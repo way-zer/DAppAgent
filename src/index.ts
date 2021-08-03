@@ -1,22 +1,11 @@
-import IPFS from 'ipfs-core'
+import * as ipfs from './module/ipfs'
 
 async function main() {
-    const ipfs = await IPFS.create({
-        repo: './DAppAgent',
-        libp2p: {
-            addresses: {
-                listen: ['/ip4/127.0.0.1/tcp/0'],
-            },
-        },
-    })
-    const {cid} = await ipfs.add('Hello world')
-    console.log(cid)
-    for await (const chunk of ipfs.get(cid)){
-        console.log(chunk)
-    }
+    console.log('Start IPFS')
+    await ipfs.start()
+    console.log(await ipfs.ipfsStatus())
     await ipfs.stop()
-    console.log("finished")
+    console.log('Stopped IPFS')
 }
 
-console.log('Hello World')
 main().then()
