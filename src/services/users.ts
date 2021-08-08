@@ -18,7 +18,7 @@ export class UserService {
     private ipfs!: IpfsService
 
     async self(): Promise<User> {
-        return this.ipfs.safeInst.key.info('self')
+        return this.ipfs.inst.key.info('self')
     }
 
     async verify() {

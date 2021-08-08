@@ -2,8 +2,9 @@ import {hooks} from '@midwayjs/hooks'
 import bodyParser from 'koa-bodyparser'
 import {join} from 'path'
 import {ILifeCycle, IMidwayApplication, IMidwayContainer} from '@midwayjs/core'
-import {Configuration, Inject, Provide} from '@midwayjs/decorator'
+import {App, Configuration, Inject} from '@midwayjs/decorator'
 import {IpfsService} from './services/ipfs'
+import {Application} from '@midwayjs/koa'
 
 @Configuration({
     imports: [
@@ -14,12 +15,16 @@ import {IpfsService} from './services/ipfs'
     importConfigs: [
         join(__dirname, 'config/'),
     ],
+    conflictCheck: false,
 })
-export class App implements ILifeCycle {
+export class AppConfiguration implements ILifeCycle {
+    @App()
+    app!: Application
     @Inject()
     ipfsService!: IpfsService
 
     async onReady(container: IMidwayContainer, app?: IMidwayApplication) {
+        this.app.use(await this.app.generateMiddleware('gatewayMiddleware'))
         console.log('Start IPFS')
         await this.ipfsService.start()
         console.log(await this.ipfsService.ipfsStatus())

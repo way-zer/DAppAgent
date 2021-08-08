@@ -2,25 +2,31 @@ import {Config, Provide, Scope, ScopeEnum} from '@midwayjs/decorator'
 import {create, IPFS} from 'ipfs-core'
 import {toArray} from '../util'
 
-export {Key as Secret} from 'ipfs-core-types/src/key'
+export interface Secret {
+    id: string
+    name: string
+}
 
 @Provide()
 @Scope(ScopeEnum.Singleton)
 export class IpfsService {
     @Config('ipfs.bootstrap')
     bootstrapConfig
-    inst: IPFS | null = null
+    instUnsafe: IPFS | null = null
 
-    get safeInst() {
-        if (!this.inst) throw 'IPFS hasn\'t start'
-        return this.inst
+    get inst() {
+        if (!this.instUnsafe) throw 'IPFS hasn\'t start'
+        return this.instUnsafe
     }
 
     async start() {
-        this.inst = await create({
+        this.instUnsafe = await create({
             repo: './DAppAgent',
             config: {
                 Bootstrap: this.bootstrapConfig,
+                Addresses: {
+                    Gateway: '/ipv4/0.0.0.0/7002',
+                },
             },
             libp2p: {
                 addresses: {
@@ -31,17 +37,17 @@ export class IpfsService {
     }
 
     async stop() {
-        const inst = this.inst
+        const inst = this.instUnsafe
         if (inst === null) return
-        this.inst = null
+        this.instUnsafe = null
         await inst.stop()
     }
 
     async ipfsStatus() {
         return {
-            running: this.inst !== null,
-            peers: await this.inst?.swarm?.peers() || [],
-            bandwidth: await toArray(this.inst?.stats?.bw()),
+            running: this.instUnsafe !== null,
+            peers: await this.instUnsafe?.swarm?.peers() || [],
+            bandwidth: await toArray(this.instUnsafe?.stats?.bw()),
         }
     }
 }

@@ -6,7 +6,7 @@
   "scripts": {
     "run": "ts-node .",
     "dev": "tsnd --respawn .",
-    "mwDev": "mw dev --ts --entryFile=bootstrap.js"
+    "mwDev": "cross-env TS_NODE_TYPE_CHECK=false TS_NODE_TRANSPILE_ONLY=true mw dev --ts --entryFile=bootstrap.js"
   },
   "devDependencies": {
     "@midwayjs/cli": "^1.2.77",
@@ -24,6 +24,8 @@
     "@midwayjs/hooks": "^2.3.0",
     "@midwayjs/koa": "^2.12.1",
     "ipfs-core": "^0.9.1",
-    "koa-bodyparser": "^4.3.0"
+    "it-to-stream": "^1.0.0",
+    "koa-bodyparser": "^4.3.0",
+    "mime": "^2.5.2"
   }
 }
