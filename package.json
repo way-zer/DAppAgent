@@ -1,7 +1,7 @@
 {
   "name": "dapp-agent",
   "version": "1.0.0",
-  "main": "src/index.ts",
+  "main": "src/util/index.ts",
   "license": "MIT",
   "scripts": {
     "run": "ts-node .",
@@ -12,6 +12,7 @@
     "@midwayjs/cli": "^1.2.77",
     "@midwayjs/cli-plugin-build": "^1.2.76",
     "@types/node": "^16.4.10",
+    "@midwayjs/decorator":"2.11.5",
     "ipfs-core-types": "^0.6.1",
     "ts-node": "^10.1.0",
     "ts-node-dev": "^1.1.8",
