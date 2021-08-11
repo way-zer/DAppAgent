@@ -1,11 +1,14 @@
 import {Context, IMidwayKoaNext, IWebMiddleware} from '@midwayjs/koa'
-import {Provide} from '@midwayjs/decorator'
+import {Provide, Scope, ScopeEnum} from '@midwayjs/decorator'
 import {useInject} from '@midwayjs/hooks-core'
 import {AppService} from '../../services/apps'
+
 // @ts-ignore
 import {getType} from 'mime/lite'
+import readable from 'it-to-stream'
 
 @Provide()
+@Scope(ScopeEnum.Singleton)
 export class GatewayMiddleware implements IWebMiddleware {
     resolve() {
         return async (ctx: Context, next: IMidwayKoaNext) => {
@@ -22,9 +25,8 @@ export class GatewayMiddleware implements IWebMiddleware {
         let path = ctx.path
         if (path.endsWith('/') || path.length == 0)
             path += 'index.html'
-        if (path.endsWith('html'))
-            ctx.type = 'html'
         ctx.type = getType(path)
-        ctx.body = await apps.getFile(addr, ctx.path || 'index.html')
+        const app = await apps.get(addr)
+        ctx.body = readable(await app.getFile('/public' + path))
     }
 }

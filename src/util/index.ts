@@ -6,3 +6,12 @@ export async function toArray<T>(gen: AsyncIterable<T> | undefined): Promise<Arr
     }
     return arr
 }
+
+export async function decodeText(file: AsyncIterable<Uint8Array>): Promise<string> {
+    const decoder = new TextDecoder()
+    let context = ''
+    for await (const chunk of file) {
+        context += decoder.decode(chunk)
+    }
+    return context
+}

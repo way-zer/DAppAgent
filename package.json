@@ -24,8 +24,11 @@
     "@midwayjs/hooks": "^2.3.0",
     "@midwayjs/koa": "^2.12.1",
     "ipfs-core": "^0.9.1",
+    "ipfs-http-response": "^0.7.0",
+    "it-last": "^1.0.5",
     "it-to-stream": "^1.0.0",
     "koa-bodyparser": "^4.3.0",
+    "koa-boom": "^0.0.4",
     "mime": "^2.5.2"
   }
 }
