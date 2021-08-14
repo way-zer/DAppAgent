@@ -58,8 +58,10 @@ export class PrivateApp extends App {
     }
 
     async init() {
+        //TODO 判重
         const key = await this.ipfs.inst.key.gen(this.name)
         console.log(`generate key for app ${key.name}: ${key.id}`)
+        await this.ipfs.inst.files.mkdir(`/apps/${this.name}`)
         await this.editMetadata({permissions: []})
         await this.uploadFile('/public/index.html', 'Hello world')
     }
