@@ -11,11 +11,17 @@
   "devDependencies": {
     "@midwayjs/cli": "^1.2.77",
     "@midwayjs/cli-plugin-build": "^1.2.76",
+    "@midwayjs/vite-plugin-hooks": "^2.3.0",
     "@types/node": "^16.4.10",
+    "@types/react": "^17.0.17",
+    "@types/react-dom": "^17.0.9",
+    "@vitejs/plugin-react-refresh": "^1.3.6",
     "ipfs-core-types": "^0.6.1",
+    "stylus": "^0.54.8",
     "ts-node": "^10.1.0",
     "ts-node-dev": "^1.1.8",
-    "typescript": "^4.3.5"
+    "typescript": "^4.3.5",
+    "vite": "^2.4.4"
   },
   "dependencies": {
     "@midwayjs/bootstrap": "^2.12.1",
@@ -29,6 +35,8 @@
     "it-to-stream": "^1.0.0",
     "koa-bodyparser": "^4.3.0",
     "koa-boom": "^0.0.4",
-    "mime": "^2.5.2"
+    "mime": "^2.5.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   }
 }
