@@ -5,8 +5,7 @@
   "license": "MIT",
   "scripts": {
     "run": "ts-node .",
-    "dev": "tsnd --respawn .",
-    "mwDev": "cross-env TS_NODE_TYPE_CHECK=false TS_NODE_TRANSPILE_ONLY=true mw dev --ts --entryFile=bootstrap.js"
+    "dev": "vite"
   },
   "devDependencies": {
     "@midwayjs/cli": "^1.2.77",

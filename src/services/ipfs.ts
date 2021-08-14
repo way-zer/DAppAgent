@@ -27,8 +27,8 @@ export class IpfsService {
     }
 
     private async createLibp2p({libp2pOptions, options}: Parameters<Libp2pFactoryFn>[0]) {
-        console.log(libp2pOptions)
-        console.log(options)
+        // console.log(libp2pOptions)
+        // console.log(options)
         const inst = await require('libp2p').create(libp2pOptions)
         this.libP2PUnsafe = inst
         return inst
