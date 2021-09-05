@@ -1,0 +1,12 @@
+GET http://localhost:3000/api/apps/createTest
+
+###
+POST http://localhost:3000/api/apps/create
+Content-Type: application/json
+
+{
+  "name": "TEST2"
+}
+
+###
+GET http://localhost:3000/api/apps/list

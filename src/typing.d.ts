@@ -18,3 +18,13 @@ declare module 'ipfs-http-response' {
 
     export const resolver: Resolver
 }
+
+import 'ipfs-core'
+
+declare module 'ipfs-core' {
+    import LibP2P from 'libp2p'
+
+    interface IPFS {
+        libp2p?: LibP2P
+    }
+}

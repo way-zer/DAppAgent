@@ -6,6 +6,7 @@ import {AppService} from '../../services/apps'
 // @ts-ignore
 import {getType} from 'mime/lite'
 import readable from 'it-to-stream'
+import {IpfsFiles} from '../../services/ipfsFiles'
 
 @Provide()
 @Scope(ScopeEnum.Singleton)
@@ -27,6 +28,13 @@ export class GatewayMiddleware implements IWebMiddleware {
             path += 'index.html'
         ctx.type = getType(path)
         const app = await apps.get(addr)
-        ctx.body = readable(await app.getFile('/public' + path))
+        try {
+            ctx.body = readable(await app.getFile('/public' + path))
+        } catch (e) {
+            if (e.message === IpfsFiles.NOT_FOUND) {
+                ctx.status = 404
+            } else
+                throw e
+        }
     }
 }

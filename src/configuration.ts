@@ -28,11 +28,11 @@ export class AppConfiguration implements ILifeCycle {
         console.log(await this.ipfsService.ipfsStatus())
 
         //clear in dev
-        const keys = await this.ipfsService.inst.key.list()
-        for(const key of keys){
-            if(key.name!='self')
-                await this.ipfsService.inst.key.rm(key.name)
-        }
+        // const keys = await this.ipfsService.inst.key.list()
+        // for(const key of keys){
+        //     if(key.name!='self')
+        //         await this.ipfsService.inst.key.rm(key.name)
+        // }
     }
 
     async onStop(container: IMidwayContainer, app?: IMidwayApplication) {

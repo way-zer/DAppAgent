@@ -2,7 +2,7 @@ import {Config, Provide, Scope, ScopeEnum} from '@midwayjs/decorator'
 import {create, IPFS} from 'ipfs-core'
 import {toArray} from '../util'
 import LibP2P from 'libp2p'
-import {Libp2pFactoryFn} from 'ipfs-core/src/types'
+
 
 export interface Secret {
     id: string
@@ -21,17 +21,10 @@ export class IpfsService {
         if (!this.instUnsafe) throw 'IPFS hasn\'t start'
         return this.instUnsafe
     }
+
     get libp2p() {
         if (!this.libP2PUnsafe) throw 'LibP2P hasn\'t start'
         return this.libP2PUnsafe
-    }
-
-    private async createLibp2p({libp2pOptions, options}: Parameters<Libp2pFactoryFn>[0]) {
-        // console.log(libp2pOptions)
-        // console.log(options)
-        const inst = await require('libp2p').create(libp2pOptions)
-        this.libP2PUnsafe = inst
-        return inst
     }
 
     async start() {
@@ -42,11 +35,21 @@ export class IpfsService {
                 Addresses: {
                     Delegates: [],
                 },
+                Pubsub: {
+                    Enabled: true,
+                    PubSubRouter: 'gossipsub',
+                },
             },
-            // 根据源码,应当返回Promise
-            // @ts-ignore
-            libp2p: this.createLibp2p.bind(this),
+            EXPERIMENTAL: {
+                ipnsPubsub: true,
+            },
+            libp2p: {
+                config: {
+                    dht: {enabled: true},
+                },
+            },
         })
+        this.libP2PUnsafe = this.inst.libp2p || null
     }
 
     async stop() {

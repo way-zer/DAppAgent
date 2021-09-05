@@ -30,6 +30,7 @@ export class IpfsFiles {
 
     async getFile(path0: string, includeIndex: boolean = false): Promise<FileContent> {
         const path = await this.resolvePath(path0)
+        console.log(path)
         if (path.endsWith('/')) {
             if (includeIndex) {
                 const ret = await this.tryIndexFile(path)
@@ -38,6 +39,13 @@ export class IpfsFiles {
             }
             throw new Error('Target Not a File')
         }
-        return this.ipfs.inst.cat(path)
+        try {
+            await this.ipfs.inst.files.stat(path)
+        } catch (e) {
+            throw new Error(IpfsFiles.NOT_FOUND)
+        }
+        return this.ipfs.inst.files.read(path)
     }
+
+    static NOT_FOUND = 'file does not exist'
 }
