@@ -1,15 +1,30 @@
 import {Inject, Provide, Scope, ScopeEnum} from '@midwayjs/decorator'
-import {bases} from 'multiformats/basics'
 import {IpfsService} from './ipfs'
 import {IntegrateService} from './integrate'
 import {IpfsFiles} from './ipfsFiles'
-import {decodeText} from '../util'
-import assert from 'assert'
+import {decodeText, peerIdBase32} from '../util'
 import {useInject} from '@midwayjs/hooks'
+import {ErrorType, MyError} from '../util/myError'
 import {CID} from 'ipfs-core'
-import last from 'it-last'
+
+export interface AppMetadata {
+    recordSign?: string
+    permissions: string[]
+}
 
 export abstract class App {
+    /**
+     * @param addr /ipns/ for prod or ipfs for dev
+     */
+    constructor(
+        public readonly addr: string,
+    ) {
+    }
+
+    isProd() {
+        return this.addr.startsWith('/ipns/')
+    }
+
     async verify(): Promise<boolean> {
         const sign = (await this.getMetadata()).recordSign
         if (!sign) return false
@@ -21,106 +36,96 @@ export abstract class App {
 
     getMetadata(): Promise<AppMetadata> {
         async function impl(this: App): Promise<AppMetadata> {
-            try {
-                const context = await decodeText(await this.getFile('/.metadata'))
-                return JSON.parse(context) as AppMetadata
-            } catch (e) {
-                if (e.message === IpfsFiles.NOT_FOUND)
-                    return {permissions: []}
-                throw e
-            }
+            const context = await decodeText(await this.getFile('/.metadata'))
+            return JSON.parse(context) as AppMetadata
         }
 
         if (this.cache_Metadata) return this.cache_Metadata
         return this.cache_Metadata = impl.apply(this)
     }
 
-    abstract getFile(path: string): Promise<AsyncIterable<Uint8Array>>
-
-    async getService(name: string): Promise<any> {
-        throw '暂未实现'
-    }
-}
-
-export class PublicApp extends App {
-    /**
-     * @param addr /ipns/ for prod or /ipfs/ for dev
-     */
-    constructor(
-        public readonly addr: string,
-    ) {
-        super()
+    async listFile(path: string) {
+        const files = await useInject(IpfsFiles)
+        return files.listFiles(this.addr + path)
     }
 
     async getFile(path: string): Promise<AsyncIterable<Uint8Array>> {
         const files = await useInject(IpfsFiles)
         return files.getFile(this.addr + path)
     }
+
+    async getService(name: string): Promise<any> {
+        throw new Error('暂未实现')
+    }
+}
+
+export class PublicApp extends App {
 }
 
 export class PrivateApp extends App {
-    ipfs!: IpfsService
+    constructor(public readonly name: string, public readonly ipfs: IpfsService) {
+        super('/apps/' + name)
+    }
 
-    constructor(public readonly name: string) {
-        super()
-
+    async getCid(): Promise<CID> {
+        return (await this.ipfs.inst.files.stat(this.addr)).cid
     }
 
     async init() {
-        //TODO 判重
-        const key = await this.ipfs.inst.key.gen(this.name)
-        console.log(`generate key for app ${key.name}: ${key.id}`)
         try {
-            await this.ipfs.inst.files.mkdir(`/apps/${this.name}`)
-        } catch (e) {//already exists
+            const key = await this.ipfs.inst.key.gen(this.name)
+            console.log(`generate key for app ${key.name}: ${key.id}`)
+        } catch (e) {//exists
         }
-        await this.editMetadata({permissions: []})
+        try {
+            await this.ipfs.inst.files.mkdir(this.addr)
+        } catch (e) {//exists
+        }
+
+        await this.setMetadata({permissions: []})
         await this.uploadFile('/public/index.html', 'Hello world')
     }
 
-    async getFile(path: string): Promise<AsyncIterable<Uint8Array>> {
-        return this.ipfs.inst.files.read('/apps/' + this.name + path)
-    }
-
-    async publish(): Promise<PublicApp> {
+    async publish(): Promise<void> {
         const sign = await (await useInject(IntegrateService)).appRecord(this)
         await this.editMetadata({recordSign: sign})
-        const dir = await this.ipfs.inst.files.stat(`/apps/${this.name}/`)
-        const record = await this.ipfs.inst.name.publish(dir.cid, {key: this.name})
-        console.log(dir.cid)
-        console.log(await last(this.ipfs.inst.name.resolve(record.name)))
-        const addr = CID.parse(record.name).toV1().toString(bases.base32.encoder)
-        return (await useInject(AppService)).get(`/ipns/${addr}`)
+        await this.ipfs.inst.name.publish(await this.getCid(), {key: this.name})
     }
 
-    async toPublic(): Promise<PublicApp> {
+    async getProd(): Promise<PublicApp> {
         const record = await this.ipfs.inst.key.info(this.name)
-        const addr = CID.parse(record.id).toV1().toString(bases.base32.encoder)
-        return (await useInject(AppService)).get(`/ipns/${addr}`, false)
+        return (await useInject(AppService))
+            .getPublic(`/ipns/${peerIdBase32(record.id)}`, false)
     }
 
-    async uploadFile(path: string, data: string | Uint8Array | Blob) {
-        await this.ipfs.inst.files.write('/apps/' + this.name + path, data, {
+    async uploadFile(path: string, data: string | Uint8Array | Blob | AsyncIterable<Uint8Array>) {
+        await this.ipfs.inst.files.write(this.addr + path, data, {
             parents: true,
             create: true,
             flush: true,
         })
+        console.info('Upload to ' + this.addr + path)
+    }
+
+    async mvFile(from: string, to: string) {
+        return this.ipfs.inst.files.mv(this.addr + from, this.addr + to)
+    }
+
+    async delFile(file: string) {
+        return this.ipfs.inst.files.rm(this.addr + file)
     }
 
     /**
      * @param options 需要相关的属性
-     * @param full 直接替换文件
      */
-    async editMetadata(options: Partial<AppMetadata>, full: boolean = false) {
-        const n = full ? options : Object.assign(await this.getMetadata(), options)
-        await this.uploadFile('/.metadata', JSON.stringify(n))
+    async editMetadata(options: Partial<AppMetadata>) {
+        await this.setMetadata(Object.assign(await this.getMetadata(), options))
+    }
+
+    async setMetadata(content: AppMetadata) {
+        await this.uploadFile('/.metadata', JSON.stringify(content))
         this.cache_Metadata = undefined
     }
-}
-
-export interface AppMetadata {
-    recordSign?: string
-    permissions: string[]
 }
 
 @Provide()
@@ -129,27 +134,39 @@ export class AppService {
     @Inject()
     private ipfs!: IpfsService
 
-    async listPrivate(): Promise<PrivateApp[]> {
+    async list(): Promise<PrivateApp[]> {
         const keys = await this.ipfs.inst.key.list()
-        return keys.filter(it => it.name != 'self').map(it => {
-            const app = new PrivateApp(it.name)
-            app.ipfs = this.ipfs
-            return app
-        })
+        return keys.filter(it => it.name != 'self')
+            .map(it => new PrivateApp(it.name, this.ipfs))
+    }
+
+    async get(name: string): Promise<PrivateApp | null> {
+        name = name.toLowerCase()
+        try {
+            await this.ipfs.inst.key.info(name)
+            return new PrivateApp(name, this.ipfs)
+        } catch (e) {
+            if (!e.toString().indexOf('does not exist'))
+                console.error(e)
+            return null
+        }
     }
 
     async create(name: string): Promise<PrivateApp> {
-        const app = new PrivateApp(name)
-        app.ipfs = this.ipfs
+        name = name.toLowerCase()
+        const exists = await this.get(name)
+        if (exists)
+            throw new MyError(ErrorType.exists, {data: exists})
+        const app = new PrivateApp(name, this.ipfs)
         await app.init()
         return app
     }
 
-    async get(addr: string, verify: boolean = true): Promise<PublicApp> {
+    async getPublic(addr: string, verify: boolean = true): Promise<PublicApp> {
         //TODO 增加cache和签名验证
         const app = new PublicApp(addr)
-        if (verify)
-            assert(await app.verify())
+        if (verify && !await app.verify())
+            throw new MyError('notVerify', {app: addr})
         return app
     }
 }

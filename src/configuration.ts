@@ -1,15 +1,18 @@
 import {hooks} from '@midwayjs/hooks'
-import bodyParser from 'koa-bodyparser'
+import bodyParser from 'koa-body'
 import {join} from 'path'
 import {ILifeCycle, IMidwayApplication, IMidwayContainer} from '@midwayjs/core'
 import {Configuration, Inject} from '@midwayjs/decorator'
 import {IpfsService} from './services/ipfs'
 import {IMidwayKoaApplication} from '@midwayjs/koa'
+import {boomify, isBoom} from '@hapi/boom'
 
 @Configuration({
     imports: [
         hooks({
-            middleware: [bodyParser()],
+            middleware: [bodyParser({
+                multipart: true,
+            })],
         }),
     ],
     importConfigs: [
@@ -22,7 +25,22 @@ export class AppConfiguration implements ILifeCycle {
     ipfsService!: IpfsService
 
     async onReady(container: IMidwayContainer, app: IMidwayKoaApplication) {
-        app.use(await app.generateMiddleware('gatewayMiddleware'))
+        app.use(async (ctx, next) => {
+            try {
+                await next()
+            } catch (e) {
+                if (!isBoom(e)) {
+                    console.error(e)
+                    e = boomify(e)
+                }
+                const {statusCode, headers, payload} = e.output
+                ctx.status = statusCode
+                for (const key in headers)
+                    ctx.response.headers[key] = headers[key]
+                ctx.body = payload
+            }
+        })
+        // app.use(await app.generateMiddleware('gatewayMiddleware'))
         console.log('Start IPFS')
         await this.ipfsService.start()
         console.log(await this.ipfsService.ipfsStatus())

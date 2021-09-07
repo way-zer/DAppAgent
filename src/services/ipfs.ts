@@ -45,10 +45,11 @@ export class IpfsService {
             },
             libp2p: {
                 config: {
-                    dht: {enabled: true},
+                    dht: {enabled: false},
                 },
             },
         })
+        // @ts-ignore
         this.libP2PUnsafe = this.inst.libp2p || null
     }
 

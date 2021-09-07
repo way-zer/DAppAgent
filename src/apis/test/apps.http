@@ -1,12 +1,49 @@
-GET http://localhost:3000/api/apps/createTest
+####API接口
+GET http://localhost:3000/api/apps/list
 
 ###
 POST http://localhost:3000/api/apps/create
 Content-Type: application/json
 
 {
-  "name": "TEST2"
+  "args": [
+    "test2"
+  ]
 }
 
 ###
-GET http://localhost:3000/api/apps/list
+POST http://localhost:3000/api/apps/info
+Content-Type: application/json
+
+{
+  "args": [
+    "test2"
+  ]
+}
+
+###
+POST http://localhost:3000/api/apps/publish
+Content-Type: application/json
+
+{
+  "args": [
+    "test2"
+  ]
+}
+
+
+####网关接口
+###
+GET http://localhost:7001/@list?path=/
+DApp-Addr: dev:test
+
+###
+GET http://localhost:7001/
+DApp-Addr: dev:test
+
+###
+PUT http://localhost:7001/index.html
+DApp-Addr: dev:test
+
+Hello World!
+Test Upload!
