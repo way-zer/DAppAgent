@@ -8,7 +8,7 @@ import {ErrorType} from '../util/myError'
 import Boom from '@hapi/boom'
 
 @Provide()
-@Controller('/')
+// @Controller('/')
 export class GatewayController {
     @Inject()
     ctx!: Context
