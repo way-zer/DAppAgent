@@ -1,5 +1,5 @@
 import { info } from "@api/apps";
-import { Input, Result, Card, Descriptions } from "antd";
+import { Input, Result, Card, Descriptions, Row, Col } from "antd";
 import React from "react";
 
 export default class AppSearch extends React.Component {
@@ -17,7 +17,6 @@ export default class AppSearch extends React.Component {
     handleSearch = (name: string) => {
         info(name).then(
             (res) => {
-                
                 if('error' in res) {
                     this.setState({
                         showResult: true,
@@ -43,8 +42,12 @@ export default class AppSearch extends React.Component {
 
     render() {
         return (
-            <div>
-                <Input.Search placeholder="输入App名称" onSearch={this.handleSearch} style={{ width: 200 }} />
+            <>
+                <Row align={'middle'}>
+                    <Col span={8} offset={8}>
+                        <Input.Search placeholder="输入App名称" onSearch={this.handleSearch} />
+                    </Col>
+                </Row>
                 {
                     this.state.showResult ? (
                         <Result status={this.state.resultStatus} title={this.state.title} />
@@ -58,7 +61,7 @@ export default class AppSearch extends React.Component {
                         </Descriptions>
                     ) : ''
                 }
-            </div>
+            </>
         )
     }
 }
