@@ -1,6 +1,6 @@
 import {IntegrateService} from './integrate'
 import {IpfsService, Secret} from './ipfs'
-import {Inject, Provide, Scope, ScopeEnum} from '@midwayjs/decorator'
+import {fluentProvide, inject} from 'daruk'
 
 
 export type User = Secret
@@ -9,16 +9,15 @@ export interface UserMetadata {
     verifySign?: string
 }
 
-@Provide()
-@Scope(ScopeEnum.Singleton)
+@(fluentProvide('UserService')
+    .inSingletonScope()
+    .done())
 export class UserService {
-    @Inject()
+    @inject('IntegrateService')
     private integrate!: IntegrateService
-    @Inject()
-    private ipfs!: IpfsService
 
     async self(): Promise<User> {
-        return this.ipfs.inst.key.info('self')
+        return IpfsService.inst.key.info('self')
     }
 
     async verify() {

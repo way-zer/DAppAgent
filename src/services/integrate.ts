@@ -1,18 +1,19 @@
 import {User} from './users'
 import {App} from './apps'
-import {Provide, Scope, ScopeEnum} from '@midwayjs/decorator'
+import {fluentProvide} from 'daruk'
 
 const MOCK_Verify_Sign = 'Verify_Sign'
 const MOCK_Record_Sign = 'Verify_Sign'
 
-@Provide()
-@Scope(ScopeEnum.Singleton)
-export class IntegrateService{
+@(fluentProvide("IntegrateService")
+    .inSingletonScope()
+    .done())
+export class IntegrateService {
     /**
      * 通过第三方进行实名认证
      * @return string 认证签名
      */
-    async userVerify(user:User): Promise<string> {
+    async userVerify(user: User): Promise<string> {
         /*TODO
         通过self密钥,生成持有签名
         将公钥(地址)及持有签名一起传递到第三方,获取认证签名

@@ -1,37 +1,27 @@
-import {Inject, Logger, Provide, Scope, ScopeEnum} from '@midwayjs/decorator'
 import {IpfsService} from '../services/ipfs'
-import {Context} from '@midwayjs/koa'
 import last from 'it-last'
 import {resolver} from 'ipfs-http-response'
-import {MidwayContextLogger} from '@midwayjs/core'
 import toStream from 'it-to-stream'
 import detectContentType from 'ipfs-http-response/src/utils/content-type'
 import assert from 'assert'
 import {CID} from 'ipfs-core'
+import {DarukContext} from 'daruk'
 
-@Provide()
-@Scope(ScopeEnum.Singleton)
-export class IpfsResponse {
-    @Inject()
-    ipfs!: IpfsService
-    @Logger()
-    logger!: MidwayContextLogger<any>
-
+export const IpfsResponse = {
     async findIndexFile(path0: string): Promise<CID | null> {
         assert(path0.endsWith('/'))
         const INDEX_FILES = ['index.html']
         for (const file in INDEX_FILES) {
             try {
-                const stats = await this.ipfs.inst.files.stat(path0 + file)
+                const stats = await IpfsService.inst.files.stat(path0 + file)
                 return stats.cid
             } catch (e) {
             }
         }
         return null
-    }
-
-    async handle(ctx: Context, path0: string) {
-        const ipfs = this.ipfs.inst
+    },
+    async handle(ctx: DarukContext, path0: string) {
+        const ipfs = IpfsService.inst
         const rawPath = ctx.path
 
         let ipfsPath = path0
@@ -48,7 +38,7 @@ export class IpfsResponse {
             }
         } catch (err) {
             const errorToString = err.toString()
-            this.logger.error('err: ', errorToString, ' fileName: ', err.fileName)
+            console.error('err: ', errorToString, ' fileName: ', err.fileName)
 
             // switch case with true feels so wrong.
             switch (true) {
@@ -78,7 +68,7 @@ export class IpfsResponse {
                     ctx.throw(err, 404)
                     return
                 default:
-                    this.logger.error(err)
+                    console.error(err)
                     throw err
             }
         }
@@ -111,5 +101,5 @@ export class IpfsResponse {
                 yield chunk.slice() // Convert BufferList to Buffer
             }
         })())
-    }
+    },
 }

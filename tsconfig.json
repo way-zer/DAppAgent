@@ -2,18 +2,20 @@
   "compilerOptions": {
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "module": "ESNEXT",
     "target": "ESNEXT",
-    "module": "commonjs",
     "strict": true,
     "noImplicitAny": false,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/"]
-    }
+    },
+    "types": ["vite/client"]
   },
   "include": [
     "./src"

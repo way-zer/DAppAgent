@@ -1,7 +1,7 @@
-import {Config, Provide, Scope, ScopeEnum} from '@midwayjs/decorator'
 import {create, IPFS} from 'ipfs-core'
 import {toArray} from '../util'
 import LibP2P from 'libp2p'
+import {inject} from 'daruk'
 
 
 export interface Secret {
@@ -9,10 +9,9 @@ export interface Secret {
     name: string
 }
 
-@Provide()
-@Scope(ScopeEnum.Singleton)
-export class IpfsService {
-    @Config('ipfs.bootstrap')
+class IpfsServiceClass {
+    static TYPE = Symbol()
+    @inject('config.ipfs.bootstrap')
     bootstrapConfig
     instUnsafe: IPFS | null = null
     libP2PUnsafe: LibP2P | null = null
@@ -28,6 +27,7 @@ export class IpfsService {
     }
 
     async start() {
+        if (this.instUnsafe) return
         this.instUnsafe = await create({
             repo: './DAppAgent',
             config: {
@@ -68,3 +68,6 @@ export class IpfsService {
         }
     }
 }
+
+//special singleton, as Ipfs is slow to start when hot reload.
+export const IpfsService = new IpfsServiceClass()

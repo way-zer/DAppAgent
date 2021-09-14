@@ -1,27 +1,25 @@
-import {Inject, Provide, Scope, ScopeEnum} from '@midwayjs/decorator'
 import {IpfsService} from './ipfs'
 import last from 'it-last'
-import {ErrorType, MyError} from '../util/myError'
 import {toArray} from '../util'
+import {fluentProvide} from 'daruk'
+import {notFound} from '@hapi/boom'
 
 type FileContent = AsyncIterable<Uint8Array>
 
-@Provide()
-@Scope(ScopeEnum.Singleton)
+@(fluentProvide('IntegrateService')
+    .inSingletonScope()
+    .done())
 export class IpfsFiles {
-    @Inject()
-    ipfs!: IpfsService
-
     get impl() {
-        return this.ipfs.inst.files
+        return IpfsService.inst.files
     }
 
     async resolveIPNS(path: string): Promise<string> {
         if (path.startsWith('/ipns/'))
             try {
-                return await last(this.ipfs.inst.name.resolve(path, {recursive: true})) || path
+                return await last(IpfsService.inst.name.resolve(path, {recursive: true})) || path
             } catch (e) {
-                throw new MyError(ErrorType.notFound, {path})
+                throw notFound('Fail to resolve IPNS', {path})
             }
         return path
     }
@@ -53,13 +51,13 @@ export class IpfsFiles {
         try {
             await this.impl.stat(path)
         } catch (e) {
-            throw new MyError(ErrorType.notFound, {})
+            throw notFound('File not found', {path, rawPath: path0})
         }
         return this.impl.read(path)
     }
 
     async listFiles(path0: string) {
         const path = await this.resolveIPNS(path0)
-        return toArray(this.ipfs.inst.files.ls(path))
+        return toArray(IpfsService.inst.files.ls(path))
     }
 }
