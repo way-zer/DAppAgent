@@ -9,14 +9,12 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@ant-design/icons": "^4.6.4",
     "@hapi/boom": "^9.1.4",
     "@midwayjs/bootstrap": "^2.12.1",
     "@midwayjs/core": "^2.12.1",
     "@midwayjs/decorator": "^2.11.5",
     "@midwayjs/hooks": "^2.3.0",
     "@midwayjs/koa": "^2.12.1",
-    "antd": "^4.16.13",
     "ipfs-core": "^0.10.5",
     "ipfs-http-response": "^0.7.0",
     "it-last": "^1.0.5",
@@ -25,8 +23,6 @@
     "koa-bodyparser": "^4.3.0",
     "mime": "^2.5.2",
     "patch-package": "^6.4.7",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
     "vm2": "^3.9.3"
   },
   "devDependencies": {
@@ -36,11 +32,7 @@
     "@midwayjs/vite-plugin-hooks": "^2.3.0",
     "@types/jest": "^27.0.1",
     "@types/node": "^16.4.10",
-    "@types/react": "^17.0.17",
-    "@types/react-dom": "^17.0.9",
-    "@vitejs/plugin-react-refresh": "^1.3.6",
     "ipfs-core-types": "^0.6.1",
-    "stylus": "^0.54.8",
     "ts-node": "^10.1.0",
     "ts-node-dev": "^1.1.8",
     "typescript": "^4.3.5",
