@@ -9,11 +9,6 @@ export default class AppCreate extends React.Component{
     submit = () => {
         create(this.formRef.current?.getFieldValue('appname')).then(
             message.success('创建成功！')
-        ).catch(
-            (e) => {
-                message.error('创建失败！')
-                console.log(e);
-            }
         )
     }
 

@@ -1,20 +1,28 @@
 // noinspection JSUnusedLocalSymbols,JSUnusedGlobalSymbols
 
-import {DarukServer} from 'daruk'
+import {darukContainer, DarukServer} from 'daruk'
 import {loadConfig} from './config'
 import {IpfsService} from './services/ipfs'
+import {checkChange} from './util/hmrHelper'
 
 async function loadModule() {
     //vite need define a variable
-    const services = import.meta.globEager('./services/*.ts')
-    const modules2 = import.meta.globEager('./apis/**/*.ts')
+    const services = import.meta.glob('./services/*.ts')
+    const modules2 = import.meta.glob('./apis/**/*.ts')
+
+    for (const it of Object.values(services)) await it()
+    for (const it of Object.values(modules2)) await it()
 }
 
 async function bootstrap() {
-    await loadConfig()
     const daruk = DarukServer({
         middlewareOrder: ['boom'],
     })
+    await checkChange("snapshot",null,()=>{
+        darukContainer.restore()
+    })
+    darukContainer.snapshot()
+    await loadConfig()
     await loadModule()
 
     await IpfsService.start()

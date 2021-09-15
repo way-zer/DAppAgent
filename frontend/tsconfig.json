@@ -22,16 +22,15 @@
     "types": [
       "vite/client"
     ],
-    "baseUrl": "..",
+    "baseUrl": ".",
     "paths": {
       "@api/*": [
-        "src/apis/lambda/*"
+        "src/api/*"
       ]
     }
   },
   "include": [
-    "./**/*",
-    "../src/apis/lambda/*"
+    "./**/*"
   ],
   "ts-node": {
     "compilerOptions": {

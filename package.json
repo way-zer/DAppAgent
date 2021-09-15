@@ -15,7 +15,6 @@
     "ipfs-http-response": "^0.7.0",
     "it-last": "^1.0.5",
     "it-to-stream": "^1.0.0",
-    "koa-better-http-proxy": "^0.2.9",
     "koa-body": "^4.2.0",
     "koa-bodyparser": "^4.3.0",
     "mime": "^2.5.2",
