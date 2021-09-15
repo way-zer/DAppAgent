@@ -1,6 +1,7 @@
 import {IntegrateService} from './integrate'
 import {IpfsService, Secret} from './ipfs'
-import {fluentProvide, inject} from 'daruk'
+import {inject} from 'daruk'
+import {singletonService} from '../util/hooks'
 
 
 export type User = Secret
@@ -9,9 +10,7 @@ export interface UserMetadata {
     verifySign?: string
 }
 
-@(fluentProvide('UserService')
-    .inSingletonScope()
-    .done())
+@singletonService
 export class UserService {
     @inject('IntegrateService')
     private integrate!: IntegrateService

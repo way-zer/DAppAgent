@@ -1,14 +1,12 @@
 import {IpfsService} from './ipfs'
 import last from 'it-last'
 import {toArray} from '../util'
-import {fluentProvide} from 'daruk'
 import {notFound} from '@hapi/boom'
+import {singletonService} from '../util/hooks'
 
 type FileContent = AsyncIterable<Uint8Array>
 
-@(fluentProvide('IntegrateService')
-    .inSingletonScope()
-    .done())
+@singletonService
 export class IpfsFiles {
     get impl() {
         return IpfsService.inst.files

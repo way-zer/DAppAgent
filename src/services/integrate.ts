@@ -1,13 +1,11 @@
 import {User} from './users'
 import {App} from './apps'
-import {fluentProvide} from 'daruk'
+import {singletonService} from '../util/hooks'
 
 const MOCK_Verify_Sign = 'Verify_Sign'
 const MOCK_Record_Sign = 'Verify_Sign'
 
-@(fluentProvide("IntegrateService")
-    .inSingletonScope()
-    .done())
+@singletonService
 export class IntegrateService {
     /**
      * 通过第三方进行实名认证

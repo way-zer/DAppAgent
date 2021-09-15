@@ -1,7 +1,8 @@
 import {create, IPFS} from 'ipfs-core'
 import {toArray} from '../util'
 import LibP2P from 'libp2p'
-import {inject} from 'daruk'
+import {useInject} from '../util/hooks'
+import {checkChange} from '../util/hmrHelper'
 
 
 export interface Secret {
@@ -10,9 +11,6 @@ export interface Secret {
 }
 
 class IpfsServiceClass {
-    static TYPE = Symbol()
-    @inject('config.ipfs.bootstrap')
-    bootstrapConfig
     instUnsafe: IPFS | null = null
     libP2PUnsafe: LibP2P | null = null
 
@@ -28,10 +26,14 @@ class IpfsServiceClass {
 
     async start() {
         if (this.instUnsafe) return
+        await checkChange('ipfs', this, (old) => old.stop())
+
+        const bootstrapConfig = useInject<string[]>('config.ipfs.bootstrap')
+        console.log(bootstrapConfig)
         this.instUnsafe = await create({
             repo: './DAppAgent',
             config: {
-                Bootstrap: this.bootstrapConfig,
+                Bootstrap: bootstrapConfig,
                 Addresses: {
                     Delegates: [],
                 },
@@ -58,6 +60,7 @@ class IpfsServiceClass {
         if (inst === null) return
         this.instUnsafe = null
         await inst.stop()
+        console.log("Stopped IPFS")
     }
 
     async ipfsStatus() {

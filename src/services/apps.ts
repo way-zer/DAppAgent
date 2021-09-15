@@ -2,9 +2,8 @@ import {IpfsService} from './ipfs'
 import {IntegrateService} from './integrate'
 import {IpfsFiles} from './ipfsFiles'
 import {decodeText, peerIdBase32} from '../util'
-import {useInject} from '../util/hooks'
+import {singletonService, useInject} from '../util/hooks'
 import {CID} from 'ipfs-core'
-import {fluentProvide} from 'daruk'
 import {conflict, forbidden} from '@hapi/boom'
 
 export interface AppMetadata {
@@ -128,9 +127,7 @@ export class PrivateApp extends App {
     }
 }
 
-@(fluentProvide('AppService')
-    .inSingletonScope()
-    .done())
+@singletonService
 export class AppService {
     async list(): Promise<PrivateApp[]> {
         const keys = await IpfsService.inst.key.list()

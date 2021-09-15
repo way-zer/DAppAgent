@@ -8,27 +8,29 @@ import {controller, DarukContext, get, inject, priority, put} from 'daruk'
 @controller()
 @priority(1)
 export class _Gateway {
+    @inject('ctx')
+    ctx!: DarukContext
     @inject(AppService)
     apps!: AppService
 
-    splitHost(ctx: DarukContext) {
-        const headerIp = ctx.headers['dapp-addr']
+    splitHost() {
+        const headerIp = this.ctx.headers['dapp-addr']
         if (headerIp) {
             const sp = headerIp.toString().split(':')
             return {
-                ending: ctx.host,
+                ending: this.ctx.host,
                 type: sp[0],
                 name: sp[1],
             }
         }
-        const sp = ctx.host.split('.')
+        const sp = this.ctx.host.split('.')
         const ending = sp.pop()
         const type = (sp.length >= 2 && sp[sp.length - 1].length < 5) ? sp.pop() : 'ipns'
         return {ending, type, name: sp.join('')}
     }
 
-    async getApp(ctx: DarukContext) {
-        const {name, type} = this.splitHost(ctx)
+    async getApp() {
+        const {name, type} = this.splitHost()
         let out: App | null = null
         try {
             switch (type) {
@@ -52,9 +54,9 @@ export class _Gateway {
     }
 
     @get('/@list')
-    async list(ctx: DarukContext) {
-        const app = await this.getApp(ctx)
-        let path = ctx.path
+    async list() {
+        const app = await this.getApp()
+        let path = this.ctx.path
         if (path[0] !== '/') path = '/' + path
         return (await app.listFile('/public' + path)).map(file =>
             Object.assign(file, {cid: file.cid.toString()}),
@@ -62,28 +64,28 @@ export class _Gateway {
     }
 
     @put('/(.*)')
-    async upload(ctx: DarukContext) {
-        const app = await this.getApp(ctx)
-        let path = ctx.path
+    async upload() {
+        const app = await this.getApp()
+        let path = this.ctx.path
         path = '/public' + path
         if (app instanceof PrivateApp) {
-            let from = ctx.query.from
+            let from = this.ctx.query.from
             if (from) {//move
                 from = '/public' + from
                 return await app.mvFile(from, path)
             }
-            await app.uploadFile(path, ctx.req)
+            await app.uploadFile(path, this.ctx.req)
         } else
             throw Boom.badRequest('Only private apps files can modify')
     }
 
     @get('/(.*)')
-    async get(ctx: DarukContext) {
-        const app = await this.getApp(ctx)
-        let path = ctx.path
+    async get() {
+        const app = await this.getApp()
+        let path = this.ctx.path
         if (path.endsWith('/'))
             path += 'index.html'
-        ctx.type = getType(path)
-        ctx.body = readable(await app.getFile('/public' + path))
+        this.ctx.type = getType(path)
+        this.ctx.body = readable(await app.getFile('/public' + path))
     }
 }
