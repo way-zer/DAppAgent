@@ -1,7 +1,8 @@
 import {AppService} from '../services/apps'
 import {cidBase32} from '../util'
 import {controller, DarukContext, get, inject, post, prefix} from 'daruk'
-import {badRequest, notFound} from '@hapi/boom'
+import {notFound} from '@hapi/boom'
+import {useQuery} from './hooks/simple'
 
 @controller()
 @prefix('/api/apps')
@@ -24,8 +25,7 @@ export class _Apps {
 
     @post('create')
     async create(ctx: DarukContext) {
-        const name = ctx.query.name
-        if (!name || typeof name !== 'string') throw badRequest('need name')
+        const name = useQuery(ctx, 'name')
         const app = await this.apps.create(name)
         await app.publish()
         return await this.info(ctx)
@@ -33,8 +33,7 @@ export class _Apps {
 
     @get('info')
     async info(ctx: DarukContext) {
-        const name = ctx.query.name
-        if (!name || typeof name !== 'string') throw badRequest('need name')
+        const name = useQuery(ctx, 'name')
         const app = await this.apps.get(name)
         if (!app) throw notFound('App not found', {name})
         return Object.assign(await app.getMetadata(), {
@@ -46,8 +45,7 @@ export class _Apps {
 
     @post('create')
     async publish(ctx: DarukContext) {
-        const name = ctx.query.name
-        if (!name || typeof name !== 'string') throw badRequest('need name')
+        const name = useQuery(ctx, 'name')
         const app = await this.apps.get(name)
         if (!app) return {error: 'NOTFOUND'}
         await app.publish()
