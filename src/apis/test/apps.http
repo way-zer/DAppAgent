@@ -36,7 +36,7 @@ Content-Type: application/json
 ###
 //可用test.dev.localhost访问
 //因为java域名解析问题，使用Dapp-Addr代替host
-GET http://localhost:7001/@list?path=/
+GET http://localhost:7001/api/file/list?path=/
 DApp-Addr: dev:test
 
 ###
@@ -44,8 +44,8 @@ GET http://localhost:7001/
 DApp-Addr: dev:test
 
 ###
-PUT http://localhost:7001/index.html
+PUT http://localhost:3000/api/file/upload?path=/index.html
 DApp-Addr: dev:test
 
 Hello World!
-Test Upload!
+Test Upload2!

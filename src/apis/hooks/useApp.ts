@@ -40,6 +40,6 @@ export async function useApp(ctx: DarukContext) {
     } catch (e) {
     }
     if (out === null)
-        throw Boom.notFound()
+        throw Boom.notFound(`Can find app with ${type}:${name}`)
     return out
 }
