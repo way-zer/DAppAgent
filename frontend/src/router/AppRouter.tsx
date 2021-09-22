@@ -4,6 +4,9 @@ import IpfsInfo from '../page/IpfsInfo'
 import AppCreate from '../page/AppCreate'
 import AppInfo from '../page/AppInfo'
 import AppSearch from '../page/AppSearch'
+import FileUpload from '../page/FileUpload'
+import FileInfo from '../page/FileInfo'
+
 
 class AppRouter extends React.Component{
     render() {
@@ -13,6 +16,8 @@ class AppRouter extends React.Component{
                 <Route exact path='/appcreate' component={AppCreate} />
                 <Route exact path='/appinfo' component={AppInfo} />
                 <Route exact path='/appsearch' component={AppSearch} />
+                <Route exact path='/fileupload' component={FileUpload} />
+                <Route exact path='/fileinfo' component={FileInfo} />
                 <Redirect to='/ipfsinfo' />
             </Switch>
         )
