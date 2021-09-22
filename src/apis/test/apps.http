@@ -49,3 +49,11 @@ DApp-Addr: dev:test
 
 Hello World!
 Test Upload2!
+
+###
+POST http://localhost:3000/api/file/delete?path=/index2.html
+DApp-Addr: dev:test
+
+###
+PUT http://localhost:3000/api/file/upload?path=/index2.html&from=/index.html
+DApp-Addr: dev:test

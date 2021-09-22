@@ -4,7 +4,7 @@ import {IpfsFiles} from './ipfsFiles'
 import {decodeText, peerIdBase32} from '../util'
 import {singletonService, useInject} from '../util/hooks'
 import {CID} from 'ipfs-core'
-import {conflict, forbidden} from '@hapi/boom'
+import {conflict, forbidden, notFound} from '@hapi/boom'
 
 export interface AppMetadata {
     recordSign?: string
@@ -97,21 +97,43 @@ export class PrivateApp extends App {
             .getPublic(`/ipns/${peerIdBase32(record.id)}`, false)
     }
 
+    /**
+     * 当路径为/结尾时,仅新建目录
+     */
     async uploadFile(path: string, data: string | Uint8Array | Blob | AsyncIterable<Uint8Array>) {
-        await IpfsService.inst.files.write(this.addr + path, data, {
-            parents: true,
-            create: true,
-            flush: true,
-        })
+        if (path.endsWith('/'))
+            await IpfsService.inst.files.mkdir(this.addr + path, {
+                parents: true, flush: true,
+            })
+        else
+            await IpfsService.inst.files.write(this.addr + path, data, {
+                parents: true,
+                create: true,
+                flush: true,
+            })
         console.info('Upload to ' + this.addr + path)
     }
 
-    async mvFile(from: string, to: string) {
-        return IpfsService.inst.files.mv(this.addr + from, this.addr + to)
+    async cpFile(from: string, to: string) {
+        try {
+            return await IpfsService.inst.files.cp(this.addr + from, this.addr + to)
+        } catch (e) {
+            if (e.code == 'ERR_ALREADY_EXISTS')
+                throw conflict(e.message)
+            else
+                throw e
+        }
     }
 
     async delFile(file: string) {
-        return IpfsService.inst.files.rm(this.addr + file)
+        try {
+            return await IpfsService.inst.files.rm(this.addr + file)
+        } catch (e) {
+            if (e.code == 'ERR_NOT_FOUND')
+                throw notFound('file ' + file + ' does not exist')
+            else
+                throw e
+        }
     }
 
     /**
