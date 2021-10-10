@@ -1,3 +1,5 @@
+import {AccessController} from './services/acessController/interface'
+
 declare module 'it-to-stream' {
     export function readable<T>(source: AsyncIterable<T>): ReadableStream<T>
 
@@ -27,4 +29,14 @@ declare module 'ipfs-core' {
     interface IPFS {
         libp2p?: LibP2P
     }
+}
+
+declare module 'orbit-db' {
+    import AccessControllers from 'orbit-db-access-controllers'
+
+    class OrbitDB {
+        static AccessControllers = AccessControllers
+    }
+
+    export default OrbitDB
 }

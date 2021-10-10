@@ -4,6 +4,7 @@ import {darukContainer, DarukServer} from 'daruk'
 import {loadConfig} from './config'
 import {IpfsService} from './services/ipfs'
 import {checkChange} from './util/hmrHelper'
+import {DBService} from './services/db'
 
 async function loadModule() {
     //vite need define a variable
@@ -18,7 +19,7 @@ async function bootstrap() {
     const daruk = DarukServer({
         middlewareOrder: ['boom'],
     })
-    await checkChange("snapshot",null,()=>{
+    await checkChange('snapshot', null, () => {
         darukContainer.restore()
     })
     darukContainer.snapshot()
@@ -26,9 +27,7 @@ async function bootstrap() {
     await loadModule()
 
     await IpfsService.start()
-    daruk.on('exit', async () => {
-        await IpfsService.stop()
-    })
+    await DBService.start()
 
     await daruk.binding()
     if (process.env.NODE_ENV === 'production')

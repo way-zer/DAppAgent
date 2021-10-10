@@ -29,7 +29,6 @@ class IpfsServiceClass {
         await checkChange('ipfs', this, (old) => old.stop())
 
         const bootstrapConfig = useInject<string[]>('config.ipfs.bootstrap')
-        console.log(bootstrapConfig)
         this.instUnsafe = await create({
             repo: './DAppAgent',
             config: {
@@ -53,6 +52,7 @@ class IpfsServiceClass {
         })
         // @ts-ignore
         this.libP2PUnsafe = this.inst.libp2p || null
+        console.log('IPFS ID is: ' + (await this.inst.id()).id)
     }
 
     async stop() {
@@ -60,7 +60,7 @@ class IpfsServiceClass {
         if (inst === null) return
         this.instUnsafe = null
         await inst.stop()
-        console.log("Stopped IPFS")
+        console.log('Stopped IPFS')
     }
 
     async ipfsStatus() {

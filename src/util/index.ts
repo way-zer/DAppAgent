@@ -1,5 +1,6 @@
-import {CID, PeerId} from 'ipfs-core'
 import {bases} from 'multiformats/basics'
+import {CID} from 'multiformats'
+import {PeerId} from 'ipfs-core'
 
 export async function toArray<T>(gen: AsyncIterable<T> | undefined): Promise<Array<T>> {
     if (!gen) return []

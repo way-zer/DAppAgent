@@ -3,12 +3,15 @@ import {IntegrateService} from './integrate'
 import {IpfsFiles} from './ipfsFiles'
 import {decodeText, peerIdBase32} from '../util'
 import {singletonService, useInject} from '../util/hooks'
-import {CID} from 'ipfs-core'
 import {conflict, forbidden, notFound} from '@hapi/boom'
+import {CID} from 'multiformats'
+import {AccessType, DataBase, DBService, DBStore, DBType} from './db'
+import memoizee from 'memoizee'
 
 export interface AppMetadata {
     recordSign?: string
     permissions: string[]
+    databases: DataBase[]
 }
 
 export abstract class App {
@@ -53,6 +56,13 @@ export abstract class App {
         return files.getFile(this.addr + path)
     }
 
+    async getDataBase(name: string): Promise<DBStore> {
+        const metadata = await this.getMetadata()
+        const db = metadata.databases.find(it => it.name == name)
+        if (!db) throw notFound('App not define database ' + name, {app: this.addr, name})
+        return DBService.getDataBase(db)
+    }
+
     async getService(name: string): Promise<any> {
         throw new Error('暂未实现')
     }
@@ -81,7 +91,7 @@ export class PrivateApp extends App {
         } catch (e) {//exists
         }
 
-        await this.setMetadata({permissions: []})
+        await this.setMetadata({permissions: [], databases: []})
         await this.uploadFile('/public/index.html', 'Hello world')
     }
 
@@ -117,7 +127,7 @@ export class PrivateApp extends App {
     async cpFile(from: string, to: string) {
         try {
             return await IpfsService.inst.files.cp(this.addr + from, this.addr + to)
-        } catch (e) {
+        } catch (e: any) {
             if (e.code == 'ERR_ALREADY_EXISTS')
                 throw conflict(e.message)
             else
@@ -128,12 +138,22 @@ export class PrivateApp extends App {
     async delFile(file: string) {
         try {
             return await IpfsService.inst.files.rm(this.addr + file)
-        } catch (e) {
+        } catch (e: any) {
             if (e.code == 'ERR_NOT_FOUND')
                 throw notFound('file ' + file + ' does not exist')
             else
                 throw e
         }
+    }
+
+    async newDataBase(name: string, type: DBType, access: AccessType) {
+        const metadata = await this.getMetadata()
+        if (metadata.databases.find(it => it.name === name))
+            throw conflict('App has defined database ' + name, {app: this.addr, name})
+        const info = {name, type, access} as DataBase
+        await DBService.getDataBase(info)
+        await this.editMetadata({databases: metadata.databases.concat(info)})
+        console.info(`New Database for app ${this.name}: `, info)
     }
 
     /**
@@ -157,17 +177,17 @@ export class AppService {
             .map(it => new PrivateApp(it.name))
     }
 
-    async get(name: string): Promise<PrivateApp | null> {
+    get = memoizee(async (name: string) => {
         name = name.toLowerCase()
         try {
             await IpfsService.inst.key.info(name)
             return new PrivateApp(name)
-        } catch (e) {
+        } catch (e: any) {
             if (!e.toString().indexOf('does not exist'))
                 console.error(e)
             return null
         }
-    }
+    })
 
     async create(name: string): Promise<PrivateApp> {
         name = name.toLowerCase()
@@ -179,11 +199,10 @@ export class AppService {
         return app
     }
 
-    async getPublic(addr: string, verify: boolean = true): Promise<PublicApp> {
-        //TODO 增加cache和签名验证
+    getPublic = memoizee(async (addr: string, verify: boolean = true) => {
         const app = new PublicApp(addr)
         if (verify && !await app.verify())
             throw forbidden('App not verify', {app})
         return app
-    }
+    })
 }

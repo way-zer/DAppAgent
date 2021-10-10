@@ -5,6 +5,8 @@
     "module": "ESNEXT",
     "target": "ESNEXT",
     "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
     "noImplicitAny": false,
     "moduleResolution": "node",
     "esModuleInterop": true,
@@ -13,11 +15,18 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/"]
+      "@/*": [
+        "src/"
+      ]
     },
-    "types": ["vite/client"]
+    "types": [
+      "vite/client"
+    ]
   },
   "include": [
-    "./src"
+    "./src",
+    "node_modules/orbit-db/src",
+    "node_modules/orbit-db-access-controllers/src",
+    "node_modules/orbit-db-store/src"
   ]
 }

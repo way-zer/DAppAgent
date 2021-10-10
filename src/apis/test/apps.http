@@ -1,8 +1,8 @@
 ####API接口
-GET http://localhost:3000/api/apps/list
+GET {{host}}/api/apps/list
 
 ###
-POST http://localhost:3000/api/apps/create
+POST {{host}}/api/apps/create
 Content-Type: application/json
 
 {
@@ -12,7 +12,7 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:3000/api/apps/info
+POST {{host}}/api/apps/info
 Content-Type: application/json
 
 {
@@ -22,7 +22,7 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:3000/api/apps/publish
+POST {{host}}/api/apps/publish
 Content-Type: application/json
 
 {
@@ -36,24 +36,24 @@ Content-Type: application/json
 ###
 //可用test.dev.localhost访问
 //因为java域名解析问题，使用Dapp-Addr代替host
-GET http://localhost:7001/api/file/list?path=/
-DApp-Addr: dev:test
+GET {{host}}/api/file/list?path=/
+DApp-Addr: {{app}}
 
 ###
-GET http://localhost:7001/
-DApp-Addr: dev:test
+GET {{host}}/
+DApp-Addr: {{app}}
 
 ###
-PUT http://localhost:3000/api/file/upload?path=/index.html
-DApp-Addr: dev:test
+PUT {{host}}/api/file/upload?path=/index.html
+DApp-Addr: {{app}}
 
 Hello World!
-Test Upload2!
+Test Upload2!{{$timestamp}}
 
 ###
-POST http://localhost:3000/api/file/delete?path=/index2.html
-DApp-Addr: dev:test
+POST {{host}}/api/file/delete?path=/index2.html
+DApp-Addr: {{app}}
 
 ###
-PUT http://localhost:3000/api/file/upload?path=/index2.html&from=/index.html
-DApp-Addr: dev:test
+PUT {{host}}/api/file/upload?path=/index2.html&from=/index.html
+DApp-Addr: {{app}}
