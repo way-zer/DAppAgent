@@ -19,8 +19,6 @@ async function bootstrap() {
     const daruk = DarukServer({
         middlewareOrder: ['boom'],
     })
-    await daruk.loadFile('../../daruk/build/plugins')
-    await daruk.loadFile('../../daruk/build/built_in')
     await checkChange('snapshot', null, () => {
         darukContainer.restore()
     })

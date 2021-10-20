@@ -74,13 +74,37 @@ DApp-Addr: {{app}}
   "access": "private"
 }
 
-###
+### 插入数据
 POST {{host}}/api/db/action
 Content-Type: application/json
 DApp-Addr: {{app}}
 
 {
   "name": "test1",
-  "op": "info",
-  "args": []
+  "op": "put",
+  "args": [
+    {
+      "_id": "a",
+      "otherKey": 123456,
+      "desc": "test"
+    }
+  ]
 }
+
+### 获取数据
+POST {{host}}/api/db/action
+Content-Type: application/json
+DApp-Addr: {{app}}
+
+{
+  "name": "test1",
+  "op": "get",
+  "args": [
+    "a"
+  ]
+}
+
+### 获取数据
+GET {{host}}/api/db/query?db=test1
+Content-Type: application/json
+DApp-Addr: {{app}}

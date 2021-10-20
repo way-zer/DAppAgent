@@ -1,0 +1,610 @@
+POST http://localhost:7001/api/db/action
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "op": "get",
+  "args": ["a"]
+}
+
+<> 2021-10-20T170835.200.json
+
+###
+
+GET http://localhost:7001/api/db/query?db=test1
+Content-Type: application/json
+DApp-Addr: dev:test
+
+<> 2021-10-20T170611.200.json
+
+###
+
+GET http://localhost:7001/api/db/query?db=test1
+Content-Type: application/json
+DApp-Addr: dev:test
+
+<> 2021-10-20T170142.200.json
+
+###
+
+GET http://localhost:7001/api/db/query?db=test1
+Content-Type: application/json
+DApp-Addr: dev:test
+
+###
+
+POST http://localhost:7001/api/db/action
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "op": "all",
+  "args": []
+}
+
+<> 2021-10-20T164902.406.json
+
+###
+
+POST http://localhost:7001/api/db/action
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "op": "query",
+  "args": [{"otherKey": 123456}]
+}
+
+<> 2021-10-20T145434.406.json
+
+###
+
+POST http://localhost:7001/api/db/action
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "op": "get",
+  "args": ["a"]
+}
+
+<> 2021-10-20T145335.200.json
+
+###
+
+POST http://localhost:7001/api/db/action
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "op": "put",
+  "args": [{
+    "_id": "a",
+    "otherKey": 123456,
+    "desc": "test"
+  }]
+}
+
+<> 2021-10-20T145331.200.txt
+
+###
+
+POST http://localhost:7001/api/db/action
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "op": "get",
+  "args": ["a"]
+}
+
+<> 2021-10-20T145322.200.json
+
+###
+
+POST http://localhost:7001/api/db/action
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "op": "put",
+  "args": [{
+    "_id": "a",
+    "desc": "test"
+  }]
+}
+
+<> 2021-10-20T145216.200.txt
+
+###
+
+POST http://localhost:7001/api/db/action
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "op": "put",
+  "args": [{
+    "_id": "a",
+    "desc": "test"
+  }]
+}
+
+###
+
+POST http://localhost:7001/api/db/action
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "op": "put",
+  "args": [{
+    "_id": "a",
+    "desc": "test"
+  }]
+}
+
+<> 2021-10-20T145006.406.json
+
+###
+
+POST http://localhost:7001/api/db/action
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "op": "put",
+  "args": [{
+    "_id": "a",
+    "desc": "test"
+  }]
+}
+
+<> 2021-10-20T144931.406.json
+
+###
+
+GET http://localhost:7001/../.metadata
+DApp-Addr: dev:test
+
+<> 2021-10-20T144832.200.txt
+
+###
+
+GET http://localhost:7001/../.metadata
+DApp-Addr: dev:test
+
+###
+
+GET http://localhost:7002/../.metadata
+DApp-Addr: dev:test
+
+###
+
+POST http://localhost:7001/api/db/action
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "op": "info",
+  "args": []
+}
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+<> 2021-10-19T181112.200.txt
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+<> 2021-10-19T181006.500.json
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+###
+
+GET http://localhost:7001/../.metadata
+DApp-Addr: dev:test
+
+<> 2021-10-19T175422.200.txt
+
+###
+
+GET http://localhost:7001/../.metadata
+DApp-Addr: dev:test
+
+<> 2021-10-19T175208.404.json
+
+###
+
+GET http://localhost:7001/../.metadata
+DApp-Addr: dev:test
+
+###
+
+GET http://localhost:7001/../.metadata
+DApp-Addr: dev:test
+
+<> 2021-10-19T174304.404.json
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+<> 2021-10-19T174231.200.txt
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+<> 2021-10-19T173835.500.json
+
+###
+
+POST http://localhost:7001/api/db/action
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "op": "info",
+  "args": []
+}
+
+<> 2021-10-19T173818.404.json
+
+###
+
+POST http://localhost:7001/api/db/action
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "op": "info",
+  "args": []
+}
+
+###
+
+POST http://localhost:7001/api/db/action
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "op": "info",
+  "args": []
+}
+
+<> 2021-10-19T172447.400.json
+
+###
+
+POST http://localhost:7001/api/db/action
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "op": "info",
+  "args": []
+}
+
+<> 2021-10-19T172413.400.json
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+<> 2021-10-11T234029.500.json
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+<> 2021-10-11T233910.500.json
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+<> 2021-10-11T233022.500.json
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+<> 2021-10-11T232912.500.json
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+<> 2021-10-11T232842.500.json
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+<> 2021-10-11T232300.500.json
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+<> 2021-10-11T232202.500.json
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+DApp-Addr: dev:test
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+<> 2021-10-11T232120.500.json
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+<> 2021-10-11T232052.404.json
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+###
+
+POST http://localhost:7001/api/db/create
+Content-Type: application/json
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+<> 2021-10-11T232000.500.json
+
+###
+
