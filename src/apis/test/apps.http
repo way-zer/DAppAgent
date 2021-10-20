@@ -1,4 +1,7 @@
 ####API接口
+GET {{host}}/api/ipfs/status
+
+###
 GET {{host}}/api/apps/list
 
 ###
