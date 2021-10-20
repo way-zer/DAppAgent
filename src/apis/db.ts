@@ -1,9 +1,8 @@
-import {controller, DarukContext, get, post, prefix, validate} from 'daruk'
+import {controller, DarukContext, del, get, post, prefix, put, validate} from 'daruk'
 import {useApp, usePrivateApp} from './hooks/useApp'
 import {DataBase} from '../services/db'
 import Boom from '@hapi/boom'
 import {constants} from 'http2'
-import {useQuery} from './hooks/simple'
 
 @controller()
 @prefix('/api/db')
@@ -23,6 +22,11 @@ export class _DB {
         ctx.status = constants.HTTP_STATUS_OK
     }
 
+    async useDatabase(ctx: DarukContext) {
+        const app = await useApp(ctx)
+        return await app.getDataBase(ctx.request['params'].db)
+    }
+
     /**
      * @deprecated 临时接口,用于研究db特性
      * docstore:
@@ -30,15 +34,14 @@ export class _DB {
      *      query (filter, {fullOp})
      *
      */
-    @post('action')
+    @post(':db/action')
     async action(ctx: DarukContext) {
-        const app = await useApp(ctx)
-        const {name, op, args} = ctx.request.body
-        if (!name || !op)
+        const db = await this.useDatabase(ctx)
+        const {op, args} = ctx.request.body
+        if (!op)
             throw Boom.badRequest('Need parameter name,op', {body: ctx.request.body})
         if (!Array.isArray(args))
             throw Boom.badRequest('Illegal parameter type', {args})
-        const db = await app.getDataBase(name)
         if (!db[op]) throw Boom.notAcceptable('op not support', {op})
         try {
             ctx.body = await (db[op].call(db, ...args))
@@ -47,27 +50,31 @@ export class _DB {
         }
     }
 
-    @post('put')
+    @put(':db')
     async put(ctx: DarukContext) {
-        const app = await useApp(ctx)
-        const {name, doc} = ctx.request.body
-        if (!name || typeof doc !== 'object')
-            throw Boom.badRequest('Need parameter name,doc', {body: ctx.request.body})
-        const db = await app.getDataBase(name)
+        const db = await this.useDatabase(ctx)
         try {
-            ctx.body = await (db['put'](doc))
+            ctx.body = await (db['put'](ctx.request.body))
         } catch (e: any) {
             throw Boom.notAcceptable('Execute action fail: ' + e.message, {exception: e})
         }
     }
 
-    @post('del')
+    @get(':db/:id')
+    async get(ctx: DarukContext) {
+        const db = await this.useDatabase(ctx)
+        const id = ctx.request['params'].id
+        try {
+            ctx.body = await (db['get'](id))
+        } catch (e: any) {
+            throw Boom.notAcceptable('Execute action fail: ' + e.message, {exception: e})
+        }
+    }
+
+    @del(':db/:id')
     async del(ctx: DarukContext) {
-        const app = await useApp(ctx)
-        const {name, id} = ctx.request.body
-        if (!name || !id)
-            throw Boom.badRequest('Need parameter name,id', {body: ctx.request.body})
-        const db = await app.getDataBase(name)
+        const db = await this.useDatabase(ctx)
+        const id = ctx.request['params'].id
         try {
             ctx.body = await (db['del'](id))
         } catch (e: any) {
@@ -75,15 +82,11 @@ export class _DB {
         }
     }
 
-    @get('query')
+    @get(':db')
     async all(ctx: DarukContext) {
-        const app = await useApp(ctx)
-        const name = useQuery(ctx, 'db')
+        const db = await this.useDatabase(ctx)
         const begin = +(ctx.query.begin || 0)
         const size = +(ctx.query.size || -1)
-        if (!name)
-            throw Boom.badRequest('Need parameter name', {body: ctx.request.body})
-        const db = await app.getDataBase(name)
         try {
             ctx.body = db['query'](() => true).slice(begin, size === -1 ? undefined : size)
         } catch (e: any) {

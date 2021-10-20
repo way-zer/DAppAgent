@@ -75,36 +75,27 @@ DApp-Addr: {{app}}
 }
 
 ### 插入数据
-POST {{host}}/api/db/action
+PUT {{host}}/api/db/test1
 Content-Type: application/json
 DApp-Addr: {{app}}
 
 {
-  "name": "test1",
-  "op": "put",
-  "args": [
-    {
-      "_id": "a",
-      "otherKey": 123456,
-      "desc": "test"
-    }
-  ]
+  "_id": "a3",
+  "otherKey": 123456,
+  "desc": "test"
 }
 
-### 获取数据
-POST {{host}}/api/db/action
+### 查询所有数据
+GET {{host}}/api/db/test1
 Content-Type: application/json
 DApp-Addr: {{app}}
 
-{
-  "name": "test1",
-  "op": "get",
-  "args": [
-    "a"
-  ]
-}
-
 ### 获取数据
-GET {{host}}/api/db/query?db=test1
+GET {{host}}/api/db/test1/a3
+Content-Type: application/json
+DApp-Addr: {{app}}
+
+### 删除数据
+DELETE {{host}}/api/db/test1/a3
 Content-Type: application/json
 DApp-Addr: {{app}}
