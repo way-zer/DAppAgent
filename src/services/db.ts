@@ -44,17 +44,14 @@ class DBServiceClass {
     getDataBase = memoizee(async (info: DataBase) => {
         if (!OrbitDB.isValidType(info.type))
             throw badRequest('invalid Type: ' + info.type)
-        let db
-        if (info.addr)
-            db = await this.inst.open(info.addr)
-        else {
-            db = await this.inst.create(info.name, info.type, {
-                accessController: {
-                    type: 'dapp',
-                    subType: info.access,
-                },
-            })
-        }
+        const db = await this.inst.open(info.addr || info.name, {
+            create: true,
+            type: info.type,
+            accessController: {
+                type: 'dapp',
+                subType: info.access,
+            },
+        })
         await db.load()
         return db as DBStore
     })

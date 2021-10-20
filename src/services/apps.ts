@@ -148,11 +148,12 @@ export class PrivateApp extends App {
 
     async newDataBase(name: string, type: DBType, access: AccessType) {
         const metadata = await this.getMetadata()
-        if (metadata.databases.find(it => it.name === name))
+        if ((metadata.databases || []).find(it => it.name === name))
             throw conflict('App has defined database ' + name, {app: this.addr, name})
-        const info = {name, type, access} as DataBase
+        const info = {name: `${this.name}-db-${name}`, type, access} as DataBase
         await DBService.getDataBase(info)
-        await this.editMetadata({databases: metadata.databases.concat(info)})
+        info.name = name
+        await this.editMetadata({databases: (metadata.databases || []).concat(info)})
         console.info(`New Database for app ${this.name}: `, info)
     }
 

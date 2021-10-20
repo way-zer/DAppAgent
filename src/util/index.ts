@@ -2,6 +2,8 @@ import {bases} from 'multiformats/basics'
 import {CID} from 'multiformats'
 import {PeerId} from 'ipfs-core'
 
+export * as Boom from '@hapi/boom'
+
 export async function toArray<T>(gen: AsyncIterable<T> | undefined): Promise<Array<T>> {
     if (!gen) return []
     const arr = [] as T[]

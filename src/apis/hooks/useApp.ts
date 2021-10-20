@@ -1,4 +1,4 @@
-import {App, AppService} from '../../services/apps'
+import {App, AppService, PrivateApp} from '../../services/apps'
 import Boom from '@hapi/boom'
 import {useInject} from '../../util/hooks'
 import {DarukContext} from 'daruk'
@@ -42,4 +42,11 @@ export async function useApp(ctx: DarukContext) {
     if (out === null)
         throw Boom.notFound(`Can find app with ${type}:${name}`)
     return out
+}
+
+export async function usePrivateApp(ctx: DarukContext): Promise<PrivateApp> {
+    const app = await useApp(ctx)
+    if (app instanceof PrivateApp)
+        return app
+    throw Boom.badRequest('Only private apps files can modify')
 }

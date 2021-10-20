@@ -44,6 +44,10 @@ GET {{host}}/
 DApp-Addr: {{app}}
 
 ###
+GET {{host}}/../.metadata
+DApp-Addr: {{app}}
+
+###
 PUT {{host}}/api/file/upload?path=/index.html
 DApp-Addr: {{app}}
 
@@ -57,3 +61,26 @@ DApp-Addr: {{app}}
 ###
 PUT {{host}}/api/file/upload?path=/index2.html&from=/index.html
 DApp-Addr: {{app}}
+
+####数据库接口
+###
+POST {{host}}/api/db/create
+Content-Type: application/json
+DApp-Addr: {{app}}
+
+{
+  "name": "test1",
+  "type": "docstore",
+  "access": "private"
+}
+
+###
+POST {{host}}/api/db/action
+Content-Type: application/json
+DApp-Addr: {{app}}
+
+{
+  "name": "test1",
+  "op": "info",
+  "args": []
+}

@@ -24,6 +24,7 @@
     ]
   },
   "include": [
+    "./typings",
     "./src",
     "node_modules/orbit-db/src",
     "node_modules/orbit-db-access-controllers/src",

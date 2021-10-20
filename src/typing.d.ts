@@ -30,13 +30,3 @@ declare module 'ipfs-core' {
         libp2p?: LibP2P
     }
 }
-
-declare module 'orbit-db' {
-    import AccessControllers from 'orbit-db-access-controllers'
-
-    class OrbitDB {
-        static AccessControllers = AccessControllers
-    }
-
-    export default OrbitDB
-}
