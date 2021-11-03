@@ -39,9 +39,7 @@ class AppMenu extends React.Component {
                         </Menu.Item>
                     </SubMenu>
                     <SubMenu key='sub2' icon={<FileOutlined />} title='文件'>
-                        <Menu.Item key="/fileupload" >
-                            上传文件
-                        </Menu.Item>
+                        
                         <Menu.Item key="/fileinfo">
                             查看文件
                         </Menu.Item>
