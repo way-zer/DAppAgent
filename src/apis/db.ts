@@ -3,6 +3,7 @@ import {useApp, usePrivateApp} from './hooks/useApp'
 import {DataBase} from '../services/db'
 import Boom from '@hapi/boom'
 import {constants} from 'http2'
+import {useParam} from "./hooks/simple";
 
 @controller()
 @prefix('/api/db')
@@ -24,7 +25,7 @@ export class _DB {
 
     async useDatabase(ctx: DarukContext) {
         const app = await useApp(ctx)
-        return await app.getDataBase(ctx.request['params'].db)
+        return await app.getDataBase(useParam(ctx, 'db'))
     }
 
     /**

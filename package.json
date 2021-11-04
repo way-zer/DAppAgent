@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "main": "src/util/index.ts",
   "license": "MIT",
+  "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "tsnd --respawn --exit-child src/main.ts",
+    "build": "vite build",
     "postinstall": "patch-package"
   },
   "dependencies": {

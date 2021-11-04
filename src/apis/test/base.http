@@ -1,0 +1,2 @@
+####IPFS接口
+GET {{host}}/api/ipfs/status

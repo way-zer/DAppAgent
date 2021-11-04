@@ -1,0 +1,39 @@
+####数据库接口
+@testdb= test1
+###
+POST {{host}}/api/db/create
+Content-Type: application/json
+DApp-Addr: {{app}}
+
+{
+  "name": "{{testdb}}",
+  "type": "docstore",
+  "access": "private"
+}
+
+### 插入数据
+@testDataId = a3
+PUT {{host}}/api/db/{{testdb}}
+Content-Type: application/json
+DApp-Addr: {{app}}
+
+{
+  "_id": "{{testDataId}}",
+  "otherKey": 123456,
+  "desc": "test"
+}
+
+### 查询所有数据
+GET {{host}}/api/db/{{testdb}}
+Content-Type: application/json
+DApp-Addr: {{app}}
+
+### 获取数据
+GET {{host}}/api/db/{{testdb}}/{{testDataId}}
+Content-Type: application/json
+DApp-Addr: {{app}}
+
+### 删除数据
+DELETE {{host}}/api/db/{{testdb}}/{{testDataId}}
+Content-Type: application/json
+DApp-Addr: {{app}}

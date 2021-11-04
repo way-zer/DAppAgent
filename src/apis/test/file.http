@@ -1,0 +1,39 @@
+#### CID相关
+###
+PUT {{host}}/api/ipfs/cid
+Content-Type: text/plain
+
+TEST FILE
+###
+GET {{host}}/ipfs/QmdE6ktvdpuXATuLgFumkRZcy9CqEXt3gdhVGYeUsmHRss/.txt
+
+####网关接口
+//可用test.dev.localhost访问
+//因为java域名解析问题，使用Dapp-Addr代替host
+
+###
+GET {{host}}/
+DApp-Addr: {{app}}
+
+###
+GET {{host}}/@/.metadata
+DApp-Addr: {{app}}
+
+###
+GET {{host}}/api/file/list?path=/
+DApp-Addr: {{app}}
+
+###
+PUT {{host}}/api/file/upload?path=/index.html
+DApp-Addr: {{app}}
+
+Hello World!
+Test Upload!{{$localDatetime rfc1123}}
+
+###
+POST {{host}}/api/file/delete?path=/index2.html
+DApp-Addr: {{app}}
+
+###
+PUT {{host}}/api/file/upload?path=/index2.html&from=/index.html
+DApp-Addr: {{app}}
