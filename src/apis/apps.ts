@@ -31,7 +31,7 @@ export class _Apps {
         const name = useQuery(ctx, 'name')
         const app = await this.apps.create(name)
         await app.publish()
-        ctx.body = await this.info(ctx)
+        ctx.body = await this.getInfo(app)
     }
 
     async useLocalApp(ctx: DarukContext): Promise<PrivateApp> {
@@ -56,14 +56,18 @@ export class _Apps {
         ctx.status = constants.HTTP_STATUS_OK
     }
 
-    @get(':name/info')
-    async info(ctx: DarukContext) {
-        const app = await this.useLocalApp(ctx)
-        ctx.body = Object.assign(await app.getMetadata(), {
+    async getInfo(app: PrivateApp){
+        return Object.assign(await app.getMetadata(), {
             name: app.name,
             cid: cidBase32(await app.getCid()),
             prod: (await app.getProd()).addr,
         })
+    }
+
+    @get(':name/info')
+    async info(ctx: DarukContext) {
+        const app = await this.useLocalApp(ctx)
+        ctx.body = this.getInfo(app)
     }
 
     @get("thisInfo")
