@@ -1,5 +1,6 @@
 # Project exclude paths
 node_modules/
-/DAppAgent/
+DAppAgent/
+/dist
 /src/config/*.local.ts
 /logs/

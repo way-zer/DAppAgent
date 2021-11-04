@@ -1,12 +1,20 @@
 ####App接口
-###
-GET {{host}}/api/apps/list
+@app = test2
+###列出
+GET {{host}}/api/apps
 
-###
-POST {{host}}/api/apps/create?name=test2
+###创建
+POST {{host}}/api/apps?name={{app}}
 
-###
-GET {{host}}/api/apps/info?name=test2
+###分布
+POST {{host}}/api/apps/{{app}}/publish
 
-###
-POST {{host}}/api/apps/publish?name=test2
+###修改描述信息
+PUT {{host}}/api/apps/{{app}}/desc
+
+###查询信息
+GET {{host}}/api/apps/{{app}}/info
+
+###查询当前应用信息
+GET {{host}}/api/apps/thisInfo
+Dapp-Addr: {{appAddr}}

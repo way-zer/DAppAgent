@@ -1,33 +1,24 @@
-import {IpfsService} from '../services/ipfs'
-// @ts-ignore
-import {getType} from 'mime/lite'
-import readable from 'it-to-stream'
-import {controller, DarukContext, get, prefix, put} from 'daruk'
-import {useParam} from "./hooks/simple";
-import {CID} from "ipfs-core";
-import Boom from "@hapi/boom";
+import { controller, DarukContext, get, post, prefix } from 'daruk';
+import { constants } from 'http2';
+import { IpfsService } from '../services/ipfs';
+import { useQuery } from './hooks/simple';
 
 @controller()
 @prefix('/api/ipfs')
 export class _Ipfs {
-    @get('/status')
+    @get('status')
     async status(ctx: DarukContext) {
-        ctx.body = JSON.stringify(await IpfsService.ipfsStatus(), (_, v) => (
+        const status = await IpfsService.ipfsStatus()
+        ctx.body = JSON.stringify(status, (_, v) => (
             (typeof v === 'bigint') ? v.toString() : v
         ))
     }
 
-    /**上传任一内容换取CID*/
-    @put("/cid")
-    async upload(ctx: DarukContext) {
+    @post('peer')
+    async connectPeer(ctx: DarukContext) {
+        const addr = useQuery(ctx, 'addr')
         const ipfs = IpfsService.inst
-        let body = ctx.request.body
-        if(typeof body === "object")body = JSON.stringify(body)
-        body = body||ctx.req // for binary
-        const res = await ipfs.add({content: body}, {pin: false})
-        ctx.body = {
-            cid: res.cid.toString(),
-            size: res.size
-        }
+        await ipfs.swarm.connect(addr)
+        ctx.status = constants.HTTP_STATUS_OK
     }
 }

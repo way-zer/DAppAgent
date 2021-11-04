@@ -1,9 +1,11 @@
-import { AppService } from '../services/apps'
-import { cidBase32 } from '../util'
-import { controller, DarukContext, get, inject, post, prefix } from 'daruk'
-import { notFound } from '@hapi/boom'
-import { useQuery } from './hooks/simple'
+import Boom from '@hapi/boom'
+import { controller, DarukContext, get, inject, post, prefix, put, validate } from 'daruk'
 import { constants } from 'http2'
+import { DataBase } from 'src/services/db'
+import { AppService, PrivateApp } from '../services/apps'
+import { cidBase32 } from '../util'
+import { useParam, useQuery } from './hooks/simple'
+import { useApp, usePrivateApp } from './hooks/useApp'
 
 @controller()
 @prefix('/api/apps')
@@ -11,7 +13,7 @@ export class _Apps {
     @inject(AppService)
     apps!: AppService
 
-    @get('list')
+    @get('')
     async list(ctx: DarukContext) {
         const out = {}
         const list = await this.apps.list()
@@ -24,7 +26,7 @@ export class _Apps {
         ctx.body = out
     }
 
-    @post('create')
+    @post('')
     async create(ctx: DarukContext) {
         const name = useQuery(ctx, 'name')
         const app = await this.apps.create(name)
@@ -32,24 +34,41 @@ export class _Apps {
         ctx.body = await this.info(ctx)
     }
 
-    @get('info')
-    async info(ctx: DarukContext) {
-        const name = useQuery(ctx, 'name')
+    async useLocalApp(ctx: DarukContext): Promise<PrivateApp> {
+        const name = useParam(ctx, 'name')
         const app = await this.apps.get(name)
-        if (!app) throw notFound('App not found', { name })
+        if (!app) throw Boom.notFound('App not found', { name })
+        return app
+    }
+
+    @put(':name/desc')
+    async updateDesc(ctx: DarukContext) {
+        if (typeof ctx.request.body !== 'object')
+            throw Boom.badRequest("invalid body, need object", { body: ctx.request.body })
+        const app = await this.useLocalApp(ctx)
+        await app.editMetadata({ desc: ctx.request.body })
+    }
+
+    @post(':name/publish')
+    async publish(ctx: DarukContext) {
+        const app = await this.useLocalApp(ctx)
+        await app.publish()
+        ctx.status = constants.HTTP_STATUS_OK
+    }
+
+    @get(':name/info')
+    async info(ctx: DarukContext) {
+        const app = await this.useLocalApp(ctx)
         ctx.body = Object.assign(await app.getMetadata(), {
-            name,
+            name: app.name,
             cid: cidBase32(await app.getCid()),
             prod: (await app.getProd()).addr,
         })
     }
 
-    @post('publish')
-    async publish(ctx: DarukContext) {
-        const name = useQuery(ctx, 'name')
-        const app = await this.apps.get(name)
-        if (!app) throw notFound('App not found', { name })
-        await app.publish()
-        ctx.status = constants.HTTP_STATUS_OK
+    @get("thisInfo")
+    async appInfo(ctx: DarukContext) {
+        const app = await useApp(ctx)
+        ctx.body = app.getMetadata()
     }
 }

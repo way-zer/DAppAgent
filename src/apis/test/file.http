@@ -1,6 +1,6 @@
 #### CID相关
 ###
-PUT {{host}}/api/ipfs/cid
+POST {{host}}/ipfs/upload
 Content-Type: text/plain
 
 TEST FILE
@@ -13,27 +13,27 @@ GET {{host}}/ipfs/QmdE6ktvdpuXATuLgFumkRZcy9CqEXt3gdhVGYeUsmHRss/.txt
 
 ###
 GET {{host}}/
-DApp-Addr: {{app}}
+DApp-Addr: {{appAddr}}
 
 ###
 GET {{host}}/@/.metadata
-DApp-Addr: {{app}}
+DApp-Addr: {{appAddr}}
 
 ###
 GET {{host}}/api/file/list?path=/
-DApp-Addr: {{app}}
+DApp-Addr: {{appAddr}}
 
 ###
-PUT {{host}}/api/file/upload?path=/index.html
-DApp-Addr: {{app}}
+PUT {{host}}/api/file?path=/index.html
+DApp-Addr: {{appAddr}}
+
+###
+PUT {{host}}/api/file?path=/index2.html&from=/index.html
+DApp-Addr: {{appAddr}}
 
 Hello World!
 Test Upload!{{$localDatetime rfc1123}}
 
 ###
-POST {{host}}/api/file/delete?path=/index2.html
-DApp-Addr: {{app}}
-
-###
-PUT {{host}}/api/file/upload?path=/index2.html&from=/index.html
-DApp-Addr: {{app}}
+DELETE  {{host}}/api/file?path=/index2.html
+DApp-Addr: {{appAddr}}

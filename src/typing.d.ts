@@ -1,5 +1,3 @@
-import 'ipfs-core'
-
 declare module 'it-to-stream' {
     export function readable<T>(source: AsyncIterable<T>): ReadableStream<T>
 
@@ -21,10 +19,11 @@ declare module 'ipfs-http-response' {
     export const resolver: Resolver
 }
 
-declare module 'ipfs-core' {
+import 'ipfs-core-types'
+declare module 'ipfs-core-types' {
     import LibP2P from 'libp2p'
 
-    interface IPFS {
+    export interface IPFS {
         libp2p?: LibP2P
     }
 }

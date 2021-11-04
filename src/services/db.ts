@@ -38,7 +38,7 @@ class DBServiceClass {
         this.instUnsafe = await OrbitDB.createInstance(IpfsService.inst, {
             directory: './DAppAgent/orbitDB',
         })
-        console.log('OrbitDB ID is: ', this.instUnsafe!!.identity.id)
+        console.log('OrbitDB ID is: ', this.instUnsafe.identity.id)
     }
 
     getDataBase = memoizee(async (info: DataBase) => {

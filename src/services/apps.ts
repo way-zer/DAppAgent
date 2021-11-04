@@ -1,17 +1,27 @@
-import {IpfsService} from './ipfs'
-import {IntegrateService} from './integrate'
-import {IpfsFiles} from './ipfsFiles'
-import {decodeText, peerIdBase32} from '../util'
-import {singletonService, useInject} from '../util/hooks'
-import {conflict, forbidden, notFound} from '@hapi/boom'
-import {CID} from 'multiformats'
-import {AccessType, DataBase, DBService, DBStore, DBType} from './db'
+import { IpfsService } from './ipfs'
+import { IntegrateService } from './integrate'
+import { IpfsFiles } from './ipfsFiles'
+import { decodeText, peerIdBase32 } from '../util'
+import { singletonService, useInject } from '../util/hooks'
+import { conflict, forbidden, notFound } from '@hapi/boom'
+import { CID } from 'multiformats'
+import { AccessType, DataBase, DBService, DBStore, DBType } from './db'
 import memoizee from 'memoizee'
+
+export interface AppDesc {
+    title: string,
+    desc: string,
+    author: string,
+    icon: string,
+    tags: string[],
+    links: Record<string, string>,
+}
 
 export interface AppMetadata {
     recordSign?: string
     permissions: string[]
     databases: DataBase[]
+    desc: Partial<AppDesc>//may not full
 }
 
 export abstract class App {
@@ -59,7 +69,7 @@ export abstract class App {
     async getDataBase(name: string): Promise<DBStore> {
         const metadata = await this.getMetadata()
         const db = metadata.databases.find(it => it.name == name)
-        if (!db) throw notFound('App not define database ' + name, {app: this.addr, name})
+        if (!db) throw notFound('App not define database ' + name, { app: this.addr, name })
         return DBService.getDataBase(db)
     }
 
@@ -91,14 +101,14 @@ export class PrivateApp extends App {
         } catch (e) {//exists
         }
 
-        await this.setMetadata({permissions: [], databases: []})
+        await this.setMetadata({ permissions: [], databases: [], desc: {} })
         await this.uploadFile('/public/index.html', 'Hello world')
     }
 
     async publish(): Promise<void> {
         const sign = await (await useInject(IntegrateService)).appRecord(this)
-        await this.editMetadata({recordSign: sign})
-        await IpfsService.inst.name.publish(await this.getCid(), {key: this.name})
+        await this.editMetadata({ recordSign: sign })
+        await IpfsService.inst.name.publish(await this.getCid(), { key: this.name })
     }
 
     async getProd(): Promise<PublicApp> {
@@ -149,10 +159,10 @@ export class PrivateApp extends App {
     async newDataBase(name: string, type: DBType, access: AccessType) {
         const metadata = await this.getMetadata()
         if ((metadata.databases || []).find(it => it.name === name))
-            throw conflict('App has defined database ' + name, {app: this.addr, name})
-        const db = await DBService.getDataBase({name: `${this.name}-db-${name}`, type, access})
-        const info = {name, type, access, addr: db.address.toString()}
-        await this.editMetadata({databases: (metadata.databases || []).concat(info)})
+            throw conflict('App has defined database ' + name, { app: this.addr, name })
+        const db = await DBService.getDataBase({ name: `${this.name}-db-${name}`, type, access })
+        const info = { name, type, access, addr: db.address.toString() }
+        await this.editMetadata({ databases: (metadata.databases || []).concat(info) })
         console.info(`New Database for app ${this.name}: `, info)
     }
 
@@ -193,16 +203,16 @@ export class AppService {
         name = name.toLowerCase()
         const exists = await this.get(name)
         if (exists)
-            throw conflict('App already exists', {app: exists})
+            throw conflict('App already exists', { app: exists })
         const app = new PrivateApp(name)
         await app.init()
         return app
     }
 
-    getPublic = memoizee(async (addr: string, verify: boolean = true) => {
+    getPublic = memoizee(async (addr: string, verify = true) => {
         const app = new PublicApp(addr)
         if (verify && !await app.verify())
-            throw forbidden('App not verify', {app})
+            throw forbidden('App not verify', { app })
         return app
     })
 }

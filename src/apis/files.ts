@@ -1,7 +1,7 @@
-import {controller, DarukContext, get, post, prefix, put} from 'daruk'
-import {useApp, usePrivateApp} from './hooks/useApp'
-import {useQuery} from './hooks/simple'
-import {constants} from 'http2'
+import { controller, DarukContext, del, get, prefix, put } from 'daruk'
+import { constants } from 'http2'
+import { useQuery } from './hooks/simple'
+import { useApp, usePrivateApp } from './hooks/useApp'
 
 /**
  * 功能简介:
@@ -15,11 +15,20 @@ import {constants} from 'http2'
 @controller()
 @prefix('/api/file')
 export class _Files {
-    resolvePath(path) {
+    resolvePath(path: string | string[]) {
         return '/public' + path
     }
 
-    @put('/upload')
+    @get('list')
+    async list(ctx: DarukContext) {
+        const app = await useApp(ctx)
+        const path = '/public' + useQuery(ctx, 'path')
+        ctx.body = (await app.listFile(path)).map(file =>
+            Object.assign(file, { cid: file.cid.toString() }),
+        )
+    }
+
+    @put('')
     async upload(ctx: DarukContext) {
         const app = await usePrivateApp(ctx)
         const path = this.resolvePath(useQuery(ctx, 'path'))
@@ -32,17 +41,7 @@ export class _Files {
         }
         ctx.status = constants.HTTP_STATUS_OK
     }
-
-    @get('/list')
-    async list(ctx: DarukContext) {
-        const app = await useApp(ctx)
-        const path = this.resolvePath(useQuery(ctx, 'path'))
-        ctx.body = (await app.listFile(path)).map(file =>
-            Object.assign(file, {cid: file.cid.toString()}),
-        )
-    }
-
-    @post('/delete')
+    @del('')
     async delete(ctx: DarukContext) {
         const app = await usePrivateApp(ctx)
         const path = this.resolvePath(useQuery(ctx, 'path'))

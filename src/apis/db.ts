@@ -1,24 +1,25 @@
-import {controller, DarukContext, del, get, post, prefix, put, validate} from 'daruk'
-import {useApp, usePrivateApp} from './hooks/useApp'
-import {DataBase} from '../services/db'
 import Boom from '@hapi/boom'
-import {constants} from 'http2'
-import {useParam} from "./hooks/simple";
+import { controller, DarukContext, del, get, post, prefix, put, validate } from 'daruk'
+import { constants } from 'http2'
+import { DataBase } from 'src/services/db'
+import { useParam } from "./hooks/simple"
+import { useApp, usePrivateApp } from './hooks/useApp'
 
+//API limit: self
 @controller()
-@prefix('/api/db')
+@prefix('/api/dbs')
 export class _DB {
-    @post('create')
+    @post('')
     @validate({
-        name: {required: true, type: 'string'},
-        type: {required: true, type: 'string'},
-        access: {required: true, type: 'string'},
+        name: { required: true, type: 'string' },
+        type: { required: true, type: 'string' },
+        access: { required: true, type: 'string' },
     })
     async create(ctx: DarukContext) {
         const app = await usePrivateApp(ctx)
         const info = ctx.request.body as DataBase
         if (info.addr)
-            throw Boom.badRequest('Illegal parameter addr', {data: info})
+            throw Boom.badRequest('Illegal parameter addr', { data: info })
         await app.newDataBase(info.name, info.type, info.access)
         ctx.status = constants.HTTP_STATUS_OK
     }
@@ -38,26 +39,26 @@ export class _DB {
     @post(':db/action')
     async action(ctx: DarukContext) {
         const db = await this.useDatabase(ctx)
-        const {op, args} = ctx.request.body
+        const { op, args } = ctx.request.body
         if (!op)
-            throw Boom.badRequest('Need parameter name,op', {body: ctx.request.body})
+            throw Boom.badRequest('Need parameter name,op', { body: ctx.request.body })
         if (!Array.isArray(args))
-            throw Boom.badRequest('Illegal parameter type', {args})
-        if (!db[op]) throw Boom.notAcceptable('op not support', {op})
+            throw Boom.badRequest('Illegal parameter type', { args })
+        if (!db[op]) throw Boom.notAcceptable('op not support', { op })
         try {
             ctx.body = await (db[op].call(db, ...args))
         } catch (e: any) {
-            throw Boom.notAcceptable('Execute action fail: ' + e.message, {exception: e})
+            throw Boom.notAcceptable('Execute action fail: ' + e.message, { exception: e })
         }
     }
 
-    @put(':db')
-    async put(ctx: DarukContext) {
+    @post(':db')
+    async add(ctx: DarukContext) {
         const db = await this.useDatabase(ctx)
         try {
             ctx.body = await (db['put'](ctx.request.body))
         } catch (e: any) {
-            throw Boom.notAcceptable('Execute action fail: ' + e.message, {exception: e})
+            throw Boom.notAcceptable('Execute action fail: ' + e.message, { exception: e })
         }
     }
 
@@ -68,7 +69,7 @@ export class _DB {
         try {
             ctx.body = await (db['get'](id))
         } catch (e: any) {
-            throw Boom.notAcceptable('Execute action fail: ' + e.message, {exception: e})
+            throw Boom.notAcceptable('Execute action fail: ' + e.message, { exception: e })
         }
     }
 
@@ -79,7 +80,7 @@ export class _DB {
         try {
             ctx.body = await (db['del'](id))
         } catch (e: any) {
-            throw Boom.notAcceptable('Execute action fail: ' + e.message, {exception: e})
+            throw Boom.notAcceptable('Execute action fail: ' + e.message, { exception: e })
         }
     }
 
@@ -91,7 +92,7 @@ export class _DB {
         try {
             ctx.body = db['query'](() => true).slice(begin, size === -1 ? undefined : size)
         } catch (e: any) {
-            throw Boom.notAcceptable('Execute action fail: ' + e.message, {exception: e})
+            throw Boom.notAcceptable('Execute action fail: ' + e.message, { exception: e })
         }
     }
 }

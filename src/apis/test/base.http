@@ -1,2 +1,5 @@
 ####IPFS接口
+### IPFS状态
 GET {{host}}/api/ipfs/status
+### 连接新Peer
+POST {{host}}/api/ipfs/peer

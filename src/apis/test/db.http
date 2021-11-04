@@ -1,9 +1,9 @@
 ####数据库接口
 @testdb= test1
 ###
-POST {{host}}/api/db/create
+POST {{host}}/api/dbs
 Content-Type: application/json
-DApp-Addr: {{app}}
+DApp-Addr: {{appAddr}}
 
 {
   "name": "{{testdb}}",
@@ -13,9 +13,9 @@ DApp-Addr: {{app}}
 
 ### 插入数据
 @testDataId = a3
-PUT {{host}}/api/db/{{testdb}}
+POST {{host}}/api/dbs/{{testdb}}
 Content-Type: application/json
-DApp-Addr: {{app}}
+DApp-Addr: {{appAddr}}
 
 {
   "_id": "{{testDataId}}",
@@ -24,16 +24,16 @@ DApp-Addr: {{app}}
 }
 
 ### 查询所有数据
-GET {{host}}/api/db/{{testdb}}
+GET {{host}}/api/dbs/{{testdb}}
 Content-Type: application/json
-DApp-Addr: {{app}}
+DApp-Addr: {{appAddr}}
 
 ### 获取数据
-GET {{host}}/api/db/{{testdb}}/{{testDataId}}
+GET {{host}}/api/dbs/{{testdb}}/{{testDataId}}
 Content-Type: application/json
-DApp-Addr: {{app}}
+DApp-Addr: {{appAddr}}
 
 ### 删除数据
-DELETE {{host}}/api/db/{{testdb}}/{{testDataId}}
+DELETE {{host}}/api/dbs/{{testdb}}/{{testDataId}}
 Content-Type: application/json
-DApp-Addr: {{app}}
+DApp-Addr: {{appAddr}}
