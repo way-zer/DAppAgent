@@ -2,15 +2,15 @@
 
 import { DarukServer } from 'daruk'
 import { loadConfig } from './config'
-import { IpfsService } from './services/ipfs'
-import { DBService } from './services/db'
+import { IpfsService } from './core/ipfs'
+import { DBService } from './core/db'
 
 async function bootstrap() {
     const daruk = DarukServer({
         middlewareOrder: ['boom'],
     })
     await loadConfig()
-    await daruk.loadFile("services")
+    await daruk.loadFile("core")
     await daruk.loadFile("apis")
 
     await IpfsService.start()

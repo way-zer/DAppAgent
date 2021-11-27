@@ -1,10 +1,10 @@
-import {checkChange} from '../util/hmrHelper'
 import OrbitDB from 'orbit-db'
 import OrbitDBStore from 'orbit-db-store'
-import {IpfsService} from './ipfs'
+import { IpfsService } from './ipfs'
 import memoizee from 'memoizee'
-import {badRequest} from '@hapi/boom'
-import {AccessType as AccessType0, MyAccessController} from './db/accessController'
+import { badRequest } from '@hapi/boom'
+import { AccessType as AccessType0, MyAccessController } from './db/accessController'
+import { Boom } from '../util'
 
 export type DBType = 'docstore' | 'keyvalue' | 'feed' | 'eventlog' | 'counter'
 export type AccessType = AccessType0
@@ -32,8 +32,6 @@ class DBServiceClass {
 
     async start() {
         if (this.instUnsafe) return
-        await checkChange('orbitDB', this, (old) => old.stop())
-
         MyAccessController.register()
         this.instUnsafe = await OrbitDB.createInstance(IpfsService.inst, {
             directory: './DAppAgent/orbitDB',
@@ -41,11 +39,24 @@ class DBServiceClass {
         console.log('OrbitDB ID is: ', this.instUnsafe.identity.id)
     }
 
-    getDataBase = memoizee(async (info: DataBase) => {
+    async create(info: DataBase): Promise<string> {
         if (!OrbitDB.isValidType(info.type))
             throw badRequest('invalid Type: ' + info.type)
-        const db = await this.inst.open(info.addr || info.name, {
-            create: true,
+        const db = await this.inst.create(info.name, info.type, {
+            accessController: {
+                type: 'dapp',
+                subType: info.access,
+            },
+        })
+        return db.address.toString()
+    }
+
+    getDataBase = memoizee(async (info: DataBase) => {
+        if (!info.addr)
+            throw Boom.badRequest("Require addr", { info })
+        if (!OrbitDB.isValidType(info.type))
+            throw badRequest('invalid Type: ' + info.type)
+        const db = await this.inst.open(info.addr, {
             type: info.type,
             accessController: {
                 type: 'dapp',

@@ -26,7 +26,7 @@ export class MyAccessController extends OrbitDBAccessController {
 
         const ac = new MyAccessController(orbitDB, options)
         ac.subType = options.subType
-        await ac.load(options.address || options.name)
+        await ac.load(options.address || options.name!!)
         return ac
     }
 
@@ -36,14 +36,14 @@ export class MyAccessController extends OrbitDBAccessController {
      */
     subType!: AccessType
 
-    async canAppend(entry, identityProvider) {
+    override async canAppend(entry, identityProvider) {
         console.log(entry)
         if (await super.canAppend(entry, identityProvider)) return true
         if (this.subType === 'private') return false
         if (this.subType === 'selfWrite') {
             //TODO
-            return false
         }
+        return false
     }
 
     async save() {

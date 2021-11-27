@@ -1,14 +1,16 @@
-import {create, IPFS} from 'ipfs-core'
-import {toArray} from '../util'
+import { create, IPFS, CID } from 'ipfs-core'
+import { Boom, toArray } from '../util'
+import last from 'it-last'
 import LibP2P from 'libp2p'
-import {useInject} from '../util/hooks'
-import {checkChange} from '../util/hmrHelper'
+import { useInject } from '../util/hooks'
 
 
 export interface Secret {
     id: string
     name: string
 }
+
+type FileContent = AsyncIterable<Uint8Array>
 
 class IpfsServiceClass {
     instUnsafe: IPFS | null = null
@@ -26,8 +28,6 @@ class IpfsServiceClass {
 
     async start() {
         if (this.instUnsafe) return
-        await checkChange('ipfs', this, (old) => old.stop())
-
         const bootstrapConfig = useInject<string[]>('config.ipfs.bootstrap')
         this.instUnsafe = await create({
             repo: './DAppAgent',
@@ -46,7 +46,7 @@ class IpfsServiceClass {
             },
             libp2p: {
                 config: {
-                    dht: {enabled: false},
+                    dht: { enabled: false },
                 },
             },
         })
@@ -69,6 +69,28 @@ class IpfsServiceClass {
             peers: await this.instUnsafe?.swarm?.peers() || [],
             bandwidth: await toArray(this.instUnsafe?.stats?.bw()),
         }
+    }
+
+    async resolveAddr(addr: string): Promise<string> {
+        if (addr.startsWith('/ipns/'))
+            try {
+                return await last(IpfsService.inst.name.resolve(addr, { recursive: true })) || addr
+            } catch (e) {
+                throw Boom.notFound('Fail to resolve IPNS', { addr })
+            }
+        return addr
+    }
+
+    async getFile(path0: string): Promise<FileContent> {
+        const path = await this.resolveAddr(path0)
+        if (path.endsWith('/'))
+            throw new Error('Target Not a File')
+        try {
+            await this.inst.files.stat(path)
+        } catch (e) {
+            throw Boom.notFound('File not found', { path, rawPath: path0 })
+        }
+        return this.inst.files.read(path)
     }
 }
 

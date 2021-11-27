@@ -1,4 +1,4 @@
-import {App, AppService, PrivateApp} from '../../services/apps'
+import {App, AppService, PrivateApp} from '../../core/apps'
 import Boom from '@hapi/boom'
 import {useInject} from '../../util/hooks'
 import {DarukContext} from 'daruk'
