@@ -12,21 +12,21 @@ export interface Secret {
 
 type FileContent = AsyncIterable<Uint8Array>
 
-class IpfsServiceClass {
-    instUnsafe: IPFS | null = null
-    libP2PUnsafe: LibP2P | null = null
+export class CoreIPFS {
+    static instUnsafe: IPFS | null = null
+    static libP2PUnsafe: LibP2P | null = null
 
-    get inst() {
+    static get inst() {
         if (!this.instUnsafe) throw 'IPFS hasn\'t start'
         return this.instUnsafe
     }
 
-    get libp2p() {
+    static get libp2p() {
         if (!this.libP2PUnsafe) throw 'LibP2P hasn\'t start'
         return this.libP2PUnsafe
     }
 
-    async start() {
+    static async start() {
         if (this.instUnsafe) return
         const bootstrapConfig = useInject<string[]>('config.ipfs.bootstrap')
         this.instUnsafe = await create({
@@ -55,7 +55,7 @@ class IpfsServiceClass {
         console.log('IPFS ID is: ' + (await this.inst.id()).id)
     }
 
-    async stop() {
+    static async stop() {
         const inst = this.instUnsafe
         if (inst === null) return
         this.instUnsafe = null
@@ -63,7 +63,7 @@ class IpfsServiceClass {
         console.log('Stopped IPFS')
     }
 
-    async ipfsStatus() {
+    static async ipfsStatus() {
         return {
             running: this.instUnsafe !== null,
             peers: await this.instUnsafe?.swarm?.peers() || [],
@@ -71,17 +71,17 @@ class IpfsServiceClass {
         }
     }
 
-    async resolveAddr(addr: string): Promise<string> {
+    static async resolveAddr(addr: string): Promise<string> {
         if (addr.startsWith('/ipns/'))
             try {
-                return await last(IpfsService.inst.name.resolve(addr, { recursive: true })) || addr
+                return await last(CoreIPFS.inst.name.resolve(addr, { recursive: true })) || addr
             } catch (e) {
                 throw Boom.notFound('Fail to resolve IPNS', { addr })
             }
         return addr
     }
 
-    async getFile(path0: string): Promise<FileContent> {
+    static async getFile(path0: string): Promise<FileContent> {
         const path = await this.resolveAddr(path0)
         if (path.endsWith('/'))
             throw new Error('Target Not a File')
@@ -93,6 +93,3 @@ class IpfsServiceClass {
         return this.inst.files.read(path)
     }
 }
-
-//special singleton, as Ipfs is slow to start when hot reload.
-export const IpfsService = new IpfsServiceClass()

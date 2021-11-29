@@ -1,6 +1,4 @@
-import { IpfsService, Secret } from './ipfs'
-import { inject } from 'daruk'
-import { singletonService } from '../util/hooks'
+import { CoreIPFS, Secret } from './ipfs'
 
 
 export type User = Secret
@@ -9,23 +7,22 @@ export interface UserMetadata {
     verifySign?: string
 }
 
-@singletonService
-export class UserService {
+export class UserManager {
     static verifier: (app: User) => Promise<boolean> = async () => true
 
-    async self(): Promise<User> {
-        return IpfsService.inst.key.info('self')
+    static async self(): Promise<User> {
+        return CoreIPFS.inst.key.info('self')
     }
 
-    async verify() {
+    static async verify() {
         const user = await this.self()
-        return UserService.verifier(user)
+        return UserManager.verifier(user)
     }
 
     /**
      * @param user0 用户,留空为自己
      */
-    async getMetadata(user0?: User): Promise<UserMetadata> {
+    static async getMetadata(user0?: User): Promise<UserMetadata> {
         const user = user0 || await this.self()
         throw ''/*TODO
     通过metadata反JSON

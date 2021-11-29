@@ -1,4 +1,4 @@
-import {IpfsService} from '../services/ipfs'
+import {IpfsService} from '../apis/services/ipfs'
 import last from 'it-last'
 import {resolver} from 'ipfs-http-response'
 import toStream from 'it-to-stream'

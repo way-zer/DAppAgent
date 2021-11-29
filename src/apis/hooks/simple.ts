@@ -1,5 +1,5 @@
-import {DarukContext} from 'daruk'
-import {badRequest} from '@hapi/boom'
+import { DarukContext } from 'daruk'
+import { badRequest } from '@hapi/boom'
 
 export function useParam(ctx: DarukContext, key: string): string {
     return ctx.request['params'][key]
@@ -10,4 +10,8 @@ export function useQuery(ctx: DarukContext, key: string): string {
     if (!value || typeof value !== 'string')
         throw badRequest(`need query '${key}'`)
     return value
+}
+
+export function useContext() {
+    return Zone.current.get("ctx") as DarukContext
 }

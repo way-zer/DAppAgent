@@ -1,9 +1,8 @@
-import { IpfsService } from './ipfs'
-import { decodeText, peerIdBase32, toArray } from '../util'
-import { singletonService, useInject } from '../util/hooks'
+import { CoreIPFS } from './ipfs'
+import { decodeText, peerIdBase32 } from '../util'
 import { conflict, forbidden, notFound } from '@hapi/boom'
 import { CID } from 'multiformats'
-import { AccessType, DataBase, DBService, DBStore, DBType } from './db'
+import { DataBase, DBManager, DBStore } from './db'
 import memoizee from 'memoizee'
 
 export interface AppDesc {
@@ -53,14 +52,19 @@ export abstract class App {
     }
 
     async getFile(path: string): Promise<AsyncIterable<Uint8Array>> {
-        return IpfsService.getFile(this.addr + path)
+        return CoreIPFS.getFile(this.addr + path)
     }
 
     async getDataBase(name: string): Promise<DBStore> {
         const metadata = await this.getMetadata()
         const db = metadata.databases.find(it => it.name == name)
         if (!db) throw notFound('App not define database ' + name, { app: this.addr, name })
-        return DBService.getDataBase(db)
+        return DBManager.getDataBase(db)
+    }
+
+    hasPermission(permssion: string) {
+        //TODO 权限检测: metadata有声明，且进行过授权
+        return true
     }
 
     async getService(name: string): Promise<any> {
@@ -77,17 +81,17 @@ export class PrivateApp extends App {
     }
 
     async getCid(): Promise<CID> {
-        return (await IpfsService.inst.files.stat(this.addr)).cid
+        return (await CoreIPFS.inst.files.stat(this.addr)).cid
     }
 
     async init() {
         try {
-            const key = await IpfsService.inst.key.gen(this.name)
+            const key = await CoreIPFS.inst.key.gen(this.name)
             console.log(`generate key for app ${key.name}: ${key.id}`)
         } catch (e) {//exists
         }
         try {
-            await IpfsService.inst.files.mkdir(this.addr)
+            await CoreIPFS.inst.files.mkdir(this.addr)
         } catch (e) {//exists
         }
 
@@ -96,9 +100,8 @@ export class PrivateApp extends App {
     }
 
     async getProd(): Promise<PublicApp> {
-        const record = await IpfsService.inst.key.info(this.name)
-        return (await useInject(AppService))
-            .getPublic(`/ipns/${peerIdBase32(record.id)}`, false)
+        const record = await CoreIPFS.inst.key.info(this.name)
+        return AppManager.getPublic(`/ipns/${peerIdBase32(record.id)}`, false)
     }
 
     /**
@@ -106,11 +109,11 @@ export class PrivateApp extends App {
      */
     async uploadFile(path: string, data: string | Uint8Array | Blob | AsyncIterable<Uint8Array>) {
         if (path.endsWith('/'))
-            await IpfsService.inst.files.mkdir(this.addr + path, {
+            await CoreIPFS.inst.files.mkdir(this.addr + path, {
                 parents: true, flush: true,
             })
         else
-            await IpfsService.inst.files.write(this.addr + path, data, {
+            await CoreIPFS.inst.files.write(this.addr + path, data, {
                 parents: true,
                 create: true,
                 flush: true,
@@ -131,18 +134,17 @@ export class PrivateApp extends App {
     }
 }
 
-@singletonService
-export class AppService {
-    async list(): Promise<PrivateApp[]> {
-        const keys = await IpfsService.inst.key.list()
+export class AppManager {
+    static async list(): Promise<PrivateApp[]> {
+        const keys = await CoreIPFS.inst.key.list()
         return keys.filter(it => it.name != 'self')
             .map(it => new PrivateApp(it.name))
     }
 
-    get = memoizee(async (name: string) => {
+    static get = memoizee(async (name: string) => {
         name = name.toLowerCase()
         try {
-            await IpfsService.inst.key.info(name)
+            await CoreIPFS.inst.key.info(name)
             return new PrivateApp(name)
         } catch (e: any) {
             if (!e.toString().indexOf('does not exist'))
@@ -151,8 +153,9 @@ export class AppService {
         }
     })
 
-    async create(name: string): Promise<PrivateApp> {
+    static async create(name: string): Promise<PrivateApp> {
         name = name.toLowerCase()
+        this.get.delete(name)//reset cache
         const exists = await this.get(name)
         if (exists)
             throw conflict('App already exists', { app: exists })
@@ -161,7 +164,7 @@ export class AppService {
         return app
     }
 
-    getPublic = memoizee(async (addr: string, verify = true) => {
+    static getPublic = memoizee(async (addr: string, verify = true) => {
         const app = new PublicApp(addr)
         if (verify && !await app.verify())
             throw forbidden('App not verify', { app })

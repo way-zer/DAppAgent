@@ -18,3 +18,8 @@ GET {{host}}/api/apps/{{app}}/info
 ###查询当前应用信息
 GET {{host}}/api/apps/thisInfo
 Dapp-Addr: {{appAddr}}
+###
+POST {{host}}/api/apps/info
+Content-Type: application/json
+
+["test"]

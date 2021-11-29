@@ -2,7 +2,7 @@ import { controller, DarukContext, get, post, priority } from 'daruk';
 import readable from 'it-to-stream';
 // @ts-ignore
 import { getType } from 'mime/lite';
-import { IpfsService } from '../core/ipfs';
+import { CoreIPFS } from '../core/ipfs';
 import { useParam } from './hooks/simple';
 import { useApp } from './hooks/useApp';
 import { CID } from "ipfs-core";
@@ -31,7 +31,7 @@ export class _Gateway {
     /**上传任一内容换取CID*/
     @post("/ipfs/upload")
     async upload(ctx: DarukContext) {
-        const ipfs = IpfsService.inst
+        const ipfs = CoreIPFS.inst
         let body = ctx.request.body
         if (typeof body === "object") body = JSON.stringify(body)
         body = body || ctx.req // for binary
@@ -51,7 +51,7 @@ export class _Gateway {
         } catch (e: any) {
             throw Boom.badRequest("invalid cid: " + e.message)
         }
-        const ipfs = IpfsService.inst
+        const ipfs = CoreIPFS.inst
         ctx.type = getType(useParam(ctx, 'suffix'))
         ctx.body = readable(ipfs.cat(cid))
     }

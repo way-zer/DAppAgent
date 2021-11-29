@@ -1,11 +1,9 @@
-import {User} from './users'
-import {App} from './apps'
-import {singletonService} from '../util/hooks'
+import { User } from '../../core/users'
+import { App } from '../../core/apps'
 
 const MOCK_Verify_Sign = 'Verify_Sign'
 const MOCK_Record_Sign = 'Verify_Sign'
 
-@singletonService
 export class IntegrateService {
     /**
      * 通过第三方进行实名认证
