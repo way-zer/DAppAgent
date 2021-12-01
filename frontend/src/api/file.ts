@@ -1,9 +1,9 @@
-import axios from "axios";
+import axios from 'axios';
 
 export async function fileUpload(file: FormData, path: string) {
-    const config = {
-        headers: {"Content-Type": "multipart/form-data"}
-    }
+  const config = {
+    headers: {'Content-Type': 'multipart/form-data'},
+  };
     return axios.put(`/api/file/upload?path=${path}`, file, config);
 }
 
@@ -20,7 +20,7 @@ export async function deleteFile(path: string) {
 }
 
 export async function copyFile(path: string, from: string) {
-    return axios.put(`/api/file/upload?path=${path}&from=${from}`)
+  return axios.put(`/api/file/upload?path=${path}&from=${from}`);
 }
 
 export async function moveFile(path: string, from: string) {

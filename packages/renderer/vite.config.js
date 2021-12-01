@@ -4,6 +4,7 @@ import {chrome} from '../../electron-vendors.config.json';
 import {join} from 'path';
 import {builtinModules} from 'module';
 import vue from '@vitejs/plugin-vue';
+import globalConfig from '../../config';
 
 const PACKAGE_ROOT = __dirname;
 
@@ -25,7 +26,7 @@ const config = {
     fs: {
       strict: true,
     },
-    port: process.env.PORT || 3001,
+    port: globalConfig.renderer.port,
   },
   build: {
     sourcemap: true,

@@ -1,7 +1,8 @@
 import {app, BrowserWindow, shell} from 'electron';
 import {join} from 'path';
 import {URL} from 'url';
-
+import globalConfig from '../../../config';
+import {bootstrap} from '/@/main';
 
 const isSingleInstance = app.requestSingleInstanceLock();
 const isDevelopment = import.meta.env.MODE === 'development';
@@ -14,16 +15,16 @@ if (!isSingleInstance) {
 app.disableHardwareAcceleration();
 
 // Install "Vue.js devtools"
-if (isDevelopment) {
-  app.whenReady()
-    .then(() => import('electron-devtools-installer'))
-    .then(({default: installExtension, VUEJS3_DEVTOOLS}) => installExtension(VUEJS3_DEVTOOLS, {
-      loadExtensionOptions: {
-        allowFileAccess: true,
-      },
-    }))
-    .catch(e => console.error('Failed install extension:', e));
-}
+// if (isDevelopment) {
+//   app.whenReady()
+//     .then(() => import('electron-devtools-installer'))
+//     .then(({default: installExtension, VUEJS3_DEVTOOLS}) => installExtension(VUEJS3_DEVTOOLS, {
+//       loadExtensionOptions: {
+//         allowFileAccess: true,
+//       },
+//     }))
+//     .catch(e => console.error('Failed install extension:', e));
+// }
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -50,17 +51,9 @@ const createWindow = async () => {
     }
   });
 
-  /**
-   * URL for main window.
-   * Vite dev server for development.
-   * `file://../renderer/index.html` for production and test
-   */
-  const pageUrl = isDevelopment && import.meta.env.VITE_DEV_SERVER_URL !== undefined
-    ? import.meta.env.VITE_DEV_SERVER_URL
-    : new URL('../renderer/dist/index.html', 'file://' + __dirname).toString();
+  bootstrap().then();
 
-
-  await mainWindow.loadURL(pageUrl);
+  await mainWindow.loadURL(globalConfig.renderer.url);
 };
 
 app.on('web-contents-created', (_event, contents) => {

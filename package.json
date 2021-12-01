@@ -8,7 +8,7 @@
   "main": "packages/main/dist/index.cjs",
   "scripts": {
     "build": "node scripts/build.js",
-    "watch": "pnpm -C ./packages/renderer dev & pnpm -C ./packages/main dev",
+    "watch": "concurrently \"pnpm -C ./packages/renderer dev\" \"pnpm -C ./packages/main dev\"",
     "precompile": "cross-env MODE=production npm run build",
     "compile": "electron-builder build --config electron-builder.config.js --dir --config.asar=false",
     "pretest": "npm run build",
@@ -23,7 +23,7 @@
   "browserslist": [
     "Chrome 96"
   ],
-  "simple-git-hooks": {
+  "simple-git-hooks_bak": {
     "pre-commit": "npx lint-staged",
     "pre-push": "npm run typecheck"
   },
@@ -34,6 +34,7 @@
     "@types/electron-devtools-installer": "2.2.0",
     "@typescript-eslint/eslint-plugin": "5.5.0",
     "@typescript-eslint/parser": "^5.5.0",
+    "concurrently": "^6.4.0",
     "cross-env": "7.0.3",
     "dts-for-context-bridge": "0.6.2",
     "electron": "16.0.2",

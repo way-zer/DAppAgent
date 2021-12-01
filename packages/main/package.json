@@ -7,9 +7,9 @@
     "dev": "node scripts/watch.js"
   },
   "dependencies": {
-    "electron-updater": "4.6.4",
     "@hapi/boom": "^9.1.4",
     "daruk": "^2.3.9",
+    "electron-updater": "4.6.4",
     "inversify": "^6.0.1",
     "inversify-config-binding": "^1.2.1",
     "ipfs-core": "^0.12.2",
@@ -26,6 +26,7 @@
     "orbit-db-access-controllers": "^0.3.2",
     "orbit-db-store": "^4.3.2",
     "patch-package": "^6.4.7",
+    "readable-stream": "^3.6.0",
     "vm2": "^3.9.5",
     "zone.js": "^0.11.4"
   },

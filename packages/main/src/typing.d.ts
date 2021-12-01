@@ -3,11 +3,11 @@ declare module 'it-to-stream' {
 
     export function writable<T>(sink: (source: AsyncIterable<T>) => Promise<void>): WritableStream<T>
 
-    export default readable
+    export default readable;
 }
 
 declare module 'ipfs-http-response' {
-    import {CID, IPFS} from 'ipfs-core'
+  import type {CID, IPFS} from 'ipfs-core';
 
     interface Resolver {
         cid(ipfs: IPFS, path: string): Promise<{ cid: CID }>
@@ -16,19 +16,19 @@ declare module 'ipfs-http-response' {
 
     export async function getResponse(ipfs: IPFS, path: string): Promise<Response>
 
-    export const resolver: Resolver
+  export const resolver: Resolver;
 }
 
-import 'ipfs-core-types'
+import 'ipfs-core-types';
 declare module 'ipfs-core-types' {
-    import LibP2P from 'libp2p'
+  import type LibP2P from 'libp2p';
 
     export interface IPFS {
         libp2p?: LibP2P
     }
 }
 
-import 'daruk'
+import 'daruk';
 
 declare module 'daruk' {
     export interface DarukRequest {
