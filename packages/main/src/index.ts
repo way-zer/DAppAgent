@@ -2,7 +2,7 @@ import {app, BrowserWindow, shell} from 'electron';
 import {join} from 'path';
 import {URL} from 'url';
 import globalConfig from '../../../config';
-import {bootstrap} from '/@/main';
+import {beforeReady, bootstrap} from '/@/main';
 
 const isSingleInstance = app.requestSingleInstanceLock();
 const isDevelopment = import.meta.env.MODE === 'development';
@@ -57,7 +57,6 @@ const createWindow = async () => {
 };
 
 app.on('web-contents-created', (_event, contents) => {
-
   /**
    * Block navigation to origins not on the allowlist.
    *
@@ -139,7 +138,7 @@ app.on('window-all-closed', () => {
   }
 });
 
-
+beforeReady();
 app.whenReady()
   .then(createWindow)
   .catch((e) => console.error('Failed create window:', e));

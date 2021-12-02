@@ -19,13 +19,16 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "isolatedModules": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "types": [
+      "vite/client"
+    ]
   },
   "files": [
     "src/index.ts"
   ],
   "include": [
-    "src/*.ts",
+    "./src/**/*.ts",
     "../../types/**/*.d.ts"
   ]
 }

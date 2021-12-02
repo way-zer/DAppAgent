@@ -2,6 +2,7 @@
 const {createLogger, build} = require('vite');
 const {spawn} = require('child_process');
 const electronPath = require('electron');
+const {rmdirSync} = require('fs');
 
 const mode = process.env.MODE = process.env.MODE || 'development';
 
@@ -11,12 +12,6 @@ const logger = createLogger(LOG_LEVEL, {
   prefix: '[main]',
 });
 
-
-/**
- *
- * @param {{name: string; configFile: string; writeBundle: import('rollup').OutputPlugin['writeBundle'] }} param0
- * @returns {import('rollup').RollupWatcher}
- */
 const getWatcher = ({name, configFile, writeBundle}) => {
   return build({
     mode,
@@ -35,19 +30,17 @@ getWatcher({
     if (spawnProcess !== null) {
       spawnProcess.kill('SIGINT');
       spawnProcess = null;
+      rmdirSync('DAppAgent/repo.lock');
     }
-    setTimeout(() => {
-      if (spawnProcess != null) return;
-      spawnProcess = spawn(String(electronPath), ['.']);
 
-      spawnProcess.stdout.on('data', d => d.toString().trim() && logger.warn(d.toString(), {timestamp: true}));
-      spawnProcess.stderr.on('data', d => {
-        const data = d.toString().trim();
-        if (!data) return;
-        // const mayIgnore = stderrFilterPatterns.some((r) => r.test(data));
-        // if (mayIgnore) return;
-        logger.error(data, {timestamp: true});
-      });
-    }, 500);//delay for lock
+    spawnProcess = spawn(String(electronPath), ['.']);
+    spawnProcess.stdout.on('data', d => d.toString().trim() && logger.warn(d.toString(), {timestamp: true}));
+    spawnProcess.stderr.on('data', d => {
+      const data = d.toString().trim();
+      if (!data) return;
+      // const mayIgnore = stderrFilterPatterns.some((r) => r.test(data));
+      // if (mayIgnore) return;
+      logger.error(data, {timestamp: true});
+    });
   },
 });
