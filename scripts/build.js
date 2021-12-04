@@ -7,7 +7,7 @@ process.env.MODE = process.env.MODE || 'production';
 const packages = [
   'packages/main',
   'packages/preload',
-  'packages/renderer',
+  'packages/frontend-admin',
 ];
 
 

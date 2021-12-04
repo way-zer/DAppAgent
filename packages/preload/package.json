@@ -4,7 +4,9 @@
   "main": "dist/index.cjs",
   "scripts": {
     "build": "vite build",
-    "dev": "echo 'included in renderer watch'"
+    "dev": "echo 'included in renderer watch'",
+    "typecheck": "tsc --noEmit",
+    "genDts": "dts-cb -i src/**/*.ts -o exposedInMainWorld.d.ts"
   },
   "dependencies": {
   }

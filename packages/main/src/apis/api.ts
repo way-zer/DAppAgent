@@ -16,7 +16,7 @@ export class _Api {
     if (!Array.isArray(args))
       throw Boom.badRequest('body must be json array');
     const serviceName = useParam(ctx, 'service');
-    const service = services.get(serviceName);
+    const service = services[serviceName];
     if (!service)
       throw Boom.notFound('service not exist', {serviceName});
     const methodName = useParam(ctx, 'method');

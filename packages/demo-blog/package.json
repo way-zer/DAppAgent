@@ -1,13 +1,15 @@
 {
-  "name": "renderer",
+  "name": "demo-blog",
   "private": true,
   "scripts": {
     "build": "vite build",
-    "dev": "node scripts/watch.js"
+    "dev": "node ../sdk/scripts/watch.js",
+    "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
     "vue": "^3.2.23",
-    "vue-router": "4.0.12"
+    "vue-router": "4.0.12",
+    "sdk": "workspace:*"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "1.10.1",

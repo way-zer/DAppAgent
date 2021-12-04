@@ -4,7 +4,8 @@
   "main": "dist/index.cjs",
   "scripts": {
     "build": "vite build",
-    "dev": "node scripts/watch.js"
+    "dev": "node scripts/watch.js",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@hapi/boom": "^9.1.4",

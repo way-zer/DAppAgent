@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+//note: need execute in frontend module
+
 const {createServer, build} = require('vite');
 
 
@@ -14,11 +16,6 @@ const sharedConfig = {
   },
 };
 
-/**
- *
- * @param {{name: string; configFile: string; writeBundle: import('rollup').OutputPlugin['writeBundle'] }} param0
- * @returns {import('rollup').RollupWatcher}
- */
 const getWatcher = ({name, configFile, writeBundle}) => {
   return build({
     ...sharedConfig,

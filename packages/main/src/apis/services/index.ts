@@ -1,40 +1,40 @@
-interface ExposedService {
-    apis: Map<string, ApiMeta>
-    name: string
+import {AppsApi} from '/@/apis/services/apps';
+import {CallApi} from '/@/apis/services/call';
+
+export class ExposedService {
+  apis: Map<string, ApiMeta>;
+
+  constructor() {
+    this.apis = Object.getPrototypeOf(this).apis || new Map();
+  }
+}
+
+export function useService<T extends keyof Services>(name: T): Services[T] {
+  return services[name];
 }
 
 export interface ApiMeta {
-    permssion?: string
-}
-
-export const services = new Map<string, ExposedService>();
-export function useService<T>(ctor: new () => T): T & ExposedService {
-  return services[ctor.prototype.serviceName];
-}
-
-export function exposedService(name: string) {
-  return function <T extends new () => C, C>(target: T): T {
-    Object.getPrototypeOf(target).serviceName = name;
-    const inst = new target();
-    services.set(name, Object.assign(inst, {
-      apis: Object.getPrototypeOf(inst).apis,
-      name,
-    }));
-    return target;
-  };
+  permssion?: string;
 }
 
 export function api(meta: Partial<ApiMeta> = {}) {
-  return function (target: any, propertyKey: string) {
+  return function (target: ExposedService, propertyKey: string) {
     target.apis ||= new Map();
     target.apis.set(propertyKey, meta);
   };
 }
 
-@exposedService('test')
-class Test {
-    @api()
-    async hello() {
-      return 'hello World';
-    }
+class TestApi extends ExposedService {
+  @api()
+  async hello() {
+    return 'hello World';
+  }
 }
+
+export const services = {
+  test: new TestApi(),
+  apps: new AppsApi(),
+  call: new CallApi(),
+};
+
+export type Services = typeof services

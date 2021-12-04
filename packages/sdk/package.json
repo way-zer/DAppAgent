@@ -1,0 +1,6 @@
+{
+  "name": "sdk",
+  "dependencies": {
+    "axios": "^0.24.0"
+  }
+}
