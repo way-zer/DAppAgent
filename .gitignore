@@ -1,5 +1,6 @@
 DAppAgent/
 /logs/
+.pnpm*.log
 
 
 node_modules

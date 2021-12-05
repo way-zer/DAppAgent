@@ -14,7 +14,7 @@ export function useService<T extends keyof Services>(name: T): Services[T] {
 }
 
 export interface ApiMeta {
-  permssion?: string;
+  permission?: string;
 }
 
 export function api(meta: Partial<ApiMeta> = {}) {

@@ -33,8 +33,8 @@ export class _Api {
   }
 
   async callMethod(meta: ApiMeta, service: any, f: Function, args: any[]) {
-    if (meta.permssion && !(await useApp()).hasPermission(meta.permssion))
-      throw Boom.forbidden('app not permission, request first.', {permission: meta.permssion});
+    if (meta.permission && !(await useApp()).hasPermission(meta.permission))
+      throw Boom.forbidden('app not permission, request first.', {permission: meta.permission});
     return f.call(service, ...args);
   }
 }

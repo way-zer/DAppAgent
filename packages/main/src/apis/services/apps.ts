@@ -5,7 +5,7 @@ import {useApp} from '../hooks/useApp';
 import {CoreIPFS} from '/@/core/ipfs';
 
 export class AppsApi extends ExposedService {
-  @api({permssion: 'apps.admin'})
+  @api({permission: 'apps.admin'})
   async listPrivate() {
     const out = {};
     const list = await AppManager.list();
@@ -18,7 +18,7 @@ export class AppsApi extends ExposedService {
     return out;
   }
 
-  @api({permssion: 'apps.admin'})
+  @api({permission: 'apps.admin'})
   async create(name: string) {
     await AppManager.create(name);
     return this.info(name);
@@ -30,7 +30,7 @@ export class AppsApi extends ExposedService {
     return app;
   }
 
-  @api({permssion: 'apps.admin'})
+  @api({permission: 'apps.admin'})
   async info(name: string) {
     const app = await this.useLocalApp(name);
     return Object.assign(await app.getMetadata(), {
@@ -40,13 +40,13 @@ export class AppsApi extends ExposedService {
     });
   }
 
-  @api({permssion: 'apps.admin'})
+  @api({permission: 'apps.admin'})
   async updateDesc(name: string, desc: object) {
     const app = await this.useLocalApp(name);
     await app.editMetadata({desc});
   }
 
-  @api({permssion: 'apps.admin'})
+  @api({permission: 'apps.admin'})
   async publish(name: string) {
     const app = await this.useLocalApp(name);
     //TODO 调用认证app

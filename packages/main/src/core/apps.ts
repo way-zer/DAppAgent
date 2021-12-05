@@ -67,7 +67,7 @@ export abstract class App {
     return DBManager.getDataBase(db);
   }
 
-  hasPermission(permssion: string) {
+  hasPermission(permission: string) {
     //TODO 权限检测: metadata有声明，且进行过授权
     return true;
   }
