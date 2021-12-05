@@ -28,7 +28,6 @@
     "src/index.ts"
   ],
   "include": [
-    "./src/**/*.ts",
-    "../../types/**/*.d.ts"
+    "./src/**/*.ts"
   ]
 }
