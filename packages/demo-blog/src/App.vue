@@ -8,16 +8,11 @@
   <router-view/>
 </template>
 
-<script lang="ts">
-import {defineComponent} from 'vue';
+<script lang="ts" setup>
 import AppNavigation from '/@/components/AppNavigation.vue';
+import {useService} from 'sdk/index';
 
-export default defineComponent({
-  name: 'App',
-  components: {
-    AppNavigation,
-  },
-});
+useService('test').hello().then(console.log);
 </script>
 
 <style>

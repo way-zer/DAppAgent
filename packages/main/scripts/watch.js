@@ -30,7 +30,10 @@ getWatcher({
     if (spawnProcess !== null) {
       spawnProcess.kill('SIGINT');
       spawnProcess = null;
-      rmdirSync('DAppAgent/repo.lock');
+      try {
+        rmdirSync('DAppAgent/repo.lock');
+      } catch (e) {
+      }
     }
 
     spawnProcess = spawn(String(electronPath), ['.']);

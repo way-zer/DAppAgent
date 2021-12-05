@@ -1,28 +1,10 @@
+export {ExposedService, api, useService} from './_define';
+import {api, ExposedService} from './_define';
 import {AppsApi} from '/@/apis/services/apps';
 import {CallApi} from '/@/apis/services/call';
-
-export class ExposedService {
-  apis: Map<string, ApiMeta>;
-
-  constructor() {
-    this.apis = Object.getPrototypeOf(this).apis || new Map();
-  }
-}
-
-export function useService<T extends keyof Services>(name: T): Services[T] {
-  return services[name];
-}
-
-export interface ApiMeta {
-  permission?: string;
-}
-
-export function api(meta: Partial<ApiMeta> = {}) {
-  return function (target: ExposedService, propertyKey: string) {
-    target.apis ||= new Map();
-    target.apis.set(propertyKey, meta);
-  };
-}
+import {DBApi} from '/@/apis/services/db';
+import {FileApi} from '/@/apis/services/file';
+import {SystemApi} from '/@/apis/services/system';
 
 class TestApi extends ExposedService {
   @api()
@@ -35,6 +17,10 @@ export const services = {
   test: new TestApi(),
   apps: new AppsApi(),
   call: new CallApi(),
+  db: new DBApi(),
+  file: new FileApi(),
+  system: new SystemApi(),
 };
 
 export type Services = typeof services
+export type {ApiMeta} from './_define';

@@ -1,6 +1,6 @@
 import {CoreIPFS} from './ipfs';
-import {Boom, decodeText, peerIdBase32} from '../util';
-import {conflict, forbidden, notFound} from '@hapi/boom';
+import {decodeText, peerIdBase32} from '../util';
+import Boom, {conflict, forbidden, notFound} from '@hapi/boom';
 import {CID} from 'multiformats';
 import type {DataBase, DBStore} from './db';
 import {DBManager} from './db';
@@ -116,16 +116,11 @@ export class PrivateApp extends App {
    * 当路径为/结尾时,仅新建目录
    */
   async uploadFile(path: string, data: string | Uint8Array | Blob | AsyncIterable<Uint8Array>) {
-    if (path.endsWith('/'))
-      await CoreIPFS.inst.files.mkdir(this.addr + path, {
-        parents: true, flush: true,
-      });
-    else
-      await CoreIPFS.inst.files.write(this.addr + path, data, {
-        parents: true,
-        create: true,
-        flush: true,
-      });
+    await CoreIPFS.inst.files.write(this.addr + path, data, {
+      parents: true,
+      create: true,
+      flush: true,
+    });
     console.info('Upload to ' + this.addr + path);
   }
 

@@ -1,11 +1,11 @@
 import type {DarukContext} from 'daruk';
 import {controller, get, post} from 'daruk';
 import {useParam} from './hooks/simple';
-import {Boom} from '../util';
 import type {ApiMeta} from './services';
 import {services} from './services';
 import 'zone.js';
 import {useApp} from './hooks/useApp';
+import Boom from '@hapi/boom';
 
 @controller('/api')
 export class _Api {

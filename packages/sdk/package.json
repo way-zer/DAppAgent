@@ -1,5 +1,7 @@
 {
   "name": "sdk",
+  "module": "index.ts",
+  "types": "index.ts",
   "dependencies": {
     "axios": "^0.24.0"
   }

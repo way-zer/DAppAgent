@@ -17,16 +17,12 @@
     "noImplicitAny": false,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "skipLibCheck": true,
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
     "types": [
       "vite/client"
     ]
   },
-  "files": [
-    "src/index.ts"
-  ],
   "include": [
     "./src/**/*.ts"
   ]

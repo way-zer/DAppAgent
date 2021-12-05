@@ -1,4 +1,4 @@
-import type {Services} from '../../main/src/apis/services';
+import type {Services} from '../main/src/apis/services';
 import axios from 'axios';
 
 /** Set this if using custom library */
@@ -10,7 +10,7 @@ export function useService<T extends keyof Services>(serviceName: T): Omit<Servi
       if (typeof name !== 'string')
         throw 'api name must be string';
       return function (...args: any[]) {
-        return postFunction(`/api/${serviceName}/${name}`, args);
+        return postFunction(`/api/${serviceName}/${name}`, args).then(it => it.data);
       };
     },
   }) as any;

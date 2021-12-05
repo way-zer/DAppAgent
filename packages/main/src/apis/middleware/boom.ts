@@ -8,7 +8,7 @@ export class BoomMiddleware implements MiddlewareClass {
     return async (ctx, next) => {
       try {
         await next();
-      } catch (e) {
+      } catch (e: any) {
         if (!isBoom(e)) {
           console.error(e);
           e = boomify(e);
@@ -20,5 +20,5 @@ export class BoomMiddleware implements MiddlewareClass {
         ctx.body = payload;
       }
     };
-    }
+  }
 }
