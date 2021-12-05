@@ -1,0 +1,11 @@
+{
+  "name": "preload",
+  "private": true,
+  "main": "dist/index.cjs",
+  "scripts": {
+    "build": "vite build",
+    "dev": "echo 'included in renderer watch'"
+  },
+  "dependencies": {
+  }
+}

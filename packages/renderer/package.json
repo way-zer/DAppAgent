@@ -1,0 +1,16 @@
+{
+  "name": "renderer",
+  "private": true,
+  "scripts": {
+    "build": "vite build",
+    "dev": "node scripts/watch.js"
+  },
+  "dependencies": {
+    "vue": "^3.2.23",
+    "vue-router": "4.0.12"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "1.10.1",
+    "vue-tsc": "0.29.8"
+  }
+}

@@ -1,44 +1,50 @@
 {
   "name": "dapp-agent",
-  "version": "1.0.0",
-  "main": "src/util/index.ts",
-  "license": "MIT",
-  "type": "module",
-  "scripts": {
-    "dev": "tsnd --respawn --exit-child src/main.ts",
-    "build": "vite build",
-    "postinstall": "patch-package"
+  "private": true,
+  "engines": {
+    "node": ">=v16.13",
+    "npm": ">=8.1"
   },
-  "dependencies": {
-    "@hapi/boom": "^9.1.4",
-    "daruk": "^2.3.9",
-    "electron": "^16.0.2",
-    "inversify": "^6.0.1",
-    "inversify-config-binding": "^1.2.1",
-    "ipfs-core": "^0.12.2",
-    "ipfs-http-response": "^1.0.5",
-    "it-last": "^1.0.6",
-    "it-to-stream": "^1.0.0",
-    "koa-body": "^4.2.0",
-    "koa-bodyparser": "^4.3.0",
-    "libp2p": "^0.34.0",
-    "memoizee": "^0.4.15",
-    "mime": "^3.0.0",
-    "multiformats": "^9.4.14",
-    "orbit-db": "^0.28.0",
-    "orbit-db-access-controllers": "^0.3.2",
-    "orbit-db-store": "^4.3.2",
-    "patch-package": "^6.4.7",
-    "vm2": "^3.9.5",
-    "zone.js": "^0.11.4"
+  "main": "packages/main/dist/index.cjs",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "watch": "pnpm -C ./packages/renderer dev & pnpm -C ./packages/main dev",
+    "precompile": "cross-env MODE=production npm run build",
+    "compile": "electron-builder build --config electron-builder.config.js --dir --config.asar=false",
+    "pretest": "npm run build",
+    "test": "node tests/app.spec.js",
+    "lint": "eslint . --ext js,ts,vue",
+    "typecheck-main": "tsc --noEmit -p packages/main/tsconfig.json",
+    "typecheck-preload": "tsc --noEmit -p packages/preload/tsconfig.json",
+    "typecheck-renderer": "vue-tsc --noEmit -p packages/renderer/tsconfig.json",
+    "typecheck": "npm run typecheck-main && npm run typecheck-preload && npm run typecheck-renderer",
+    "pretypecheck-renderer": "dts-cb -i packages/preload/src/**/*.ts -o packages/preload/exposedInMainWorld.d.ts"
+  },
+  "browserslist": [
+    "Chrome 96"
+  ],
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged",
+    "pre-push": "npm run typecheck"
+  },
+  "lint-staged": {
+    "*.{js,ts,vue}": "eslint --cache --fix"
   },
   "devDependencies": {
-    "@types/memoizee": "^0.4.6",
-    "@types/node": "^16.11.10",
-    "electron-builder": "^22.14.5",
-    "ts-node": "^10.4.0",
-    "ts-node-dev": "^1.1.8",
-    "typescript": "^4.5.2",
-    "vite": "^2.6.14"
+    "@types/electron-devtools-installer": "2.2.0",
+    "@typescript-eslint/eslint-plugin": "5.5.0",
+    "@typescript-eslint/parser": "^5.5.0",
+    "cross-env": "7.0.3",
+    "dts-for-context-bridge": "0.6.2",
+    "electron": "16.0.2",
+    "electron-builder": "22.14.5",
+    "electron-devtools-installer": "3.2.0",
+    "eslint": "8.3.0",
+    "eslint-plugin-vue": "8.1.1",
+    "lint-staged": "12.1.2",
+    "playwright": "1.16.3",
+    "simple-git-hooks": "2.7.0",
+    "typescript": "4.5.2",
+    "vite": "2.6.14"
   }
 }

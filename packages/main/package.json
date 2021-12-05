@@ -1,0 +1,37 @@
+{
+  "name": "main",
+  "private": true,
+  "main": "dist/index.cjs",
+  "scripts": {
+    "build": "vite build",
+    "dev": "node scripts/watch.js"
+  },
+  "dependencies": {
+    "electron-updater": "4.6.4",
+    "@hapi/boom": "^9.1.4",
+    "daruk": "^2.3.9",
+    "inversify": "^6.0.1",
+    "inversify-config-binding": "^1.2.1",
+    "ipfs-core": "^0.12.2",
+    "ipfs-http-response": "^1.0.5",
+    "it-last": "^1.0.6",
+    "it-to-stream": "^1.0.0",
+    "koa-body": "^4.2.0",
+    "koa-bodyparser": "^4.3.0",
+    "libp2p": "^0.34.0",
+    "memoizee": "^0.4.15",
+    "mime": "^3.0.0",
+    "multiformats": "^9.4.14",
+    "orbit-db": "^0.28.0",
+    "orbit-db-access-controllers": "^0.3.2",
+    "orbit-db-store": "^4.3.2",
+    "patch-package": "^6.4.7",
+    "vm2": "^3.9.5",
+    "zone.js": "^0.11.4"
+  },
+  "devDependencies": {
+    "@types/memoizee": "^0.4.6",
+    "@types/node": "^16.11.10",
+    "ts-node": "^10.4.0"
+  }
+}

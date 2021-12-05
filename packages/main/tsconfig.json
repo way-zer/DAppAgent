@@ -1,0 +1,30 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "/@/*": [
+        "./src/*"
+      ]
+    },
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "module": "ESNEXT",
+    "target": "ESNEXT",
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "noImplicitAny": false,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "files": [
+    "src/index.ts"
+  ],
+  "include": [
+    "../../types/**/*.d.ts"
+  ]
+}
