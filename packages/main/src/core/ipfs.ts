@@ -5,7 +5,8 @@ import type LibP2P from 'libp2p';
 import {useInject} from '../util/hooks';
 import Boom from '@hapi/boom';
 import {toArray} from '/@/util';
-
+import {BWResult} from 'ipfs-core-types/types/src/stats';
+import {PeersResult} from 'ipfs-core-types/types/src/swarm';
 
 export interface Secret {
   id: string;
@@ -18,7 +19,7 @@ export class CoreIPFS {
   static instUnsafe: IPFS | null = null;
   static libP2PUnsafe: LibP2P | null = null;
 
-  static get inst() {
+  static get inst(): IPFS {
     if (!this.instUnsafe) throw 'IPFS hasn\'t start';
     return this.instUnsafe;
   }
@@ -65,7 +66,7 @@ export class CoreIPFS {
     console.log('Stopped IPFS');
   }
 
-  static async ipfsStatus() {
+  static async ipfsStatus(): Promise<{ running: boolean; bandwidth: Array<BWResult>; peers: PeersResult[] }> {
     return {
       running: this.instUnsafe !== null,
       peers: await this.instUnsafe?.swarm?.peers() || [],

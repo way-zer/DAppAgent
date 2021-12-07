@@ -3,17 +3,18 @@ import {useApp} from '../hooks/useApp';
 import {parseCID, toArray} from '/@/util';
 import {CoreIPFS} from '/@/core/ipfs';
 import {AppsApi} from '/@/apis/services/apps';
+import {MFSEntry} from 'ipfs-core/types/src/components/files/ls';
 
 export class FileApi extends ExposedService {
   @api()
-  async list(path: string = '/') {
+  async list(path: string = '/'): Promise<(MFSEntry & { cid: string })[]> {
     const app = await useApp();
     path = app.addr + '/public' + path;
     const files = await toArray(CoreIPFS.inst.files.ls(path));
     return files.map(file => ({
       ...file,
       cid: file.cid.toString(),
-    }));
+    })) as any;
   }
 
   /**

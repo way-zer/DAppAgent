@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "module": "system",
+    "target": "esnext",
+    "sourceMap": false,
+    "declaration": true,
+    "outFile": "index.js",
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
+    "skipLibCheck": true,
+    "baseUrl": "../main",
+    "experimentalDecorators": true,
+    "paths": {
+      "/@/*": [
+        "./src/*"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

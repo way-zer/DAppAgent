@@ -1,5 +1,6 @@
 import type {DarukContext} from 'daruk';
 import {badRequest} from '@hapi/boom';
+import "zone.js"
 
 export function useParam(ctx: DarukContext, key: string): string {
   return ctx.request['params'][key];
