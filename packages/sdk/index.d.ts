@@ -183,7 +183,10 @@ declare module "main/src/apis/hooks/useApp" {
 declare module "main/src/apis/services/apps" {
     import { ExposedService } from "main/src/apis/services/index";
     export class AppsApi extends ExposedService {
-        listPrivate(): Promise<{}>;
+        listPrivate(): Promise<Record<string, {
+            cid: string;
+            prod: string;
+        }>>;
         create(name: string): Promise<{
             name: string;
             cid: string;

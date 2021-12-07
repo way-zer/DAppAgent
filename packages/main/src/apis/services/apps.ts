@@ -8,7 +8,7 @@ import Boom from '@hapi/boom';
 export class AppsApi extends ExposedService {
   @api({permission: 'apps.admin'})
   async listPrivate() {
-    const out = {};
+    const out = {} as Record<string, { cid: string, prod: string }>;
     const list = await AppManager.list();
     for (const app of list) {
       out[app.name] = {
