@@ -1,10 +1,7 @@
 {
   "name": "sdk",
   "module": "index.ts",
-  "types": "index.d.ts",
   "scripts": {
-    "genType": "tsc -p genType.tsconfig.json && (rm index.js || del index.js)",
-    "build": "pnpm run genType"
   },
   "dependencies": {
     "axios": "^0.24.0"

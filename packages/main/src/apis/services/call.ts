@@ -25,7 +25,7 @@ export class CallApi extends ExposedService {
       app, service, payload,
     };
     const param = JSON.stringify(ts);
-    const promise = new Promise((resolve, reject) => {
+    const promise = new Promise<object>((resolve, reject) => {
       ts.timeout = Date.now() + 10_000;
       const tt = setInterval(() => {
         if ((ts.timeout || 1e99) > Date.now()) return;

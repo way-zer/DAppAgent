@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../tsconfig.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
@@ -7,17 +7,9 @@
         "./src/*"
       ]
     },
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "module": "ESNEXT",
-    "target": "ESNEXT",
-    "strict": true,
-    "allowSyntheticDefaultImports": true,
     "allowJs": true,
+    "allowSyntheticDefaultImports": true,
     "noImplicitAny": false,
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
     "types": [
       "vite/client"
@@ -25,5 +17,8 @@
   },
   "include": [
     "./src/**/*.ts"
+  ],
+  "exclude": [
+    "dist/*"
   ]
 }

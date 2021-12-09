@@ -1,10 +1,10 @@
 export {ExposedService, api, useService} from './_define';
 import {api, ExposedService} from './_define';
-import {AppsApi} from '/@/apis/services/apps';
-import {CallApi} from '/@/apis/services/call';
-import {DBApi} from '/@/apis/services/db';
-import {FileApi} from '/@/apis/services/file';
-import {SystemApi} from '/@/apis/services/system';
+import {AppsApi} from './apps';
+import {CallApi} from './call';
+import {DBApi} from './db';
+import {FileApi} from './file';
+import {SystemApi} from './system';
 
 class TestApi extends ExposedService {
   @api()

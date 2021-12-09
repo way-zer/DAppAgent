@@ -1,7 +1,7 @@
 import {app, BrowserWindow, shell} from 'electron';
 import {join} from 'path';
 import {URL} from 'url';
-import globalConfig from '../../../config';
+import globalConfig from 'config';
 import {beforeReady, bootstrap} from '/@/main';
 
 const isSingleInstance = app.requestSingleInstanceLock();

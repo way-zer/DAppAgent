@@ -16,6 +16,7 @@ export class DBApi extends ExposedService {
     return info;
   }
 
+  /**@internal*/
   static async useDatabase(dbName: string, app: App | undefined = undefined) {
     app ||= await useApp();
     return await app.getDataBase(dbName);

@@ -60,6 +60,6 @@ export class AppsApi extends ExposedService {
 
   @api()
   async thisInfo() {
-    return (await useApp()).getMetadata();
+    return await (await useApp()).getMetadata();
   }
 }
