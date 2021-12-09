@@ -3,12 +3,14 @@ import { createDirectory, deleteFile, fileInfo, copyFile } from "@api/file";
 import { Input, Button, message, Modal, Table, Space, Dropdown, Menu, Breadcrumb, Row, Col, Divider } from "antd";
 import React, { useEffect, useState } from "react"
 import FileUpload from "./FileUpload";
+import {Services, useService} from 'sdk';
 
 function FileInfo() {
     const [refresh, setRefresh] = useState<boolean>(false);
     const [path, setPath] = useState<string>('/');
-    const [data, setData] = useState<any>();
+    const [data, setData] = useState<Awaited<ReturnType<Services["file"]["list"]>>>();
     useEffect(() => {
+      useService("file").list(path).then(res=>setData(res))
         fileInfo(path).then(res => setData(res));
         console.log("set");
     }, [path, refresh]);

@@ -1,8 +1,3 @@
-DAppAgent/
-/logs/
-.pnpm*.log
-
-
 node_modules
 .DS_Store
 dist
@@ -59,3 +54,9 @@ thumbs.db
 # Editor-based Rest Client
 .idea/httpRequests
 /.idea/csv-plugin.xml
+
+# Custom
+DAppAgent/
+/logs/
+.pnpm*.log
+!/packages/main/dist/services.d.ts
