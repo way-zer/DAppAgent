@@ -6,7 +6,7 @@ import {useContext} from './simple';
 export function useAppId(ctx: DarukContext = useContext()) {
   const headerIp = ctx.headers['dapp'];
   if (headerIp) return headerIp.toString();
-  const sp = ctx.host.split('.');
+  const sp = ctx.host.split('.');sp.pop();
   const type = (sp.length >= 2 && sp[sp.length - 1].length < 5) ? sp.pop() : 'ipns';
   return `${type}:${sp.join('')}`;
 }

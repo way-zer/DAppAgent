@@ -160,7 +160,7 @@ export class AppManager {
       case 'dev':
         try {
           await CoreIPFS.inst.key.info(name);
-          return `/${name}`;
+          return `/apps/${name}`;
         } catch (e: any) {
           throw Boom.notFound('App not exist', {app: id});
         }
@@ -185,14 +185,21 @@ export class AppManager {
     } catch (e: any) {
       if (!e.toString().indexOf('does not exist'))
         console.error(e);
-      throw Boom.notFound();
+      throw Boom.notFound('Private app not found', {name});
     }
   });
 
   static async create(name: string): Promise<PrivateApp> {
     name = name.toLowerCase();
-    this.getPrivate.delete(name);//reset cache
-    const exists = await this.getPrivate(name);
+    await this.getPrivate.delete(name);//reset cache
+    let exists = false;
+    try {
+      await CoreIPFS.inst.key.info(name);
+      exists = true;
+    } catch (e: any) {
+      if (!e.toString().indexOf('does not exist'))
+        console.error(e);
+    }
     if (exists)
       throw conflict('App already exists', {app: exists});
     const app = new PrivateApp(name);

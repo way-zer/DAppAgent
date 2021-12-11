@@ -38,7 +38,7 @@ export class AppsApi extends ExposedService {
       ...await app.getMetadata(),
       name: app.name,
       cid: cidBase32(await app.getCid()),
-      prod: (await app.getProd()).addr,
+      prod: await app.getProd().then(it => it.addr).catch(),
     };
   }
 

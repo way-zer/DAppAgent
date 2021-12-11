@@ -1,6 +1,6 @@
 export default {
   main: {
-    debug: false,
+    debug: true,
     port: 7001,
     ipfs: {
       bootstrap: [],
