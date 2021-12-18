@@ -3,7 +3,8 @@
   "private": true,
   "main": "dist/index.cjs",
   "scripts": {
-    "build": "vite build&&pnpm run genType",
+    "build": "vite build && pnpm run genType",
+    "buildOnly": "vite build",
     "dev": "node scripts/watch.js",
     "typecheck": "tsc --noEmit",
     "genType": "node scripts/genType.js"

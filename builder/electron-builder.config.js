@@ -16,7 +16,10 @@ const config = {
     'dist/*',
   ],
   extraResources: [
-    'buildResources',
+    {
+      from: 'buildResources',
+      to: './',
+    },
   ],
   extraMetadata: {
     version: process.env.VITE_APP_VERSION,

@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "CommonJS",
-    "outDir": "dist",
-    "skipLibCheck": true
-  },
-  "include": [
-    "*.ts"
-  ]
+    "module": "ESNext",
+    "types": ["vite/client"]
+  }
 }

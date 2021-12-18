@@ -11,8 +11,8 @@ if (import.meta.env.DEV) {
   iconPath = '../../builder/buildResources/icon.png';
   preloadPath = '../preload/dist/preload.cjs.js';
 } else {
-  iconPath = 'icon.png';
-  preloadPath = 'preload.cjs.js';
+  iconPath = process.resourcesPath + '/icon.png';
+  preloadPath = __dirname + '/preload/preload.cjs.js';
 }
 
 export class ElectronHelper {
