@@ -1,6 +1,6 @@
-import { node } from '../../electron-vendors.config.json';
-import { join } from 'path';
-import { builtinModules } from 'module';
+import {node} from 'config/electron-vendors.config.json';
+import {join} from 'path';
+import {builtinModules} from 'module';
 
 const PACKAGE_ROOT = __dirname;
 
@@ -18,7 +18,7 @@ const config = {
     },
   },
   build: {
-    sourcemap: "inline",
+    sourcemap: 'inline',
     target: `node${node}`,
     outDir: 'dist',
     assetsDir: '.',

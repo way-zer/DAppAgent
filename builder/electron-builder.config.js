@@ -9,15 +9,19 @@ if (process.env.VITE_APP_VERSION === undefined) {
  */
 const config = {
   directories: {
-    output: 'dist',
-    buildResources: 'config/buildResources',
+    output: '../dist',
+    buildResources: 'buildResources',
   },
   files: [
-    'packages/**/dist/**',
+    'dist/*',
+  ],
+  extraResources: [
+    'buildResources',
   ],
   extraMetadata: {
     version: process.env.VITE_APP_VERSION,
   },
+  npmRebuild: false,
 };
 
 module.exports = config;

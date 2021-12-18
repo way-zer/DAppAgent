@@ -2,7 +2,7 @@ import {darukContainer, DarukServer} from 'daruk';
 import {CoreIPFS} from './core/ipfs';
 import {DBManager} from './core/db';
 import {buildInjectionModule} from 'inversify-config-binding';
-import globalConfig from '../../../config';
+import globalConfig from 'config';
 import assert from 'assert';
 
 export async function bootstrap() {

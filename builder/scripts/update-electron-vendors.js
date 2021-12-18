@@ -33,7 +33,7 @@ function updateVendors() {
   const packageJSONPath = path.resolve(process.cwd(), 'package.json');
 
   return Promise.all([
-    writeFile('./electron-vendors.config.json',
+    writeFile('../config/electron-vendors.config.json',
       formattedJSON({
         chrome: chromeMajorVersion,
         node: nodeMajorVersion,

@@ -1,4 +1,4 @@
-import {chrome} from '../../electron-vendors.config.json';
+import {chrome} from 'config/electron-vendors.config.json';
 import {join} from 'path';
 import {builtinModules} from 'module';
 
@@ -31,9 +31,6 @@ const config = {
         'electron',
         ...builtinModules,
       ],
-      output: {
-        entryFileNames: '[name].cjs',
-      },
     },
     emptyOutDir: true,
     brotliSize: false,

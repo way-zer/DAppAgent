@@ -6,6 +6,15 @@ import globalConfig from 'config';
 import {useService} from '/@/apis/services';
 import {bootstrap} from '../main';
 
+let iconPath, preloadPath;
+if (import.meta.env.DEV) {
+  iconPath = '../../builder/buildResources/icon.png';
+  preloadPath = '../preload/dist/preload.cjs.js';
+} else {
+  iconPath = 'icon.png';
+  preloadPath = 'preload.cjs.js';
+}
+
 export class ElectronHelper {
   static running = new Set<BrowserWindow>();
   static tray: Tray;
@@ -49,7 +58,7 @@ export class ElectronHelper {
   }
 
   static async setTray() {
-    const tray = new Tray('../../config/buildResources/icon.png');
+    const tray = new Tray(iconPath);
     tray.setTitle('DappAgent');
     tray.setContextMenu(Menu.buildFromTemplate([
       {
@@ -68,7 +77,7 @@ export class ElectronHelper {
       },
       {
         label: '打开测试应用', click: () => {
-          this.createWindow("dapp://test.dev").catch(e => {
+          this.createWindow('dapp://test.dev').catch(e => {
             console.error('Fail to create window', e);
           });
         },
@@ -85,7 +94,7 @@ export class ElectronHelper {
       show: false,
       webPreferences: {
         nativeWindowOpen: true,
-        // preload: join(__dirname,'../../../preload/dist/index.cjs')
+        // preload: preloadPath
       },
     });
     window.on('ready-to-show', () => window.show());

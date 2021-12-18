@@ -9,5 +9,8 @@
     "genDts": "dts-cb -i src/**/*.ts -o exposedInMainWorld.d.ts"
   },
   "dependencies": {
+  },
+  "devDependencies": {
+    "dts-for-context-bridge": "0.6.2"
   }
 }

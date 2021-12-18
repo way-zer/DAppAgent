@@ -1,0 +1,21 @@
+{
+  "name": "builder",
+  "main": "dist/index.cjs",
+  "scripts": {
+    "compile": "node scripts/compile.js"
+  },
+  "browserslist": [
+    "Chrome 96"
+  ],
+  "dependencies": {
+    "ipfs-core": "^0.12.2",
+    "daruk": "^2.3.9",
+    "orbit-db": "^0.28.0",
+    "readable-stream": "^3.6.0",
+    "memoizee": "^0.4.15"
+  },
+  "devDependencies": {
+    "electron": "16.0.2",
+    "electron-builder": "22.14.5"
+  }
+}
