@@ -7,7 +7,7 @@ export default {
     },
   },
   renderer: {
-    port: 3001,
-    url: '',
+    port: 3000,
+    url: 'http://localhost:3000',
   },
 };

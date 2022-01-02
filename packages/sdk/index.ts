@@ -1,7 +1,7 @@
-import type {Services} from 'main/dist/services';
+import type {Services} from '../main/dist/services';
 import axios from 'axios';
 
-export type {Services} from 'main/dist/services';
+export type {Services} from '../main/dist/services';
 
 /** Set this if using custom library */
 export var postFunction: (url: string, body: any[]) => Promise<any> = axios.post;

@@ -15,7 +15,6 @@ class AppRouter extends React.Component{
                 <Route exact path='/appcreate' component={AppCreate} />
                 <Route exact path='/appinfo' component={AppInfo} />
                 <Route exact path='/appsearch' component={AppSearch} />
-                
                 <Route exact path='/fileinfo' component={FileInfo} />
                 <Redirect to='/ipfsinfo' />
             </Switch>

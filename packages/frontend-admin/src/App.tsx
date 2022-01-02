@@ -5,7 +5,7 @@ import { Layout } from 'antd';
 import AppMenu from './page/AppMenu';
 import AppRouter from './router/AppRouter';
 import { createBrowserHistory } from 'history'
-import { Router } from 'react-router';
+import { Router } from 'react-router-dom';
 
 const { Header, Content, Footer, Sider } = Layout;
 

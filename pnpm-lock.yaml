@@ -37,7 +37,6 @@ importers:
   packages/demo-blog:
     specifiers:
       '@vitejs/plugin-vue': 1.10.1
-      eslint-plugin-vue: 8.1.1
       sdk: workspace:*
       vue: ^3.2.23
       vue-router: 4.0.12
@@ -48,7 +47,6 @@ importers:
       vue-router: 4.0.12_vue@3.2.23
     devDependencies:
       '@vitejs/plugin-vue': 1.10.1_vite@2.6.14
-      eslint-plugin-vue: 8.1.1_eslint@8.3.0
       vue-tsc: 0.29.8_typescript@4.5.2
 
   packages/frontend-admin:
@@ -63,7 +61,6 @@ importers:
       react: ^17.0.2
       react-dom: ^17.0.2
       react-router-dom: ^5.3.0
-      sdk: workspace
       stylus: ^0.54.8
     dependencies:
       '@ant-design/icons': 4.7.0_react-dom@17.0.2+react@17.0.2
@@ -72,7 +69,6 @@ importers:
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       react-router-dom: 5.3.0_react@17.0.2
-      sdk: link:../sdk
     devDependencies:
       '@types/react': 17.0.37
       '@types/react-dom': 17.0.11
@@ -109,6 +105,7 @@ importers:
       patch-package: ^6.4.7
       readable-stream: ^3.6.0
       ts-morph: ^13.0.2
+      vite: 2.6.14
       vm2: ^3.9.5
       zone.js: ^0.11.4
     dependencies:
@@ -142,6 +139,7 @@ importers:
       '@types/orbit-db': link:../orbit-db-types
       ipfs-core-types: 0.8.4
       ts-morph: 13.0.2
+      vite: 2.6.14
 
   packages/orbit-db-types:
     specifiers:
@@ -3710,35 +3708,12 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /eslint-plugin-vue/8.1.1_eslint@8.3.0:
-    resolution: {integrity: sha512-rx64IrlhdfPya6u2V5ukOGiLCTgaCBdMSpczLVqyo8A0l+Vbo+lzvIfEUfAQ2auj+MF6y0TwxLorzdCIzHunnw==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-    peerDependencies:
-      eslint: ^6.2.0 || ^7.0.0 || ^8.0.0
-    dependencies:
-      eslint: 8.3.0
-      eslint-utils: 3.0.0_eslint@8.3.0
-      natural-compare: 1.4.0
-      semver: 7.3.5
-      vue-eslint-parser: 8.0.1_eslint@8.3.0
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
   /eslint-scope/5.1.1:
     resolution: {integrity: sha512-2NxwbF/hZ0KpepYN0cNbo+FN6XoK7GaHlQhgx/hIZl6Va0bF45RQOOwhLIy8lQDbuCiadSLCBnH2CFYquit5bw==}
     engines: {node: '>=8.0.0'}
     dependencies:
       esrecurse: 4.3.0
       estraverse: 4.3.0
-    dev: true
-
-  /eslint-scope/6.0.0:
-    resolution: {integrity: sha512-uRDL9MWmQCkaFus8RF5K9/L/2fn+80yoW3jkD53l4shjCh26fCtvJGasxjUqP5OT87SYTxCVA3BwTUzuELx9kA==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-    dependencies:
-      esrecurse: 4.3.0
-      estraverse: 5.3.0
     dev: true
 
   /eslint-scope/7.1.0:
@@ -10298,24 +10273,6 @@ packages:
       vscode-languageserver-textdocument: 1.0.3
       vscode-pug-languageservice: 0.29.8
       vscode-typescript-languageservice: 0.29.8
-    dev: true
-
-  /vue-eslint-parser/8.0.1_eslint@8.3.0:
-    resolution: {integrity: sha512-lhWjDXJhe3UZw2uu3ztX51SJAPGPey1Tff2RK3TyZURwbuI4vximQLzz4nQfCv8CZq4xx7uIiogHMMoSJPr33A==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-    peerDependencies:
-      eslint: '>=6.0.0'
-    dependencies:
-      debug: 4.3.3
-      eslint: 8.3.0
-      eslint-scope: 6.0.0
-      eslint-visitor-keys: 3.1.0
-      espree: 9.1.0
-      esquery: 1.4.0
-      lodash: 4.17.21
-      semver: 7.3.5
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   /vue-router/4.0.12_vue@3.2.23:
