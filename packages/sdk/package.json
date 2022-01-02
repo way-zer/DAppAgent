@@ -2,11 +2,14 @@
   "name": "sdk",
   "module": "index.ts",
   "scripts": {
+    "cli": "node scripts/cli.js"
   },
   "dependencies": {
     "axios": "^0.24.0"
   },
   "devDependencies": {
+    "debug": "^4.3.3",
+    "ipfs-cli": "^0.11.0",
     "main": "workspace:*"
   }
 }
