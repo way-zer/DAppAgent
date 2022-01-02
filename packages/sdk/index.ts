@@ -1,7 +1,9 @@
-import type {Services} from '../main/dist/services';
+// @ts-ignore
+import type {Services} from './services';
 import axios from 'axios';
 
-export type {Services} from '../main/dist/services';
+// @ts-ignore
+export type {Services} from './services';
 
 /** Set this if using custom library */
 export var postFunction: (url: string, body: any[]) => Promise<any> = axios.post;
