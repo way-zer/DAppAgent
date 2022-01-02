@@ -59,4 +59,3 @@ thumbs.db
 DAppAgent/
 /logs/
 .pnpm*.log
-!/packages/main/dist/services.d.ts
