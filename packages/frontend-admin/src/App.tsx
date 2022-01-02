@@ -4,8 +4,7 @@ import './App.css';
 import { Layout } from 'antd';
 import AppMenu from './page/AppMenu';
 import AppRouter from './router/AppRouter';
-import { createBrowserHistory } from 'history'
-import { Router } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -22,7 +21,7 @@ export default class App extends React.Component {
 	render() {
 		const { collapsed } = this.state;
 		return (
-			<Router history={createBrowserHistory()}>
+			<BrowserRouter>
 				<Layout style={{ minHeight: '100vh' }}>
 					<Sider collapsible collapsed={collapsed} onCollapse={this.onCollapse}>
 						<AppMenu />
@@ -31,7 +30,7 @@ export default class App extends React.Component {
 						<AppRouter />
 					</Content>
 				</Layout>
-			</Router>
+			</BrowserRouter>
 		);
 	}
 }
