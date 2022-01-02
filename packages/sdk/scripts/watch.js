@@ -7,7 +7,7 @@ const {createServer, build} = require('vite');
 
 /** @type 'production' | 'development'' */
 const mode = process.env.MODE = process.env.MODE || 'development';
-const appHost = process.argv[0] || 'test.dev.dapp';
+const appHost = process.argv[2] || 'test.dev.dapp';
 
 /** @type {import('vite').InlineConfig} */
 const sharedConfig = {
@@ -49,14 +49,14 @@ const setupPreloadPackageWatcher = (viteDevServer) => {
       ...sharedConfig,
       server: {
         proxy: {
-          '/api': {
+          '/api/': {
             target: 'http://localhost:7001',
             toProxy: true,
             headers: {
               'host': appHost,
             },
           },
-          '/ipfs': {
+          '/ipfs/': {
             target: 'http://localhost:7001',
             toProxy: true,
             headers: {
@@ -65,7 +65,7 @@ const setupPreloadPackageWatcher = (viteDevServer) => {
           },
         },
       },
-      configFile: './vite.config.js',
+      configFile: './vite.config.ts',
     });
 
     await viteDevServer.listen();

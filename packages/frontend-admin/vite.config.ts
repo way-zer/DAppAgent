@@ -6,15 +6,7 @@ import path from 'path';
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
-    proxy: {
-      '/api': {
-        target: 'http://localhost:7001',
-        toProxy: true,
-        headers: {
-                    'host': 'test.dev.dapp',
-        },
-      },
-    },
+    port: 3000,
   },
   plugins: [reactRefresh()],
   resolve: {

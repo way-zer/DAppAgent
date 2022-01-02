@@ -14,7 +14,8 @@
     "axios": "^0.21.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-router-dom": "^5.3.0"
+    "react-router-dom": "^5.3.0",
+    "sdk": "workspace"
   },
   "devDependencies": {
     "@types/react": "^17.0.17",
