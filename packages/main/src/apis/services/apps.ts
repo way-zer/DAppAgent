@@ -13,7 +13,7 @@ export class AppsApi extends ExposedService {
     for (const app of list) {
       out[app.name] = {
         cid: cidBase32(await app.getCid()),
-        prod: (await app.getProd()).addr,
+        prod: (await app.getProd())?.addr || 'NOT_Publish',
       };
     }
     return out;
@@ -38,7 +38,7 @@ export class AppsApi extends ExposedService {
       ...await app.getMetadata(),
       name: app.name,
       cid: cidBase32(await app.getCid()),
-      prod: await app.getProd().then(it => it.addr).catch(),
+      prod: (await app.getProd())?.addr || 'NOT_Publish',
     };
   }
 

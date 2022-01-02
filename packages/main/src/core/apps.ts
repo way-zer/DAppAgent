@@ -107,9 +107,13 @@ export class PrivateApp extends App {
     await this.uploadFile('/public/index.html', 'Hello world');
   }
 
-  async getProd(): Promise<PublicApp> {
+  async getProd(): Promise<PublicApp | null> {
     const record = await CoreIPFS.inst.key.info(this.name);
-    return AppManager.getPublic(`ipns:${peerIdBase32(record.id)}`, false);
+    try {
+      return await AppManager.getPublic(`ipns:${peerIdBase32(record.id)}`, false);
+    } catch (e) {
+      return null;
+    }
   }
 
   /**
@@ -153,7 +157,7 @@ export class AppManager {
             return res;
         } catch (e) {//not found
         }
-        throw Boom.notFound('Fail to resolve IPNS', {name});
+        throw Boom.notFound('App not found: Fail to resolve IPNS', {name});
       case 'ipfs':
         const cid = CID.parse(name);
         return `/ipfs/${cid}`;
