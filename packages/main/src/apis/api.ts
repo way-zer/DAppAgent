@@ -1,9 +1,8 @@
 import type {DarukContext} from 'daruk';
 import {controller, get, post} from 'daruk';
-import {useParam} from './hooks/simple';
+import {localContext, useParam} from './hooks/simple';
 import type {ApiMeta} from './services';
 import {services} from './services';
-import 'zone.js';
 import {useApp} from './hooks/useApp';
 import Boom from '@hapi/boom';
 
@@ -14,7 +13,7 @@ export class _Api {
   async get(ctx: DarukContext) {
     const args = ctx.request.method === 'GET' ? [] : ctx.request.body;
     if (!Array.isArray(args))
-      throw Boom.badRequest('body must be json array');
+      throw Boom.badRequest('body must be json array', {args});
     const serviceName = useParam(ctx, 'service');
     const service = services[serviceName];
     if (!service)
@@ -24,16 +23,13 @@ export class _Api {
     if (!apiMeta)
       throw Boom.notFound('method not exist', {serviceName, methodName});
 
-    ctx.body = await Zone.current.fork({
-      name: 'Call Service Function',
-      properties: {ctx},
-    }).run(async () => {
-      return this.callMethod(apiMeta, service, service[methodName], args);
+    ctx.body = await localContext.run(ctx, async () => {
+      return await this.callMethod(apiMeta, service, service[methodName], args);
     });
   }
 
   async callMethod(meta: ApiMeta, service: any, f: Function, args: any[]) {
-    if (meta.permission && !(await useApp()).hasPermission(meta.permission))
+    if (meta.permission && !await (await useApp()).hasPermission(meta.permission))
       throw Boom.forbidden('app not permission, request first.', {permission: meta.permission});
     return f.call(service, ...args);
   }

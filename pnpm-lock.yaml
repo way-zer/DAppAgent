@@ -100,6 +100,7 @@ importers:
       koa-body: ^4.2.0
       koa-bodyparser: ^4.3.0
       libp2p: ^0.34.0
+      libp2p-crypto: ^0.20.0
       memoizee: ^0.4.15
       mime: ^3.0.0
       multiformats: ^9.4.14
@@ -108,10 +109,10 @@ importers:
       orbit-db-store: ^4.3.2
       patch-package: ^6.4.7
       readable-stream: ^3.6.0
+      source-map-support: ^0.5.21
       ts-morph: ^13.0.2
       vite: 2.6.14
       vm2: ^3.9.5
-      zone.js: ^0.11.4
     dependencies:
       '@hapi/boom': 9.1.4
       daruk: 2.3.9
@@ -126,6 +127,7 @@ importers:
       koa-body: 4.2.0
       koa-bodyparser: 4.3.0
       libp2p: 0.34.0
+      libp2p-crypto: 0.20.0
       memoizee: 0.4.15
       mime: 3.0.0
       multiformats: 9.5.1
@@ -135,13 +137,13 @@ importers:
       patch-package: 6.4.7
       readable-stream: 3.6.0
       vm2: 3.9.5
-      zone.js: 0.11.4
     devDependencies:
       '@types/electron-devtools-installer': 2.2.0
       '@types/memoizee': 0.4.6
       '@types/node': 16.11.11
       '@types/orbit-db': link:../orbit-db-types
       ipfs-core-types: 0.8.4
+      source-map-support: 0.5.21
       ts-morph: 13.0.2
       vite: 2.6.14
 
@@ -5397,7 +5399,7 @@ packages:
       just-debounce-it: 1.5.0
       libp2p-interfaces: 1.3.1
       multiaddr: 10.0.1
-      multiformats: 9.5.1
+      multiformats: 9.5.4
       native-abort-controller: 1.0.4_abort-controller@3.0.0
       protobufjs: 6.11.2
       readable-stream: 3.6.0
@@ -5591,7 +5593,7 @@ packages:
       merge-options: 3.0.4
       multiaddr: 10.0.1
       multiaddr-to-uri: 8.0.0
-      multiformats: 9.5.1
+      multiformats: 9.5.4
       nanoid: 3.1.30
       parse-duration: 1.0.2
       timeout-abort-controller: 1.1.1
@@ -5850,7 +5852,7 @@ packages:
       it-last: 1.0.6
       merge-options: 3.0.4
       multiaddr: 10.0.1
-      multiformats: 9.5.1
+      multiformats: 9.5.4
       native-abort-controller: 1.0.4_abort-controller@3.0.0
       parse-duration: 1.0.2
       stream-to-it: 0.2.4
@@ -6144,7 +6146,7 @@ packages:
       interface-datastore: 6.0.3
       libp2p-crypto: 0.19.7
       long: 4.0.0
-      multiformats: 9.5.1
+      multiformats: 9.5.4
       peer-id: 0.15.4
       protobufjs: 6.11.2
       timestamp-nano: 1.0.0
@@ -7310,7 +7312,7 @@ packages:
       is-typedarray: 1.0.0
       iso-random-stream: 2.0.0
       keypair: 1.0.4
-      multiformats: 9.5.1
+      multiformats: 9.5.4
       node-forge: 0.10.0
       pem-jwk: 2.0.0
       protobufjs: 6.11.2
@@ -7326,7 +7328,7 @@ packages:
       err-code: 3.0.1
       iso-random-stream: 2.0.0
       keypair: 1.0.4
-      multiformats: 9.5.1
+      multiformats: 9.5.4
       noble-ed25519: 1.2.6
       noble-secp256k1: 1.2.14
       node-forge: 0.10.0
@@ -7381,7 +7383,7 @@ packages:
     resolution: {integrity: sha512-Gi4iqPOUH2rSmZ8PymyoTleFYvBCku98DvCT1FRyD3hQvLvLSWyAU9cUHLQcHyK3HQstzv3ZSU2q9XgPy7vnfA==}
     dependencies:
       debug: 4.3.3
-      multiformats: 9.5.1
+      multiformats: 9.5.4
       p-defer: 3.0.0
       p-queue: 6.6.2
       peer-id: 0.15.4
@@ -7473,7 +7475,7 @@ packages:
       it-pushable: 1.4.2
       libp2p-crypto: 0.20.0
       multiaddr: 10.0.1
-      multiformats: 9.5.1
+      multiformats: 9.5.4
       p-queue: 6.6.2
       peer-id: 0.15.4
       protobufjs: 6.11.2
@@ -7524,7 +7526,7 @@ packages:
       libp2p-interfaces: 1.3.1
       libp2p-record: 0.10.6
       multiaddr: 10.0.1
-      multiformats: 9.5.1
+      multiformats: 9.5.4
       p-map: 4.0.0
       p-queue: 6.6.2
       p-timeout: 4.1.0
@@ -7774,7 +7776,7 @@ packages:
       mafmt: 10.0.0
       merge-options: 3.0.4
       multiaddr: 10.0.1
-      multiformats: 9.5.1
+      multiformats: 9.5.4
       multistream-select: 2.0.1
       mutable-proxy: 1.0.0
       node-forge: 0.10.0
@@ -8973,7 +8975,7 @@ packages:
     dependencies:
       '@ipld/dag-cbor': 6.0.14
       '@ipld/dag-pb': 2.1.14
-      multiformats: 9.5.1
+      multiformats: 9.5.4
     dev: false
 
   /orbit-db-keystore/0.3.5:
@@ -9399,7 +9401,7 @@ packages:
       class-is: 1.1.0
       libp2p-crypto: 0.20.0
       minimist: 1.2.5
-      multiformats: 9.5.1
+      multiformats: 9.5.4
       protobufjs: 6.11.2
       uint8arrays: 3.0.0
     dev: false
@@ -11030,6 +11032,13 @@ packages:
       source-map-url: 0.4.1
       urix: 0.1.0
 
+  /source-map-support/0.5.21:
+    resolution: {integrity: sha512-uBHU3L3czsIyYXKX88fdrGovxdSCoTGDRZ6SYXtSRxLZUzHg5P/66Ht6uoUlHu9EZod+inXhKo3qQgwXUT/y1w==}
+    dependencies:
+      buffer-from: 1.1.2
+      source-map: 0.6.1
+    dev: true
+
   /source-map-url/0.4.1:
     resolution: {integrity: sha512-cPiFOTLUKvJFIg4SKVScy4ilPPW6rFgMgfuZJPNoDuMs3nC1HbMUycBoJw77xFIp6z1UJQJOfx6C9GMH80DiTw==}
 
@@ -12353,12 +12362,6 @@ packages:
   /ylru/1.2.1:
     resolution: {integrity: sha512-faQrqNMzcPCHGVC2aaOINk13K+aaBDUPjGWl0teOXywElLjyVAB6Oe2jj62jHYtwsU49jXhScYbvPENK+6zAvQ==}
     engines: {node: '>= 4.0.0'}
-    dev: false
-
-  /zone.js/0.11.4:
-    resolution: {integrity: sha512-DDh2Ab+A/B+9mJyajPjHFPWfYU1H+pdun4wnnk0OcQTNjem1XQSZ2CDW+rfZEUDjv5M19SBqAkjZi0x5wuB5Qw==}
-    dependencies:
-      tslib: 2.3.1
     dev: false
 
   '@github.com/paulkernfeld/node-headless/tarball/master':

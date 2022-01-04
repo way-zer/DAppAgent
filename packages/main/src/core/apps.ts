@@ -6,6 +6,7 @@ import type {DataBase, DBStore} from './db';
 import {DBManager} from './db';
 import memoizee from 'memoizee';
 import last from 'it-last';
+import {keys, PrivateKey} from 'libp2p-crypto';
 
 export interface AppDesc {
   title: string,
@@ -21,6 +22,7 @@ export interface AppMetadata {
   permissions: string[];
   databases: DataBase[];
   desc: Partial<AppDesc>;//may not full
+  services: Record<string, string>;
 }
 
 export abstract class App {
@@ -67,13 +69,26 @@ export abstract class App {
     return DBManager.getDataBase(db);
   }
 
-  hasPermission(permission: string) {
-    //TODO 权限检测: metadata有声明，且进行过授权
+  async hasPermission(permission: string) {
+    if (this.id === 'dev:test') return true;
+    const declared = (await this.getMetadata()).permissions;
+    if (permission ! in declared) return false;
+    return !!(await CoreIPFS.config.get(`dapp.permissions.${this.id.replace('.', '_')}.${permission}`).catch(() => false));
+  }
+
+  async grantPermission(permission: string) {
+    if (this.id === 'dev:test') return true;
+    const declared = (await this.getMetadata()).permissions;
+    if (permission ! in declared) return false;
+    await CoreIPFS.config.set(`dapp.permissions.${this.id.replace('.', '_')}.${permission}`, true);
     return true;
   }
 
-  async getService(name: string): Promise<any> {
-    throw new Error('暂未实现');
+  async getService(name: string): Promise<string> {
+    const metadata = await this.getMetadata();
+    if (!metadata.services || !metadata.services[name])
+      throw Boom.notFound('Not found service ' + name, {app: this.id, name, services: metadata.services});
+    return `dapp://${this.id.replace(/[^:]+:[^:]+/, '$2.$1')}${metadata.services[name]}`;
   }
 }
 
@@ -92,6 +107,11 @@ export class PrivateApp extends App {
     return (await CoreIPFS.inst.files.stat(this.addr)).cid;
   }
 
+  async getKey(): Promise<PrivateKey> {
+    const key = await CoreIPFS.libp2p.keychain!!.exportKey(this.name, 'temp');
+    return await keys.import(key, 'temp');
+  }
+
   async init() {
     try {
       const key = await CoreIPFS.inst.key.gen(this.name);
@@ -103,7 +123,7 @@ export class PrivateApp extends App {
     } catch (e) {//exists
     }
 
-    await this.setMetadata({permissions: [], databases: [], desc: {}});
+    await this.setMetadata({permissions: [], databases: [], desc: {}, services: {}});
     await this.uploadFile('/public/index.html', 'Hello world');
   }
 
@@ -166,7 +186,7 @@ export class AppManager {
           await CoreIPFS.inst.key.info(name);
           return `/apps/${name}`;
         } catch (e: any) {
-          throw Boom.notFound('App not exist', {app: id});
+          throw Boom.notFound('App not exist', {app: id, e});
         }
       case 'sys':
         throw Boom.notImplemented('App resolve for sys');

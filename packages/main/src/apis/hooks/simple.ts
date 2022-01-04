@@ -1,6 +1,6 @@
 import type {DarukContext} from 'daruk';
 import {badRequest} from '@hapi/boom';
-import "zone.js"
+import {AsyncLocalStorage} from 'async_hooks';
 
 export function useParam(ctx: DarukContext, key: string): string {
   return ctx.request['params'][key];
@@ -13,6 +13,8 @@ export function useQuery(ctx: DarukContext, key: string): string {
   return value;
 }
 
+export const localContext = new AsyncLocalStorage<DarukContext>();
+
 export function useContext() {
-  return Zone.current.get('ctx') as DarukContext;
+  return localContext.getStore();
 }

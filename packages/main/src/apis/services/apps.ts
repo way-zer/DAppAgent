@@ -1,9 +1,11 @@
 import {cidBase32} from '/@/util';
-import {api, ExposedService} from '.';
+import {api, ExposedService, useService} from '.';
 import {AppManager} from '/@/core/apps';
 import {useApp} from '../hooks/useApp';
 import {CoreIPFS} from '/@/core/ipfs';
 import Boom from '@hapi/boom';
+import {PeerId} from 'ipfs-core';
+import {useContext} from '/@/apis/hooks/simple';
 
 export class AppsApi extends ExposedService {
   @api({permission: 'apps.admin'})
@@ -51,11 +53,31 @@ export class AppsApi extends ExposedService {
   @api({permission: 'apps.admin'})
   async publish(name: string) {
     const app = await AppsApi.useLocalApp(name);
-    //TODO 调用认证app
-    const sign = 'Verify_Sign';
+    const peerId = CoreIPFS.libp2p.peerId;
+    const appKey = await app.getKey();
+    const appPeerId = await PeerId.createFromPrivKey(appKey.bytes);
+
+    const result = await useService('call').request('sys:beian', 'appRecord', {
+      cid: (await app.getCid()).toString(),
+      id: appPeerId.toString(),
+      appSign: await appKey.sign(appPeerId.id),
+      user: peerId.toString(),
+      userSign: await peerId.privKey.sign(appPeerId.id),
+    }) as any;
+    if (!result.sign)
+      throw Boom.notAcceptable('Fail to get app Sign', {app: appPeerId.toString()});
+    const sign = result.sign as string;
     await app.editMetadata({recordSign: sign});
     await CoreIPFS.inst.name.publish(await app.getCid(), {key: app.name});
     await app.verify();
+  }
+
+  @api({permission: 'apps.admin'})
+  async grantPermission(id: string, permissions: string[]) {
+    const app = await AppManager.getPublic(id);
+    for (const permission of permissions) {
+      await app.grantPermission(permission);
+    }
   }
 
   @api()

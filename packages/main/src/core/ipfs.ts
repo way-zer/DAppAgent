@@ -47,14 +47,13 @@ export class CoreIPFS {
       },
       libp2p: {
         config: {
-          dht: {enabled: false},
+          dht: {enabled: true},
         },
       },
     });
     // @ts-ignore
     this.libP2PUnsafe = this.inst.libp2p || null;
     console.log('IPFS ID is: ' + (await this.inst.id()).id);
-    console.log(await this.inst.config.getAll())
   }
 
   static async stop() {
@@ -96,5 +95,9 @@ export class CoreIPFS {
       throw Boom.notFound('File not found', {path, rawPath: path0});
     }
     return this.inst.files.read(path);
+  }
+
+  static get config(){
+    return this.inst.config
   }
 }
