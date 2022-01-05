@@ -25,6 +25,29 @@ export interface AppMetadata {
   services: Record<string, string>;
 }
 
+export class AppId {
+  constructor(public readonly type: string, public readonly name: string) {
+    this.name = name.toLowerCase();
+  }
+
+  toString() {
+    return `${this.type}:${this.name}`;
+  }
+
+  get url() {
+    return `dapp://${this.name}.${this.type}`;
+  }
+
+  permissionNode(permission: string) {
+    return `dapp.permissions.${this.type}-${this.name}.${permission}`;
+  }
+
+  static fromString(id: string) {
+    const [type, name] = id.split(':');
+    return new AppId(type, name);
+  }
+}
+
 export abstract class App {
   static verifier: (app: App) => Promise<boolean> = async () => true;
 
@@ -33,7 +56,7 @@ export abstract class App {
    * @param addr /ipns/ for prod or ipfs for dev
    */
   protected constructor(
-    public readonly id: string,
+    public readonly id: AppId,
     public readonly addr: string,
   ) {
   }
@@ -70,17 +93,15 @@ export abstract class App {
   }
 
   async hasPermission(permission: string) {
-    if (this.id === 'dev:test') return true;
     const declared = (await this.getMetadata()).permissions;
     if (permission ! in declared) return false;
-    return !!(await CoreIPFS.config.get(`dapp.permissions.${this.id.replace('.', '_')}.${permission}`).catch(() => false));
+    return !!(await CoreIPFS.config.get(this.id.permissionNode(permission)).catch(() => false));
   }
 
   async grantPermission(permission: string) {
-    if (this.id === 'dev:test') return true;
     const declared = (await this.getMetadata()).permissions;
     if (permission ! in declared) return false;
-    await CoreIPFS.config.set(`dapp.permissions.${this.id.replace('.', '_')}.${permission}`, true);
+    await CoreIPFS.config.set(this.id.permissionNode(permission), true);
     return true;
   }
 
@@ -88,7 +109,7 @@ export abstract class App {
     const metadata = await this.getMetadata();
     if (!metadata.services || !metadata.services[name])
       throw Boom.notFound('Not found service ' + name, {app: this.id, name, services: metadata.services});
-    return `dapp://${this.id.replace(/[^:]+:[^:]+/, '$2.$1')}${metadata.services[name]}`;
+    return this.id.url + metadata.services[name];
   }
 }
 
@@ -99,8 +120,9 @@ export class PublicApp extends App {
 }
 
 export class PrivateApp extends App {
-  constructor(public readonly name: string) {
-    super('dev:' + name, '/apps/' + name);
+  constructor(public readonly id: AppId) {
+    console.assert(id.type === 'dev');
+    super(id, '/apps/' + id.name);
   }
 
   async getCid(): Promise<CID> {
@@ -108,13 +130,13 @@ export class PrivateApp extends App {
   }
 
   async getKey(): Promise<PrivateKey> {
-    const key = await CoreIPFS.libp2p.keychain!!.exportKey(this.name, 'temp');
+    const key = await CoreIPFS.libp2p.keychain!!.exportKey(this.id.name, 'temp');
     return await keys.import(key, 'temp');
   }
 
   async init() {
     try {
-      const key = await CoreIPFS.inst.key.gen(this.name);
+      const key = await CoreIPFS.inst.key.gen(this.id.name);
       console.log(`generate key for app ${key.name}: ${key.id}`);
     } catch (e) {//exists
     }
@@ -128,9 +150,9 @@ export class PrivateApp extends App {
   }
 
   async getProd(): Promise<PublicApp | null> {
-    const record = await CoreIPFS.inst.key.info(this.name);
+    const record = await CoreIPFS.inst.key.info(this.id.name);
     try {
-      return await AppManager.getPublic(`ipns:${peerIdBase32(record.id)}`, false);
+      return await AppManager.get(new AppId('ipns', peerIdBase32(record.id)));
     } catch (e) {
       return null;
     }
@@ -159,66 +181,30 @@ export class PrivateApp extends App {
     await this.uploadFile('/.metadata', JSON.stringify(content));
     this.cache_Metadata = undefined;
   }
+
+  async hasPermission(permission: string): Promise<boolean> {
+    if (this.id.name === 'test') return true;
+    return super.hasPermission(permission);
+  }
+
+  async verify(): Promise<boolean> {
+    return true;
+  }
 }
 
 export class AppManager {
-  static async resolveAddr(id: string) {
-    let [type, name] = id.split(':');
-    if (!name) {
-      name = type;
-      type = 'ipns';
-    }
-
-    switch (type) {
-      case 'ipns':
-        try {
-          const res = await last(CoreIPFS.inst.name.resolve(name, {recursive: true}));
-          if (res)
-            return res;
-        } catch (e) {//not found
-        }
-        throw Boom.notFound('App not found: Fail to resolve IPNS', {name});
-      case 'ipfs':
-        const cid = CID.parse(name);
-        return `/ipfs/${cid}`;
-      case 'dev':
-        try {
-          await CoreIPFS.inst.key.info(name);
-          return `/apps/${name}`;
-        } catch (e: any) {
-          throw Boom.notFound('App not exist', {app: id, e});
-        }
-      case 'sys':
-        throw Boom.notImplemented('App resolve for sys');
-      default:
-        throw Boom.badRequest('invalid app type', {type});
-    }
-  }
-
   static async list(): Promise<PrivateApp[]> {
     const keys = await CoreIPFS.inst.key.list();
     return keys.filter(it => it.name != 'self')
-      .map(it => new PrivateApp(it.name));
+      .map(it => new PrivateApp(new AppId('dev', it.name)));
   }
 
-  static getPrivate = memoizee(async (name: string) => {
-    name = name.toLowerCase();
-    try {
-      await CoreIPFS.inst.key.info(name);
-      return new PrivateApp(name);
-    } catch (e: any) {
-      if (!e.toString().indexOf('does not exist'))
-        console.error(e);
-      throw Boom.notFound('Private app not found', {name});
-    }
-  });
-
   static async create(name: string): Promise<PrivateApp> {
-    name = name.toLowerCase();
-    await this.getPrivate.delete(name);//reset cache
+    const id = new AppId('dev', name);
+    await this.get.delete(id);//reset cache
     let exists = false;
     try {
-      await CoreIPFS.inst.key.info(name);
+      await CoreIPFS.inst.key.info(id.name);
       exists = true;
     } catch (e: any) {
       if (!e.toString().indexOf('does not exist'))
@@ -226,15 +212,47 @@ export class AppManager {
     }
     if (exists)
       throw conflict('App already exists', {app: exists});
-    const app = new PrivateApp(name);
+    const app = new PrivateApp(id);
     await app.init();
     return app;
   }
 
-  static getPublic = memoizee(async (id: string, verify = true) => {
-    const app = new PublicApp(id, await AppManager.resolveAddr(id));
+  static get = memoizee(async (id: AppId, verify = true) => {
+    let app: App;
+    switch (id.type) {
+      case 'ipns':
+        try {
+          const res = await last(CoreIPFS.inst.name.resolve(id.name, {recursive: true}));
+          if (res) {
+            app = new PublicApp(id, res);
+            break;
+          }
+        } catch (e) {//not found
+        }
+        throw Boom.notFound('App not found: Fail to resolve IPNS', {name: id.name});
+      case 'ipfs':
+        const cid = CID.parse(id.name);
+        app = new PublicApp(id, `/ipfs/${cid}`);
+        break;
+      case 'dev':
+        try {
+          await CoreIPFS.inst.key.info(id.name);
+          app = new PrivateApp(id);
+          break;
+        } catch (e: any) {
+          throw Boom.notFound('App not exist', {app: id, e});
+        }
+      case 'sys':
+        throw Boom.notImplemented('App resolve for sys');
+      default:
+        throw Boom.badRequest('invalid app type', {type: id.type});
+    }
     if (verify && !await app.verify())
       throw forbidden('App not verify', {app});
     return app;
+  }, {
+    normalizer(args: Parameters<(id: AppId, verify?: boolean) => Promise<App>>): string {
+      return args[0].toString() + (args[1] || true).toString();
+    },
   });
 }

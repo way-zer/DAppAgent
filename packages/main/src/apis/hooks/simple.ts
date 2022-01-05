@@ -16,5 +16,5 @@ export function useQuery(ctx: DarukContext, key: string): string {
 export const localContext = new AsyncLocalStorage<DarukContext>();
 
 export function useContext() {
-  return localContext.getStore();
+  return localContext.getStore()!!;
 }

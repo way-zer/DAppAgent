@@ -18,7 +18,6 @@
     "electron-devtools-installer": "3.2.0",
     "electron-updater": "4.6.4",
     "inversify": "^6.0.1",
-    "inversify-config-binding": "^1.2.1",
     "ipfs-core": "^0.12.2",
     "ipfs-http-response": "^1.0.5",
     "it-last": "^1.0.6",

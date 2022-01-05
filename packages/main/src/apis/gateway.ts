@@ -5,7 +5,7 @@ import readable from 'it-to-stream';
 import {getType} from 'mime/lite';
 import {CoreIPFS} from '../core/ipfs';
 import {useParam} from './hooks/simple';
-import {useApp} from './hooks/useApp';
+import {useApp, useAppId} from './hooks/useApp';
 import {parseCID} from '/@/util';
 
 @controller()
@@ -22,7 +22,7 @@ export class _Gateway {
 
   @get('/(.*)')
   async get(ctx: DarukContext) {
-    const app = await useApp(ctx);
+    const app = await useApp(useAppId(ctx));
     const path = this.resolvePath(ctx.path);
     ctx.type = getType(path);
     ctx.body = readable(await app.getFile(path));
