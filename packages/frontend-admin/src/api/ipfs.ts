@@ -1,5 +1,6 @@
 import axios from 'axios';
+import { useService } from 'sdk'
 
 export async function status() {
-  return axios.get('/api/ipfs/status');
+  return useService("system").status();
 }

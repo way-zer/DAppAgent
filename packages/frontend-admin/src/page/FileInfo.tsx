@@ -19,11 +19,13 @@ function FileInfo() {
     const [path, setPath] = useState<string>('/');
     const [data, setData] = useState<columnItem[]>();
     //Awaited<ReturnType<Services["file"]["list"]>>
-    // useEffect(() => {
-    //  // useService("file").list(path).then((res: any)=>setData(res))
-    //     fileInfo(path).then(res => setData(res));
-    //     console.log("set");
-    // }, [path, refresh]);
+    useEffect(() => {
+      useService("file").list(path).then((res: any)=>{
+        setData(res);
+      })
+        fileInfo(path).then(res => setData(res));
+        console.log("set");
+    }, [path, refresh]);
 
     const Refresh = () => {
         setRefresh(!refresh);
