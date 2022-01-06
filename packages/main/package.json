@@ -2,6 +2,9 @@
   "name": "main",
   "private": true,
   "main": "dist/index.cjs",
+  "engines": {
+    "node": ">=14"
+  },
   "scripts": {
     "build": "vite build && pnpm run genType",
     "buildOnly": "vite build",
@@ -12,9 +15,9 @@
   "dependencies": {
     "@hapi/boom": "^9.1.4",
     "daruk": "^2.3.9",
+    "electron-devtools-installer": "3.2.0",
     "electron-updater": "4.6.4",
     "inversify": "^6.0.1",
-    "inversify-config-binding": "^1.2.1",
     "ipfs-core": "^0.12.2",
     "ipfs-http-response": "^1.0.5",
     "it-last": "^1.0.6",
@@ -22,6 +25,7 @@
     "koa-body": "^4.2.0",
     "koa-bodyparser": "^4.3.0",
     "libp2p": "^0.34.0",
+    "libp2p-crypto": "^0.20.0",
     "memoizee": "^0.4.15",
     "mime": "^3.0.0",
     "multiformats": "^9.4.14",
@@ -30,9 +34,7 @@
     "orbit-db-store": "^4.3.2",
     "patch-package": "^6.4.7",
     "readable-stream": "^3.6.0",
-    "vm2": "^3.9.5",
-    "zone.js": "^0.11.4",
-    "electron-devtools-installer": "3.2.0"
+    "vm2": "^3.9.5"
   },
   "devDependencies": {
     "@types/electron-devtools-installer": "2.2.0",
@@ -40,7 +42,8 @@
     "@types/node": "^16.11.10",
     "@types/orbit-db": "workspace:*",
     "ipfs-core-types": "^0.8.1",
-    "vite": "2.6.14",
-    "ts-morph": "^13.0.2"
+    "source-map-support": "^0.5.21",
+    "ts-morph": "^13.0.2",
+    "vite": "2.6.14"
   }
 }

@@ -43,6 +43,7 @@ const config = {
         'ipfs-core',
         'orbit-db',
         'daruk',
+        'libp2p-crypto',
 
         'memoizee',
         /readable-stream.*/,

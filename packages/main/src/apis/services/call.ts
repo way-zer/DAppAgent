@@ -2,7 +2,8 @@ import {api, ExposedService} from '/@/apis/services/index';
 import Boom from '@hapi/boom';
 import {useApp} from '/@/apis/hooks/useApp';
 import {randomUUID} from 'crypto';
-import {AppManager} from '/@/core/apps';
+import {AppId, AppManager} from '/@/core/apps';
+import {ElectronHelper} from '/@/core/electron';
 
 /**
  * 跨应用调用接口
@@ -17,11 +18,13 @@ export class CallApi extends ExposedService {
   @api()
   async request(app: string, service: string, payload: object) {
     const from = await useApp();
-    const callApp = await AppManager.getPublic(app);
+    const callApp = await useApp(AppId.fromString(app));
+    let addr = await callApp.getService(service);
+
     const ts: Transaction = {
       id: (Math.random() * 1e9).toFixed(0),
       token: randomUUID(),
-      from: from.id, time: Date.now(),
+      from: from.id.toString(), time: Date.now(),
       app, service, payload,
     };
     const param = JSON.stringify(ts);
@@ -40,7 +43,7 @@ export class CallApi extends ExposedService {
       this.transactions.set(ts.id, ts);
     });
     console.log(param);
-    //TODO 调用electron,为被调用程序新开窗口处理
+    await ElectronHelper.createWindow(addr + '?param=' + encodeURI(param));
     return promise;
   }
 
@@ -60,11 +63,11 @@ export class CallApi extends ExposedService {
   }
 
   @api()
-  async pullTransaction() {
+  async pullTransaction(token?: string) {
     const app = (await useApp()).id;
     const out = [] as Transaction[];
     for (const v of this.transactions.values()) {
-      if (v.app == app)
+      if (v.app == app.toString() && (!token || v.token == token))
         out.push(v);
     }
     return out;

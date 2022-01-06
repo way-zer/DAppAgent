@@ -7,7 +7,13 @@ GET {{host}}/api/apps
 POST {{host}}/api/apps?name={{app}}
 
 ###分布
-POST {{host}}/api/apps/{{app}}/publish
+POST {{host}}/api/apps/publish
+Host: test.dev.dapp
+Content-Type: application/json
+
+[
+  "test"
+]
 
 ###修改描述信息
 PUT {{host}}/api/apps/{{app}}/desc
@@ -17,7 +23,7 @@ GET {{host}}/api/apps/{{app}}/info
 
 ###查询当前应用信息
 GET {{host}}/api/apps/thisInfo
-Dapp-Addr: {{appAddr}}
+Host: test.dev.dapp
 ###
 POST {{host}}/api/apps/info
 Content-Type: application/json

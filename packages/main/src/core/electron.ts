@@ -46,12 +46,14 @@ export class ElectronHelper {
     await this.setTray();
     protocol.registerStreamProtocol('dapp', (req, callback) => {
       const url = new URL(req.url);
-      const req2 = request(`http://127.0.0.1:${globalConfig.main.port}${url.pathname}`, callback);
-      req2.method = req.method;
-      req2.setHeader('Host', new URL(req.url).hostname + '.dapp');
+      const req2 = request(`http://127.0.0.1:${globalConfig.main.port}${url.pathname}`,{
+        method: req.method,
+        headers: Object.assign({},req.headers,{'Host': new URL(req.url).hostname + '.dapp'}),
+      }, callback);
       req2.on('error', (err) => {
         throw err;
       });
+      req2.write((req.uploadData||[])[0]?.bytes||"")
       req2.end();
     });
     await bootstrap();

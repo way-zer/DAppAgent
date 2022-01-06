@@ -1,5 +1,8 @@
 import {app} from 'electron';
 import {ElectronHelper} from '/@/core/electron';
+import * as SourceMap from 'source-map-support';
+
+SourceMap.install()
 
 const isSingleInstance = app.requestSingleInstanceLock();
 
