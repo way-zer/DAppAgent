@@ -2,7 +2,7 @@ import {app} from 'electron';
 import {ElectronHelper} from '/@/core/electron';
 import * as SourceMap from 'source-map-support';
 
-SourceMap.install()
+SourceMap.install();
 
 const isSingleInstance = app.requestSingleInstanceLock();
 
@@ -93,7 +93,6 @@ app.disableHardwareAcceleration();
 // });
 
 ElectronHelper.init();
-app.whenReady().then(ElectronHelper.afterReady.bind(ElectronHelper));
 
 // Auto-updates
 if (import.meta.env.PROD) {

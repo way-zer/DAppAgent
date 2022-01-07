@@ -40,20 +40,24 @@ export class ElectronHelper {
         window.focus();
       }
     });
+    app.on('window-all-closed', () => {
+      return false;//Keep tray
+    });
+    app.whenReady().then(() => this.afterReady());
   }
 
   static async afterReady() {
     await this.setTray();
     protocol.registerStreamProtocol('dapp', (req, callback) => {
       const url = new URL(req.url);
-      const req2 = request(`http://127.0.0.1:${globalConfig.main.port}${url.pathname}`,{
+      const req2 = request(`http://127.0.0.1:${globalConfig.main.port}${url.pathname}`, {
         method: req.method,
-        headers: Object.assign({},req.headers,{'Host': new URL(req.url).hostname + '.dapp'}),
+        headers: Object.assign({}, req.headers, {'Host': new URL(req.url).hostname + '.dapp'}),
       }, callback);
       req2.on('error', (err) => {
         throw err;
       });
-      req2.write((req.uploadData||[])[0]?.bytes||"")
+      req2.write((req.uploadData || [])[0]?.bytes || '');
       req2.end();
     });
     await bootstrap();
@@ -82,6 +86,11 @@ export class ElectronHelper {
           this.createWindow('dapp://test.dev').catch(e => {
             console.error('Fail to create window', e);
           });
+        },
+      },
+      {
+        label: '退出', click: () => {
+          app.quit();
         },
       },
     ]));
