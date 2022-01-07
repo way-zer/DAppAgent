@@ -19,25 +19,34 @@ export interface AppDesc {
 }
 
 export interface AppMetadata {
-    recordSign?: string;
-    permissions: string[];
-    databases: DataBase[];
-    desc: Partial<AppDesc>;
+  recordSign?: string;
+  permissions: string[];
+  databases: DataBase[];
+  desc: Partial<AppDesc>;
+  services: Record<string, string>;
 }
 
 interface AppsApi {
-    /** @api({permission: 'apps.admin'}) */
-    listPrivate(): Promise<Record<string, { cid: string; prod: string; }>>;
-    /** @api({permission: 'apps.admin'}) */
-    create(name: string): Promise<{ name: string; cid: string; prod: string; recordSign?: string | undefined; permissions: string[]; databases: DataBase[]; desc: Partial<AppDesc>; }>;
-    /** @api({permission: 'apps.admin'}) */
-    info(name: string): Promise<{ name: string; cid: string; prod: string; recordSign?: string | undefined; permissions: string[]; databases: DataBase[]; desc: Partial<AppDesc>; }>;
-    /** @api({permission: 'apps.admin'}) */
-    updateDesc(name: string, desc: object): Promise<void>;
-    /** @api({permission: 'apps.admin'}) */
-    publish(name: string): Promise<void>;
-    /** @api() */
-    thisInfo(): Promise<AppMetadata>;
+  /** @api({permission: 'apps.admin'}) */
+  listPrivate(): Promise<Record<string, { id: string; cid: string; url: string; prod: string; }>>;
+
+  /** @api({permission: 'apps.admin'}) */
+  create(name: string): Promise<{ name: string; id: string; url: string; cid: string; prod: string; recordSign?: string | undefined; permissions: string[]; databases: DataBase[]; desc: Partial<AppDesc>; services: Record<string, string>; }>;
+
+  /** @api({permission: 'apps.admin'}) */
+  info(name: string): Promise<{ name: string; id: string; url: string; cid: string; prod: string; recordSign?: string | undefined; permissions: string[]; databases: DataBase[]; desc: Partial<AppDesc>; services: Record<string, string>; }>;
+
+  /** @api({permission: 'apps.admin'}) */
+  updateDesc(name: string, desc: object): Promise<void>;
+
+  /** @api({permission: 'apps.admin'}) */
+  publish(name: string): Promise<void>;
+
+  /** @api({permission: 'apps.admin'}) */
+  grantPermission(id: string, permissions: string[]): Promise<void>;
+
+  /** @api() */
+  thisInfo(): Promise<AppMetadata>;
 }
 
 export interface Transaction {
@@ -64,23 +73,26 @@ interface CallApi {
      */
     /** @api() */
     request(app: string, service: string, payload: object): Promise<object>;
-    /**
-     * 响应请求
-     * @param id 调用时,平台传入的事务id
-     * @param token 调用时,平台传入的事务token
-     * @param response 返回结果
-     */
-    /** @api() */
-    respond(id: string, token: string, response: object): Promise<void>;
-    /** @api() */
-    pullTransaction(): Promise<Transaction[]>;
-    /**
-     * 心跳延时
-     * 针对长时间请求,例如oauth登录之类需要用户操作的
-     * 需每10s调用一次,保证存活
-     */
-    /** @api() */
-    heartbeat(id: string, token: string): Promise<void>;
+
+  /**
+   * 响应请求
+   * @param id 调用时,平台传入的事务id
+   * @param token 调用时,平台传入的事务token
+   * @param response 返回结果
+   */
+  /** @api() */
+  respond(id: string, token: string, response: object): Promise<void>;
+
+  /** @api() */
+  pullTransaction(token?: string): Promise<Transaction[]>;
+
+  /**
+   * 心跳延时
+   * 针对长时间请求,例如oauth登录之类需要用户操作的
+   * 需每10s调用一次,保证存活
+   */
+  /** @api() */
+  heartbeat(id: string, token: string): Promise<void>;
 }
 
 interface DBApi {
