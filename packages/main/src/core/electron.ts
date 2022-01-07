@@ -33,15 +33,17 @@ export class ElectronHelper {
         },
       },
     ]);
+    app.on('window-all-closed', () => false);//Keep tray
+    app.on('browser-window-created', (_, window) => {
+      this.running.add(window);
+      window.on('closed', () => this.running.delete(window));
+    });
     app.on('second-instance', () => {
       const window = this.running[Symbol.iterator]().next().value;
       if (window) {
         if (window.isMinimized()) window.restore();
         window.focus();
       }
-    });
-    app.on('window-all-closed', () => {
-      return false;//Keep tray
     });
     app.whenReady().then(() => this.afterReady());
   }
@@ -109,8 +111,6 @@ export class ElectronHelper {
       },
     });
     window.on('ready-to-show', () => window.show());
-    window.on('close', () => this.running.delete(window));
-    this.running.add(window);
     await window.loadURL(url);
   }
 }
