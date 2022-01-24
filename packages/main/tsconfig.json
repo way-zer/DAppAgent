@@ -15,6 +15,16 @@
       "vite/client"
     ]
   },
+  "ts-node": {
+    "transpileOnly": true,
+    "experimentalReplAwait": true,
+    "compilerOptions": {
+      "module": "CommonJS"
+    },
+    "require": [
+      "tsconfig-paths/register"
+    ]
+  },
   "include": [
     "./src/**/*.ts"
   ],
