@@ -4,7 +4,9 @@ import {request} from 'http';
 import globalConfig from 'config';
 // import icon from 'config/buildResources/icon.png?url';
 import {useService} from '/@/apis/services';
-import {bootstrap} from '../main';
+import {CoreIPFS} from '/@/core/ipfs';
+import {DBManager} from '/@/core/db';
+import {Apis} from '/@/apis';
 
 let iconPath, preloadPath;
 if (import.meta.env.DEV) {
@@ -45,11 +47,15 @@ export class ElectronHelper {
         window.focus();
       }
     });
+    setTimeout(async () => {
+      await CoreIPFS.start();
+      await DBManager.start();
+    });
     app.whenReady().then(() => this.afterReady());
   }
 
   static async afterReady() {
-    await this.setTray();
+    await Apis.start();
     protocol.registerStreamProtocol('dapp', (req, callback) => {
       const url = new URL(req.url);
       const req2 = request(`http://127.0.0.1:${globalConfig.main.port}${url.pathname}`, {
@@ -62,7 +68,7 @@ export class ElectronHelper {
       req2.write((req.uploadData || [])[0]?.bytes || '');
       req2.end();
     });
-    await bootstrap();
+    await this.setTray();
   }
 
   static async setTray() {
