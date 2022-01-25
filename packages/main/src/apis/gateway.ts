@@ -4,8 +4,8 @@ import readable from 'it-to-stream';
 // @ts-ignore
 import {getType} from 'mime/lite';
 import {CoreIPFS} from '../core/ipfs';
-import {useParam} from './hooks/simple';
-import {useApp, useAppId} from './hooks/useApp';
+import {useContext, useParam} from './hooks/simple';
+import {useApp} from './hooks/useApp';
 import {parseCID} from '/@/util';
 
 @controller()
@@ -15,14 +15,14 @@ export class _Gateway {
     if (path.endsWith('/'))
       path += 'index.html';
     if (path.startsWith('/@/'))
-      return path.substr(2);
+      return path.substring(2);
     else
       return '/public' + path;
   }
 
   @get('/(.*)')
   async get(ctx: DarukContext) {
-    const app = await useApp(useAppId(ctx));
+    const app = await useApp([useContext, ctx]);
     const path = this.resolvePath(ctx.path);
     ctx.type = getType(path);
     ctx.body = readable(await app.getFile(path));

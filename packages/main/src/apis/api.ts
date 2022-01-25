@@ -1,10 +1,11 @@
 import type {DarukContext} from 'daruk';
 import {controller, get, post} from 'daruk';
-import {localContext, useParam} from './hooks/simple';
+import {useContext, useParam} from './hooks/simple';
 import type {ApiMeta} from './services';
 import {services} from './services';
 import {useApp} from './hooks/useApp';
 import Boom from '@hapi/boom';
+import {withContext} from '/@/util/hook';
 
 @controller('/api')
 export class _Api {
@@ -23,9 +24,9 @@ export class _Api {
     if (!apiMeta)
       throw Boom.notFound('method not exist', {serviceName, methodName});
 
-    ctx.body = await localContext.run(ctx, async () => {
+    ctx.body = withContext(async () => {
       return await this.callMethod(apiMeta, service, service[methodName], args);
-    });
+    }, [useContext, ctx]);
   }
 
   async callMethod(meta: ApiMeta, service: any, f: Function, args: any[]) {

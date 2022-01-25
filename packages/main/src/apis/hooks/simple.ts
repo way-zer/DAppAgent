@@ -1,6 +1,6 @@
 import type {DarukContext} from 'daruk';
-import {badRequest} from '@hapi/boom';
-import {AsyncLocalStorage} from 'async_hooks';
+import Boom, {badRequest} from '@hapi/boom';
+import {contextHook} from '/@/util/hook';
 
 export function useParam(ctx: DarukContext, key: string): string {
   return ctx.request['params'][key];
@@ -13,8 +13,7 @@ export function useQuery(ctx: DarukContext, key: string): string {
   return value;
 }
 
-export const localContext = new AsyncLocalStorage<DarukContext>();
-
-export function useContext() {
-  return localContext.getStore()!!;
-}
+export const useContext = contextHook(function (): DarukContext {
+  //use withContext to provide
+  throw Boom.badRequest('No DarukContext in context');
+});
