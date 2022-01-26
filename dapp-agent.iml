@@ -3,8 +3,10 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/packages/main" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/DAppAgent" />
       <excludeFolder url="file://$MODULE_DIR$/expr/DAppAgent" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/main/DAppAgent" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

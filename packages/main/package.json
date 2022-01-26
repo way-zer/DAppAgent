@@ -45,7 +45,6 @@
     "source-map-support": "^0.5.21",
     "ts-morph": "^13.0.2",
     "ts-node": "^10.4.0",
-    "tsconfig-paths": "^3.12.0",
-    "vite": "2.6.14"
+    "tsconfig-paths": "^3.12.0"
   }
 }

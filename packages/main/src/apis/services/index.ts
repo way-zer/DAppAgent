@@ -1,10 +1,11 @@
-export {ExposedService, api, useService} from './_define';
+import {IntegrateApi} from '/@/apis/services/integrate';
 import {api, ExposedService} from './_define';
 import {AppsApi} from './apps';
 import {CallApi} from './call';
 import {DBApi} from './db';
-import {FileApi} from './file';
 import {SystemApi} from './system';
+
+export {ExposedService, api, useService} from './_define';
 
 class TestApi extends ExposedService {
   @api()
@@ -18,8 +19,8 @@ export const services = {
   apps: new AppsApi(),
   call: new CallApi(),
   db: new DBApi(),
-  file: new FileApi(),
   system: new SystemApi(),
+  integrate: new IntegrateApi(),
 };
 
 export type Services = typeof services

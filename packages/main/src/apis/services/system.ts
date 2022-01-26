@@ -1,6 +1,7 @@
 import {api, ExposedService} from '/@/apis/services/index';
 import {CoreIPFS} from '/@/core/ipfs';
 import {DBManager} from '/@/core/db';
+import {ElectronHelper} from '/@/core/electron';
 
 export class SystemApi extends ExposedService {
   @api({permission: 'system.info'})
@@ -24,5 +25,10 @@ export class SystemApi extends ExposedService {
   @api({permission: 'system.admin'})
   async connectPeer(addr: string) {
     await CoreIPFS.inst.swarm.connect(addr);
+  }
+
+  @api({permission: 'system.selectDir'})
+  async selectDir() {
+    return await ElectronHelper.selectDir();
   }
 }

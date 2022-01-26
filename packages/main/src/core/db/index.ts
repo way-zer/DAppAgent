@@ -1,10 +1,10 @@
 import OrbitDB from 'orbit-db';
 import type OrbitDBStore from 'orbit-db-store';
-import {CoreIPFS} from './ipfs';
+import {CoreIPFS} from '../ipfs';
 import memoizee from 'memoizee';
 import Boom, {badRequest} from '@hapi/boom';
-import type {AccessType as AccessType0} from './db/accessController';
-import {MyAccessController} from './db/accessController';
+import type {AccessType as AccessType0} from './accessController';
+import {MyAccessController} from './accessController';
 
 export type DBType = 'docstore' | 'keyvalue' | 'feed' | 'eventlog' | 'counter'
 export type AccessType = AccessType0

@@ -1,9 +1,10 @@
 import {api, ExposedService} from '/@/apis/services/index';
 import Boom from '@hapi/boom';
-import {useApp} from '/@/apis/hooks/useApp';
+import {useApp, useAppId} from '/@/apis/hooks/useApp';
 import {randomUUID} from 'crypto';
-import {AppId, AppManager} from '/@/core/apps';
+import {AppId} from '/@/core/apps';
 import {ElectronHelper} from '/@/core/electron';
+import {withContext} from '/@/util/hook';
 
 /**
  * 跨应用调用接口
@@ -18,7 +19,7 @@ export class CallApi extends ExposedService {
   @api()
   async request(app: string, service: string, payload: object) {
     const from = await useApp();
-    const callApp = await useApp(AppId.fromString(app));
+    const callApp = await withContext(useApp, [useAppId, AppId.fromString(app)]);
     let addr = await callApp.getService(service);
 
     const ts: Transaction = {

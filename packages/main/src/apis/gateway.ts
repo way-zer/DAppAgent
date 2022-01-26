@@ -7,6 +7,7 @@ import {CoreIPFS} from '../core/ipfs';
 import {useContext, useParam} from './hooks/simple';
 import {useApp} from './hooks/useApp';
 import {parseCID} from '/@/util';
+import {withContext} from '/@/util/hook';
 
 @controller()
 @priority(1)
@@ -22,7 +23,7 @@ export class _Gateway {
 
   @get('/(.*)')
   async get(ctx: DarukContext) {
-    const app = await useApp([useContext, ctx]);
+    const app = await withContext(useApp, [useContext, ctx]);
     const path = this.resolvePath(ctx.path);
     ctx.type = getType(path);
     ctx.body = readable(await app.getFile(path));

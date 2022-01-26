@@ -1,88 +1,135 @@
-import {cidBase32} from '/@/util';
-import {api, ExposedService, useService} from '.';
-import {AppId, AppManager} from '/@/core/apps';
-import {useApp, usePrivateApp} from '../hooks/useApp';
-import {CoreIPFS} from '/@/core/ipfs';
+import {api, ExposedService} from '.';
+import {AppId, AppManager, AppMeta} from '/@/core/apps';
+import {useApp, useAppId, useAppModifiable} from '../hooks/useApp';
+import {withContext} from '/@/util/hook';
+import {parseCID, toArray} from '/@/util';
+import assert from 'assert';
 import Boom from '@hapi/boom';
-import {PeerId} from 'ipfs-core';
+import {CoreIPFS} from '/@/core/ipfs';
+import {globSource} from 'ipfs-core';
 
 export class AppsApi extends ExposedService {
-  @api({permission: 'apps.admin'})
-  async listPrivate() {
-    const out = {} as Record<string, { id: string, cid: string, url: string, prod: string }>;
-    const list = await AppManager.list();
-    for (const app of list) {
-      out[app.id.name] = {
-        id: app.id.toString(),
-        url: app.id.url,
-        cid: cidBase32(await app.getCid()),
-        prod: (await app.getProd())?.addr || 'NOT_Publish',
-      };
-    }
-    return out;
-  }
-
-  @api({permission: 'apps.admin'})
-  async create(name: string) {
-    await AppManager.create(name);
-    return this.info(name);
-  }
-
-  static async useLocalApp(name: string) {
-    return await usePrivateApp(new AppId('dev', name));
-  }
-
-  @api({permission: 'apps.admin'})
-  async info(name: string) {
-    const app = await AppsApi.useLocalApp(name);
+  @api()
+  async thisInfo() {
+    const app = await useApp();
     return {
-      ...await app.getMetadata(),
-      name: app.id.name,
+      ...await app.appMeta.get(),
       id: app.id.toString(),
       url: app.id.url,
-      cid: cidBase32(await app.getCid()),
-      prod: (await app.getProd())?.addr || 'NOT_Publish',
+      modifiable: await app.canModify(),
+      publicIds: (await app.publicIds()).map(it => it.toString()),
     };
   }
 
   @api({permission: 'apps.admin'})
-  async updateDesc(name: string, desc: object) {
-    const app = await AppsApi.useLocalApp(name);
-    await app.editMetadata({desc});
+  async list() {
+    const list = await AppManager.list();
+    return await Promise.all(list.map(async app => ({
+      id: app.id.toString(),
+      url: app.id.url,
+      modifiable: await app.canModify(),
+      publicIds: (await app.publicIds()).map(it => it.toString()),
+    })));
   }
 
   @api({permission: 'apps.admin'})
-  async publish(name: string) {
-    const app = await AppsApi.useLocalApp(name);
-    const peerId = CoreIPFS.libp2p.peerId;
-    const appKey = await app.getKey();
-    const appPeerId = await PeerId.createFromPrivKey(appKey.bytes);
-
-    const result = await useService('call').request('sys:beian', 'appRecord', {
-      cid: (await app.getCid()).toString(),
-      id: appPeerId.toString(),
-      appSign: await appKey.sign(appPeerId.id),
-      user: peerId.toString(),
-      userSign: await peerId.privKey.sign(appPeerId.id),
-    }) as any;
-    if (!result.sign)
-      throw Boom.notAcceptable('Fail to get app Sign', {app: appPeerId.toString()});
-    const sign = result.sign as string;
-    await app.editMetadata({recordSign: sign});
-    await CoreIPFS.inst.name.publish(await app.getCid(), {key: app.id.name});
-    await app.verify();
+  async info(id: string) {
+    return withContext(this.thisInfo, [useAppId, AppId.fromString(id)]);
   }
 
   @api({permission: 'apps.admin'})
   async grantPermission(id: string, permissions: string[]) {
-    const app = await AppManager.get(AppId.fromString(id));
+    const app = await withContext(useApp, [useAppId, AppId.fromString(id)]);
     for (const permission of permissions) {
       await app.grantPermission(permission);
     }
   }
 
+  @api({permission: 'apps.admin'})
+  async create(name: string) {
+    const app = await AppManager.create(name);
+    return withContext(this.thisInfo, [useApp, app]);
+  }
+
+  @api({permission: 'apps.admin'})
+  async fork(name: string, fromApp: string) {
+    const from = await withContext(useApp, [useAppId, AppId.fromString(fromApp)]);
+    const app = await AppManager.create(name, from);
+    return withContext(this.thisInfo, [useApp, app]);
+  }
+
+  @api({permission: 'apps.admin'})
+  async updateProgram(id: string, programCid: string) {
+    const app = await withContext(useAppModifiable, [useAppId, AppId.fromString(id)]);
+    const program = parseCID(programCid);
+    await AppManager.updateProgram(app, program);
+    return true;
+  }
+
+  @api({permission: 'apps.admin'})
+  async publish(id: string) {
+    const app = await withContext(useAppModifiable, [useAppId, AppId.fromString(id)]);
+    await AppManager.publish(app);
+  }
+
+  @api({permission: 'apps.admin'})
+  async clone(id: string) {
+    const appId = AppId.fromString(id);
+    const app = await AppManager.clone(appId);
+    return withContext(this.thisInfo, [useApp, app]);
+  }
+
+  @api({permission: 'apps.admin'})
+  async delete(id: string) {
+    const app = await withContext(useApp, [useAppId, AppId.fromString(id)]);
+    return await AppManager.delete(app);
+  }
+
   @api()
-  async thisInfo() {
-    return await (await useApp()).getMetadata();
+  async checkUpdateSelf() {
+    const app = await useApp();
+    return await AppManager.checkUpdate(app);
+  }
+
+  @api({permission: 'apps.admin'})
+  async checkUpdate(id: string) {
+    const app = await withContext(useApp, [useAppId, AppId.fromString(id)]);
+    return withContext(this.checkUpdateSelf, [useApp, app]);
+  }
+
+  @api({permission: 'apps.admin'})
+  async updateDesc(id: string, desc: Partial<Pick<AppMeta, 'name' | 'desc' | 'icon' | 'ext'>>) {
+    const app = await withContext(useAppModifiable, [useAppId, AppId.fromString(id)]);
+    const meta = await app.appMeta.get();
+    const uncheck = desc as any;
+    if (desc.name) {
+      assert(typeof uncheck.name === 'string', Boom.badData('"name" must be string'));
+      meta.name = desc.name;
+    }
+    if (desc.desc) {
+      assert(typeof uncheck.desc === 'string', Boom.badData('"desc" must be string'));
+      meta.desc = desc.desc;
+    }
+    if (desc.icon) {
+      assert(typeof uncheck.icon === 'string', Boom.badData('"icon" must be string'));
+      meta.icon = desc.icon;
+    }
+    if (desc.ext) {
+      assert(typeof uncheck.ext === 'object', Boom.badData('"ext" must be object'));
+      meta.ext = desc.ext;
+    }
+    await app.appMeta.set(meta);
+  }
+
+  @api({permission: 'apps.syncProgram'})
+  async syncProgram(id: string, dir: string) {
+    const app = await withContext(useAppModifiable, [useAppId, AppId.fromString(id)]);
+    const result = await toArray(CoreIPFS.inst.addAll(globSource(dir, '**/*')));
+    const cid = result.find(it => it.path === '/')?.cid;
+    if (!cid)
+      throw Boom.notFound('local dir not found', {dir});
+    await AppManager.updateProgram(app, cid);
+    await app.localData.edit({lastLocalProgramDir: dir});
+    return cid.toString();
   }
 }

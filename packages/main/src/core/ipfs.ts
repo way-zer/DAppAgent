@@ -96,8 +96,4 @@ export class CoreIPFS {
     }
     return this.inst.files.read(path);
   }
-
-  static get config() {
-    return this.inst.config;
-  }
 }

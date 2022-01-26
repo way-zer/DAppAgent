@@ -1,24 +1,11 @@
 import {api, ExposedService} from '/@/apis/services/index';
-import {AccessType, DataBase, DBManager} from '/@/core/db';
-import {AppsApi} from '/@/apis/services/apps';
-import {App} from '/@/core/apps';
 import {useApp} from '/@/apis/hooks/useApp';
 import DocumentStore from 'orbit-db-docstore';
 
 export class DBApi extends ExposedService {
-  @api({permission: 'db.admin'})
-  async create(appId: string, name: string, access: AccessType) {
-    const app = await AppsApi.useLocalApp(appId);
-    const info: DataBase = {name, access, type: 'docstore'};
-    info.addr = await DBManager.create(info);
-    const metadata = await app.getMetadata();
-    await app.editMetadata({databases: (metadata.databases || []).concat(info)});
-    return info;
-  }
-
   /**@internal*/
-  static async useDatabase(dbName: string, app: App | undefined = undefined) {
-    app ||= await useApp();
+  static async useDatabase(dbName: string) {
+    const app = await useApp();
     return await app.getDataBase(dbName);
   }
 

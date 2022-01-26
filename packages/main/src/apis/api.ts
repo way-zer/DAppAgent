@@ -1,5 +1,5 @@
 import type {DarukContext} from 'daruk';
-import {controller, get, post} from 'daruk';
+import {controller, options, post} from 'daruk';
 import {useContext, useParam} from './hooks/simple';
 import type {ApiMeta} from './services';
 import {services} from './services';
@@ -9,7 +9,13 @@ import {withContext} from '/@/util/hook';
 
 @controller('/api')
 export class _Api {
-  @get('/:service/:method')
+  @options('/')
+  async options(ctx: DarukContext) {
+    ctx.status = 200;
+    ctx.response.headers['Access-Control-Allow-Origin'] = ctx.request.origin;
+  }
+
+  // @get('/:service/:method')
   @post('/:service/:method')
   async get(ctx: DarukContext) {
     const args = ctx.request.method === 'GET' ? [] : ctx.request.body;
@@ -32,6 +38,7 @@ export class _Api {
   async callMethod(meta: ApiMeta, service: any, f: Function, args: any[]) {
     if (meta.permission && !await (await useApp()).hasPermission(meta.permission))
       throw Boom.forbidden('app not permission, request first.', {permission: meta.permission});
-    return f.call(service, ...args);
+    const result = await f.call(service, ...args);
+    return result === undefined ? true : result;
   }
 }

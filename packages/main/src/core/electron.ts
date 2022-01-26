@@ -1,4 +1,4 @@
-import {app, BrowserWindow, Menu, protocol, Tray} from 'electron';
+import {app, BrowserWindow, dialog, Menu, protocol, Tray} from 'electron';
 import {URL} from 'url';
 import {request} from 'http';
 import globalConfig from 'config';
@@ -7,6 +7,7 @@ import {useService} from '/@/apis/services';
 import {CoreIPFS} from '/@/core/ipfs';
 import {DBManager} from '/@/core/db';
 import {Apis} from '/@/apis';
+import {AppManager} from '/@/core/apps';
 
 let iconPath, preloadPath;
 if (import.meta.env.DEV) {
@@ -50,6 +51,7 @@ export class ElectronHelper {
     setTimeout(async () => {
       await CoreIPFS.start();
       await DBManager.start();
+      AppManager.startRepublish();
     });
     app.whenReady().then(() => this.afterReady());
   }
@@ -118,5 +120,12 @@ export class ElectronHelper {
     });
     window.on('ready-to-show', () => window.show());
     await window.loadURL(url);
+  }
+
+  static async selectDir() {
+    const result = await dialog.showOpenDialog({
+      properties: ['openDirectory'],
+    });
+    return result.canceled ? null : result.filePaths[0];
   }
 }
