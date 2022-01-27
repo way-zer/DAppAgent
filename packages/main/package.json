@@ -1,7 +1,7 @@
 {
   "name": "main",
   "private": true,
-  "main": "dist/index.cjs",
+  "main": "dist/index.js",
   "engines": {
     "node": ">=14"
   },
@@ -17,13 +17,9 @@
     "daruk": "^2.3.9",
     "electron-devtools-installer": "3.2.0",
     "electron-updater": "4.6.4",
-    "inversify": "^6.0.1",
     "ipfs-core": "^0.12.2",
-    "ipfs-http-response": "^1.0.5",
     "it-last": "^1.0.6",
     "it-to-stream": "^1.0.0",
-    "koa-body": "^4.2.0",
-    "koa-bodyparser": "^4.3.0",
     "libp2p": "^0.34.0",
     "libp2p-crypto": "^0.20.0",
     "memoizee": "^0.4.15",
@@ -32,17 +28,14 @@
     "orbit-db": "^0.28.0",
     "orbit-db-access-controllers": "^0.3.2",
     "orbit-db-store": "^4.3.2",
-    "patch-package": "^6.4.7",
     "readable-stream": "^3.6.0",
-    "vm2": "^3.9.5"
+    "source-map-support": "^0.5.21"
   },
   "devDependencies": {
     "@types/electron-devtools-installer": "2.2.0",
     "@types/memoizee": "^0.4.6",
     "@types/node": "^16.11.10",
     "@types/orbit-db": "workspace:*",
-    "ipfs-core-types": "^0.8.1",
-    "source-map-support": "^0.5.21",
     "ts-morph": "^13.0.2",
     "ts-node": "^10.4.0",
     "tsconfig-paths": "^3.12.0"

@@ -5,7 +5,6 @@ import toBuffer from 'it-to-buffer';
 import {CID} from 'multiformats';
 import {DBManager, DBStore} from '/@/core/db';
 import Boom, {badData, notFound} from '@hapi/boom';
-import {normalizePath} from 'vite';
 import {CoreIPFS} from '/@/core/ipfs';
 import parseDuration from 'parse-duration';
 import {AppId} from '/@/core/apps/appId';
@@ -71,9 +70,9 @@ export class App {
 
   async publishIPNS() {
     if (!(await this.appMeta.get()).recordSign) return;
-    let value: any = await this.appMeta.file.cid();
-    value = new TextEncoder().encode(normalizePath(value as any));
-    const {name} = await CoreIPFS.inst.ipns.publish((await this.privateKey())!!, value, parseDuration(''));
+    const value: any = await this.appMeta.file.cid();
+    const valueB = new TextEncoder().encode(`/ipfs/${value}`);
+    const {name} = await CoreIPFS.inst.ipns.publish((await this.privateKey())!!, valueB, parseDuration(''));
     console.log(`publish App ${this.id.toString()} to /ipns/${name}`);
   }
 

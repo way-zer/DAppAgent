@@ -45,5 +45,5 @@ export type AppLocalMeta = {
     granted: boolean,
     time: Date
   }>,
-  lastLocalProgramDir: string
+  lastLocalProgramDir?: string
 }
