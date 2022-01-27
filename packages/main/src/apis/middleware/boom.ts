@@ -1,6 +1,6 @@
 import type {DarukContext, MiddlewareClass} from 'daruk';
 import {defineMiddleware} from 'daruk';
-import {boomify, isBoom} from '@hapi/boom';
+import Boom from '@hapi/boom';
 import config from 'config';
 
 @defineMiddleware('boom')
@@ -10,15 +10,18 @@ export class BoomMiddleware implements MiddlewareClass {
       try {
         await next();
       } catch (e: any) {
-        if (!isBoom(e)) {
+        if (!Boom.isBoom(e)) {
           console.error(e);
-          e = boomify(e);
+          e = Boom.boomify(e);
         }
-        const {statusCode, headers, payload} = e.output;
+        const ee = e as Boom.Boom;
+        const {statusCode, headers, payload} = ee.output;
         ctx.status = statusCode;
         for (const key in headers)
           ctx.response.headers[key] = headers[key];
         ctx.body = payload;
+        if (!ee.isServer)
+          payload.data = ee.data;
         if (config.main.debug)
           console.log(ctx.toJSON(), e);
       }

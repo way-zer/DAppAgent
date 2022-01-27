@@ -31,10 +31,6 @@ export class IPFSFile {
     return (await this.stat()).cid;
   }
 
-  get write() {
-    return CoreIPFS.inst.files.write.bind(null, this.path);
-  }
-
   async cpFrom(path: IPFSPath) {
     const bak = this.path + '.bak';
     await CoreIPFS.inst.files.mv(this.path, bak).catch(() => null);
@@ -51,6 +47,10 @@ export class IPFSFile {
   async read(): Promise<AsyncIterable<Uint8Array>> {
     await this.stat();//ensure exist
     return CoreIPFS.inst.files.read(this.path);
+  }
+
+  async write(content: Parameters<(typeof CoreIPFS)['inst']['files']['write']>[1]) {
+    await CoreIPFS.inst.files.write(this.path, content, {create: true});
   }
 
   asDagConfig<T extends object>() {

@@ -7,6 +7,7 @@ const simpleProgramMeta: ProgramMeta = {
   name: 'SimpleApp',
   desc: 'Simple App',
   author: 'WayZer',
+  icon: '/favicon.ico',
   ext: {},
   permissions: [],
   databases: [],
@@ -17,8 +18,8 @@ export async function simpleProgram(): Promise<[CID, ProgramMeta]> {
   const files = CoreIPFS.inst.files;
   const tmp = '/tmp/simple';
   await files.mkdir(tmp, {parents: true});
-  await files.write(tmp + '/index.html', 'Hello World!');
-  await files.write(tmp + '/app.json', JSON.stringify(simpleProgramMeta));
+  await files.write(tmp + '/index.html', 'Hello World!', {create: true});
+  await files.write(tmp + '/app.json', JSON.stringify(simpleProgramMeta), {create: true});
   const cid = (await files.stat(tmp)).cid;
   await files.rm(tmp, {recursive: true});
   return [cid, simpleProgramMeta];
@@ -31,7 +32,7 @@ export async function simpleProgram(): Promise<[CID, ProgramMeta]> {
 export async function simpleAppMeta(program?: CID): Promise<AppMeta> {
   let programMeta: ProgramMeta;
   if (program) {
-    programMeta = await new IPFSFile(program + '/app.json').asJsonConfig<ProgramMeta>().get();
+    programMeta = await new IPFSFile(`/ipfs/${program}/app.json`).asJsonConfig<ProgramMeta>().get();
   } else {
     [program, programMeta] = await simpleProgram();
   }
@@ -41,8 +42,8 @@ export async function simpleAppMeta(program?: CID): Promise<AppMeta> {
     icon: programMeta.icon,
     ext: programMeta.ext,
 
-    creator: CoreIPFS.libp2p.peerId,
-    updated: new Date(),
+    creator: CoreIPFS.libp2p.peerId.toB58String(),
+    updated: Date.now(),
     databases: {},
     program,
   };

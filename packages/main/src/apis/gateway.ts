@@ -6,27 +6,26 @@ import {getType} from 'mime/lite';
 import {CoreIPFS} from '../core/ipfs';
 import {useContext, useParam} from './hooks/simple';
 import {useApp} from './hooks/useApp';
-import {parseCID} from '/@/util';
 import {withContext} from '/@/util/hook';
+import Boom from '@hapi/boom';
 
 @controller()
 @priority(1)
 export class _Gateway {
-  resolvePath(path) {
-    if (path.endsWith('/'))
-      path += 'index.html';
-    if (path.startsWith('/@/'))
-      return path.substring(2);
-    else
-      return '/public' + path;
-  }
-
-  @get('/(.*)')
-  async get(ctx: DarukContext) {
-    const app = await withContext(useApp, [useContext, ctx]);
-    const path = this.resolvePath(ctx.path);
-    ctx.type = getType(path);
-    ctx.body = readable(await app.getFile(path));
+  /**通过cid直接读取内容*/
+  @get('/ipfs/:cidPath(.*)')
+  async getByCid(ctx: DarukContext) {
+    const path = '/ipfs/' + useParam(ctx, 'cidPath');
+    try {
+      const stat = await CoreIPFS.inst.files.stat(path);
+      if (stat.type == 'directory')
+        // noinspection ExceptionCaughtLocallyJS
+        throw path + ' is a directory.';
+    } catch (e: any) {
+      throw Boom.badRequest(e.message || e?.toString());
+    }
+    ctx.type = getType(ctx.querystring || 'index.html');
+    ctx.body = readable(CoreIPFS.inst.cat(path));
   }
 
   /**上传任一内容换取CID*/
@@ -43,11 +42,13 @@ export class _Gateway {
     };
   }
 
-  /**通过cid直接读取内容*/
-  @get('/ipfs/:cid/:suffix')
-  async getByCid(ctx: DarukContext) {
-    const cid = parseCID(useParam(ctx, 'cid'));
-    ctx.type = getType(useParam(ctx, 'suffix'));
-    ctx.body = readable(CoreIPFS.inst.cat(cid));
+  @get('/(.*)')
+  async get(ctx: DarukContext) {
+    const app = await withContext(useApp, [useContext, ctx]);
+    let path = ctx.path;
+    if (path.endsWith('/'))
+      path += 'index.html';
+    ctx.type = getType(path);
+    ctx.body = readable(await app.getFile(path));
   }
 }

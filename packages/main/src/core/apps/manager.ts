@@ -17,6 +17,7 @@ export class AppManager {
 
   static async list() {
     if (this._list) return this._list;
+    await CoreIPFS.inst.files.mkdir('/apps').catch(() => undefined);
     return this._list = (await toArray(CoreIPFS.inst.files.ls('/apps')))
       .filter(it => it.type == 'directory')
       .map(file => (new App(AppId.fromString(file.name))));
@@ -41,7 +42,7 @@ export class AppManager {
   static async create(name: string, from?: App): Promise<App> {
     const id = new AppId('dev', name);
     if (await this.get(id) != null)
-      throw Boom.notFound('App exists', {name});
+      throw Boom.conflict('App exists', {name});
     const app = new App(id);
 
     const meta = await simpleAppMeta();
@@ -53,8 +54,8 @@ export class AppManager {
     await app.privateKeyFile.write(keyBS);
 
     await app.localData.set({
-      firstUse: new Date(),
-      lastUse: new Date(),
+      firstUse: Date.now(),
+      lastUse: Date.now(),
       permissions: {},
     });
 
@@ -72,7 +73,7 @@ export class AppManager {
       throw Boom.forbidden('Can\'t modify app', {app: app.id.toString()});
 
     //检查配置文件
-    const meta = await new IPFSFile(program + '/app.json').asJsonConfig<ProgramMeta>().get();
+    const meta = await new IPFSFile(`/ipfs/${program}/app.json`).asJsonConfig<ProgramMeta>().get();
     const unsafe = meta as any;
     assert(typeof unsafe.name === 'string', Boom.badData('"name" must be string'));
     assert(typeof unsafe.desc === 'string', Boom.badData('"desc" must be string'));
@@ -127,8 +128,8 @@ export class AppManager {
     const app = new App(id);
     await app.appMeta.file.cpFrom(addr);
     await app.localData.set({
-      firstUse: new Date(),
-      lastUse: new Date(),
+      firstUse: Date.now(),
+      lastUse: Date.now(),
       permissions: {},
     });
     if (!await app.verify())
@@ -155,7 +156,7 @@ export class AppManager {
   static async delete(app: App) {
     const i = (await this.list()).indexOf(app);
     if (i >= 0) {
-      this._list = this._list?.splice(i);
+      this._list!!.splice(i);
       await CoreIPFS.inst.files.rm(app.appRoot, {recursive: true});
     }
   }

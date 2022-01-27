@@ -30,8 +30,13 @@ export class AppId {
     return false;
   }
 
-  readonly needUpdate = AppIdRegistry.needUpdate.bind(AppIdRegistry, this);
-  readonly resolve = AppIdRegistry.resolve.bind(AppIdRegistry, this);
+  get needUpdate() {
+    return AppIdRegistry.needUpdate(this);
+  }
+
+  async resolve(): Promise<CID | null> {
+    return AppIdRegistry.resolve(this);
+  }
 
   static fromString(id: string) {
     const [type, name] = id.split(':');

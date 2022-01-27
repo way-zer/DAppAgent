@@ -1,31 +1,124 @@
-####App接口
-@app = test2
-###列出
-GET {{host}}/api/apps
+# App接口
 
-###创建
-POST {{host}}/api/apps?name={{app}}
+###当前应用信息
+#TEST ON 2022-01-27
+POST {{host}}/api/apps/thisInfo
+dapp: {{appId}}
 
-###分布
-POST {{host}}/api/apps/publish
-Host: test.dev.dapp
+###列出应用
+#TEST ON 2022-01-27
+POST {{host}}/api/apps/list
+dapp: {{appId}}
+
+###指定应用信息
+#TEST ON 2022-01-27
+POST {{host}}/api/apps/info
+dapp: {{appId}}
 Content-Type: application/json
 
 [
-  "test"
+  "dev:test2"
 ]
 
-###修改描述信息
-PUT {{host}}/api/apps/{{app}}/desc
-
-###查询信息
-GET {{host}}/api/apps/{{app}}/info
-
-###查询当前应用信息
-GET {{host}}/api/apps/thisInfo
-Host: test.dev.dapp
-###
-POST {{host}}/api/apps/info
+###创建应用
+#TEST ON 2022-01-27
+POST {{host}}/api/apps/create
+dapp: {{appId}}
 Content-Type: application/json
 
-["test"]
+[
+  "test2"
+]
+
+###fork应用
+#TEST ON 2022-01-27
+POST {{host}}/api/apps/fork
+dapp: {{appId}}
+Content-Type: application/json
+
+[
+  "test3",
+  "dev:test"
+]
+
+###更新应用程序
+#TEST ON 2022-01-27
+POST {{host}}/api/apps/syncProgram
+dapp: {{appId}}
+Content-Type: application/json
+
+[
+  "dev:test2",
+  "C:/Users/q1048/Projects/dapp-agent/packages/frontend-admin/dist"
+]
+
+###发布应用
+#TEST TODO
+POST {{host}}/api/apps/publish
+dapp: {{appId}}
+Content-Type: application/json
+
+[
+  "dev:test"
+]
+
+###克隆他人应用
+#TEST TODO
+POST {{host}}/api/apps/clone
+dapp: {{appId}}
+Content-Type: application/json
+
+[
+  "ipns:IPNS_ADDR"
+]
+
+###删除应用
+#TEST ON 2022-01-27
+POST {{host}}/api/apps/delete
+dapp: {{appId}}
+Content-Type: application/json
+
+[
+  "dev:test3"
+]
+
+###检查更新(自我)
+#TEST TODO
+POST {{host}}/api/apps/checkUpdateSelf
+dapp: {{appId}}
+
+###检查更新
+#TEST TODO
+POST {{host}}/api/apps/checkUpdate
+dapp: {{appId}}
+Content-Type: application/json
+
+[
+  "dev:test2"
+]
+
+###更新描述
+#TEST ON 2022-01-27
+POST {{host}}/api/apps/updateDesc
+dapp: {{appId}}
+Content-Type: application/json
+
+[
+  "dev:test2",
+  {
+    "desc": "Modified desc"
+  }
+]
+
+###授权
+#TEST ON 2022-01-27
+POST {{host}}/api/apps/grantPermission
+dapp: {{appId}}
+Content-Type: application/json
+
+[
+  "dev:test2",
+  [
+    "apps.admin"
+  ]
+]

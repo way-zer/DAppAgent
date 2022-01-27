@@ -1,9 +1,12 @@
+#TODO 旧API文件,待更新
+
 ####数据库接口
 @testdb= test1
+
 ###
 POST {{host}}/api/dbs
 Content-Type: application/json
-DApp-Addr: {{appAddr}}
+DApp-Addr: {{appId}}
 
 {
   "name": "{{testdb}}",
@@ -15,7 +18,7 @@ DApp-Addr: {{appAddr}}
 @testDataId = a3
 POST {{host}}/api/dbs/{{testdb}}
 Content-Type: application/json
-DApp-Addr: {{appAddr}}
+DApp-Addr: {{appId}}
 
 {
   "_id": "{{testDataId}}",
@@ -26,14 +29,14 @@ DApp-Addr: {{appAddr}}
 ### 查询所有数据
 GET {{host}}/api/dbs/{{testdb}}
 Content-Type: application/json
-DApp-Addr: {{appAddr}}
+DApp-Addr: {{appId}}
 
 ### 获取数据
 GET {{host}}/api/dbs/{{testdb}}/{{testDataId}}
 Content-Type: application/json
-DApp-Addr: {{appAddr}}
+DApp-Addr: {{appId}}
 
 ### 删除数据
 DELETE {{host}}/api/dbs/{{testdb}}/{{testDataId}}
 Content-Type: application/json
-DApp-Addr: {{appAddr}}
+DApp-Addr: {{appId}}

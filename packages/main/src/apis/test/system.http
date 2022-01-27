@@ -1,0 +1,23 @@
+# System接口
+
+### 系统状态
+#TEST ON 2022-01-27
+POST {{host}}/api/system/status
+dapp: {{appId}}
+
+### 连接新Peer
+#TEST ON 2022-01-27
+POST {{host}}/api/system/connectPeer
+dapp: {{appId}}
+Content-Type: application/json
+
+[
+  "/ip4/127.0.0.1/tcp/4001/p2p/12D3KooWSC2Y25bytgfhxdTfHjzFj81HsvqeQNcdSndX6j2Bh4mw"
+]
+
+### 选择目录
+#TEST ON 2022-01-27
+POST {{host}}/api/system/selectDir
+dapp: {{appId}}
+
+###

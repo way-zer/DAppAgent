@@ -2,11 +2,14 @@ import {CID} from 'multiformats';
 import {AccessType, DBType} from '/@/core/db';
 import PeerId from 'peer-id';
 
+type Timestamp = number //Date.now
+type StringFor<T> = string
+
 export type ProgramMeta = {
   name: string,
   desc: string,
   author: string,
-  icon?: string,//相对路径,或ipfs绝对路径
+  icon: string,
   ext: object,//开发者自行配置
   permissions: {
     node: string,
@@ -27,23 +30,23 @@ export type ProgramMeta = {
 export type AppMeta = {
   name: string,//默认使用代码中配置
   desc: string,//默认使用代码中配置
-  icon?: string,//相对路径,或ipfs绝对路径，默认使用代码中配置
+  icon: string,//默认使用代码中配置
   ext: object,//可在fork时作为附加参数,或API修改
 
-  creator: PeerId,//自动填充
+  creator: StringFor<PeerId>,//自动填充
   fork?: CID,//来源cid,fork时自动填充
-  updated: Date,//自动生成
+  updated: Timestamp,//自动生成
   databases: Record<string/*name*/, string/*addr*/>//自动生成
   recordSign?: string,//备案添加
   program: CID,//应用代码根
 }
 
 export type AppLocalMeta = {
-  firstUse: Date,
-  lastUse: Date,
+  firstUse: Timestamp,
+  lastUse: Timestamp,
   permissions: Record<string, {
     granted: boolean,
-    time: Date
+    time: Timestamp
   }>,
   lastLocalProgramDir?: string
 }

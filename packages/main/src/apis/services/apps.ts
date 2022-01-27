@@ -2,22 +2,27 @@ import {api, ExposedService} from '.';
 import {AppId, AppManager, AppMeta} from '/@/core/apps';
 import {useApp, useAppId, useAppModifiable} from '../hooks/useApp';
 import {withContext} from '/@/util/hook';
-import {parseCID, toArray} from '/@/util';
+import {toArray} from '/@/util';
 import assert from 'assert';
 import Boom from '@hapi/boom';
 import {CoreIPFS} from '/@/core/ipfs';
 import {globSource} from 'ipfs-core';
+import path from 'path';
 
 export class AppsApi extends ExposedService {
   @api()
   async thisInfo() {
     const app = await useApp();
+    const meta = await app.appMeta.get();
     return {
-      ...await app.appMeta.get(),
+      ...meta,
       id: app.id.toString(),
       url: app.id.url,
+      fork: meta.fork?.toString(),
+      program: meta.program.toString(),
       modifiable: await app.canModify(),
       publicIds: (await app.publicIds()).map(it => it.toString()),
+      localData: (await app.localData.get()),
     };
   }
 
@@ -56,14 +61,6 @@ export class AppsApi extends ExposedService {
     const from = await withContext(useApp, [useAppId, AppId.fromString(fromApp)]);
     const app = await AppManager.create(name, from);
     return withContext(this.thisInfo, [useApp, app]);
-  }
-
-  @api({permission: 'apps.admin'})
-  async updateProgram(id: string, programCid: string) {
-    const app = await withContext(useAppModifiable, [useAppId, AppId.fromString(id)]);
-    const program = parseCID(programCid);
-    await AppManager.updateProgram(app, program);
-    return true;
   }
 
   @api({permission: 'apps.admin'})
@@ -124,8 +121,9 @@ export class AppsApi extends ExposedService {
   @api({permission: 'apps.syncProgram'})
   async syncProgram(id: string, dir: string) {
     const app = await withContext(useAppModifiable, [useAppId, AppId.fromString(id)]);
-    const result = await toArray(CoreIPFS.inst.addAll(globSource(dir, '**/*')));
-    const cid = result.find(it => it.path === '/')?.cid;
+    dir = path.resolve(dir);
+    const result = await toArray(CoreIPFS.inst.addAll(globSource(dir, '**/*'), {wrapWithDirectory: true, pin: false}));
+    const cid = result.find(it => it.path === '')?.cid;
     if (!cid)
       throw Boom.notFound('local dir not found', {dir});
     await AppManager.updateProgram(app, cid);

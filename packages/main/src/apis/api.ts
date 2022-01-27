@@ -18,27 +18,30 @@ export class _Api {
   // @get('/:service/:method')
   @post('/:service/:method')
   async get(ctx: DarukContext) {
-    const args = ctx.request.method === 'GET' ? [] : ctx.request.body;
+    let args = ctx.request.body;
+    if (typeof args === 'object' && Object.keys(args).length === 0) args = [];//default {}
     if (!Array.isArray(args))
       throw Boom.badRequest('body must be json array', {args});
+
     const serviceName = useParam(ctx, 'service');
     const service = services[serviceName];
     if (!service)
       throw Boom.notFound('service not exist', {serviceName});
+
     const methodName = useParam(ctx, 'method');
     const apiMeta = service.apis.get(methodName);
     if (!apiMeta)
       throw Boom.notFound('method not exist', {serviceName, methodName});
 
-    ctx.body = withContext(async () => {
+    ctx.body = await withContext(async () => {
       return await this.callMethod(apiMeta, service, service[methodName], args);
     }, [useContext, ctx]);
+    ctx.status = 200;
   }
 
   async callMethod(meta: ApiMeta, service: any, f: Function, args: any[]) {
     if (meta.permission && !await (await useApp()).hasPermission(meta.permission))
       throw Boom.forbidden('app not permission, request first.', {permission: meta.permission});
-    const result = await f.call(service, ...args);
-    return result === undefined ? true : result;
+    return f.call(service, ...args);
   }
 }

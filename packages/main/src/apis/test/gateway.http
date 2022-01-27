@@ -1,0 +1,22 @@
+# 网关接口
+
+### 请求CID
+#TEST ON 2022-01-27
+GET {{host}}/ipfs/QmVK4zPx7uFs6mc5g74qa2xVGu1zWxu7GbsdTHMKWYm2Sq/README.html
+
+### 上传单文件
+#TEST ON 2022-01-27
+POST {{host}}/ipfs/upload
+Content-Type: text/plain
+
+TEST FILE
+
+### 获取应用首页
+#TEST ON 2022-01-27
+GET {{host}}
+dapp: {{appId}}
+
+### 获取应用描述文件
+#TEST ON 2022-01-27
+GET {{host}}/app.json
+dapp: {{appId}}

@@ -1,0 +1,13 @@
+{
+  "name": "DappAgent",
+  "desc": "Frontend for DappAgent",
+  "author": "YangK",
+  "icon": "/favicon.ico",
+  "ext": {},
+  "permissions": [
+    "apps.admin",
+    "apps.syncProgram"
+  ],
+  "databases": [],
+  "services": {}
+}

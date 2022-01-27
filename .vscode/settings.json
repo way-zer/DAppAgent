@@ -2,7 +2,7 @@
     "rest-client.environmentVariables": {
         "$shared": {
             "host": "http://localhost:7001",
-            "appAddr": "dev:test"
+            "appId": "dev:test"
         }
     }
 }

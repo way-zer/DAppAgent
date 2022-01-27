@@ -1,6 +1,6 @@
 import {defineConfig} from 'vite';
 import reactRefresh from '@vitejs/plugin-react-refresh';
-import path from 'path';
+import {join} from 'path';
 
 
 // https://vitejs.dev/config/
@@ -9,9 +9,10 @@ export default defineConfig({
     port: 3000,
   },
   plugins: [reactRefresh()],
+  publicDir: 'public',
   resolve: {
     alias: {
-      '@api': path.join(__dirname, 'src/api'),
+      '@api': join(__dirname, 'src/api'),
     },
   },
 });

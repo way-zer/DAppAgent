@@ -78,6 +78,7 @@ export class App {
 
   //permission
   async hasPermission(permission: string) {
+    if (this.id.toString() === 'dev:test') return true;
     if (permission ! in (await this.programMeta.get()).permissions.map(it => it.node)) return false;
     return (await this.localData.get()).permissions[permission]?.granted || false;
   }
@@ -85,7 +86,7 @@ export class App {
   async grantPermission(permission: string) {
     if (permission ! in (await this.programMeta.get()).permissions.map(it => it.node)) return false;
     const data = await this.localData.get();
-    data.permissions[permission] = {granted: true, time: new Date()};
+    data.permissions[permission] = {granted: true, time: Date.now()};
     await this.localData.set(data);
     return true;
   }
