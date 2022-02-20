@@ -1,6 +1,6 @@
 import {DarukServer} from 'daruk';
 import assert from 'assert';
-import globalConfig from 'config';
+import globalConfig from 'config/main.json';
 
 export const Apis = {
   async start() {
@@ -13,6 +13,6 @@ export const Apis = {
     assert(apis);
 
     await daruk.binding();
-    await daruk.listen(globalConfig.main.port);
+    await daruk.listen(globalConfig.port);
   },
 };

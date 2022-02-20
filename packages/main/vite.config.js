@@ -1,5 +1,9 @@
-import {node} from 'config/electron-vendors.config.json';
+import {node} from 'config/vendors.json';
 import {join} from 'path';
+import {rmdirSync} from 'fs';
+import {spawn} from 'child_process';
+import electronPath from 'electron';
+import {build, createLogger, defineConfig, Plugin} from 'vite';
 
 const PACKAGE_ROOT = __dirname;
 
@@ -10,6 +14,7 @@ const PACKAGE_ROOT = __dirname;
  */
 const config = {
   mode: process.env.MODE,
+  plugins: [electron()],
   root: PACKAGE_ROOT,
   resolve: {
     alias: {
@@ -23,9 +28,6 @@ const config = {
     brotliSize: false,
     minify: process.env.MODE !== 'development',
 
-    ssr: true,
-    sourcemap: true,
-    target: `node${node}`,
     lib: {
       entry: 'src/index.ts',
       formats: ['cjs'],
@@ -34,3 +36,53 @@ const config = {
 };
 
 export default config;
+
+/**@return Plugin*/
+function electron() {
+  const logger = createLogger('info', {
+    prefix: '[electron]',
+  });
+  let enable = false;
+  let spawnProcess = null;
+  return {
+    name: 'electron-dev',
+    enforce: 'pre',
+    config(config, {command, mode}) {
+      if (command === 'serve') {
+        enable = true;
+        config.mode = mode;
+        build(config).then();
+        return new Promise(() => {
+        });//never
+      }
+      return defineConfig({
+        build: {
+          ssr: true,
+          sourcemap: true,
+          target: `node${node}`,
+        },
+        server: {watch: {}},
+      });
+    },
+    writeBundle() {
+      if (spawnProcess !== null) {
+        spawnProcess.kill('SIGINT');
+        spawnProcess = null;
+        try {
+          rmdirSync('DAppAgent/repo.lock');
+        } catch (e) {
+        }
+      }
+      if (!enable) return;
+      spawnProcess = spawn(String(electronPath), ['.']);
+      spawnProcess.stdout.on('data', d => d.toString().trim() && logger.warn(d.toString(), {timestamp: true}));
+      spawnProcess.stderr.on('data', d => {
+        const data = d.toString().trim();
+        if (!data) return;
+        // const mayIgnore = stderrFilterPatterns.some((r) => r.test(data));
+        // if (mayIgnore) return;
+        logger.error(data, {timestamp: true});
+      });
+    },
+  };
+}

@@ -1,7 +1,7 @@
 import {app, BrowserWindow, dialog, Menu, protocol, Tray} from 'electron';
 import {URL} from 'url';
 import {request} from 'http';
-import globalConfig from 'config';
+import globalConfig from 'config/main.json';
 // import icon from 'config/buildResources/icon.png?url';
 import {useService} from '/@/apis/services';
 import {CoreIPFS} from '/@/core/ipfs';
@@ -60,7 +60,7 @@ export class ElectronHelper {
     await Apis.start();
     protocol.registerStreamProtocol('dapp', (req, callback) => {
       const url = new URL(req.url);
-      const req2 = request(`http://127.0.0.1:${globalConfig.main.port}${url.pathname}`, {
+      const req2 = request(`http://127.0.0.1:${globalConfig.port}${url.pathname}`, {
         method: req.method,
         headers: Object.assign({}, req.headers, {'Host': new URL(req.url).hostname + '.dapp'}),
       }, callback);
@@ -79,7 +79,7 @@ export class ElectronHelper {
     tray.setContextMenu(Menu.buildFromTemplate([
       {
         label: '打开主窗口', click: () => {
-          this.createWindow(globalConfig.renderer.url).catch(e => {
+          this.createWindow(globalConfig.homeUrl).catch(e => {
             console.error('Fail to create window', e);
           });
         },

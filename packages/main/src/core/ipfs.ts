@@ -4,7 +4,7 @@ import last from 'it-last';
 import type LibP2P from 'libp2p';
 import Boom from '@hapi/boom';
 import {toArray} from '/@/util';
-import config from 'config';
+import config from 'config/main.json';
 
 export interface Secret {
   id: string;
@@ -29,7 +29,7 @@ export class CoreIPFS {
 
   static async start() {
     if (this.instUnsafe) return;
-    const bootstrapConfig = config.main.ipfs.bootstrap;
+    const bootstrapConfig = config.ipfs.bootstrap;
     this.instUnsafe = await create({
       repo: './DAppAgent',
       config: {

@@ -1,0 +1,8 @@
+{
+  "debug": false,
+  "port": 7001,
+  "homeUrl": "http://localhost:3000",
+  "ipfs": {
+    "bootstrap": []
+  }
+}

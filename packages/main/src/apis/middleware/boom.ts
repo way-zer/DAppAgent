@@ -1,7 +1,7 @@
 import type {DarukContext, MiddlewareClass} from 'daruk';
 import {defineMiddleware} from 'daruk';
 import Boom from '@hapi/boom';
-import config from 'config';
+import config from 'config/main.json';
 
 @defineMiddleware('boom')
 export class BoomMiddleware implements MiddlewareClass {
@@ -22,7 +22,7 @@ export class BoomMiddleware implements MiddlewareClass {
         ctx.body = payload;
         if (!ee.isServer)
           payload.data = ee.data;
-        if (config.main.debug)
+        if (config.debug)
           console.log(ctx.toJSON(), e);
       }
     };

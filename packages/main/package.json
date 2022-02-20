@@ -8,13 +8,15 @@
   "scripts": {
     "build": "vite build && pnpm run genType",
     "buildOnly": "vite build",
-    "dev": "node scripts/watch.js",
+    "dev": "vite",
     "typecheck": "tsc --noEmit",
     "genType": "node scripts/genType.js"
   },
   "dependencies": {
     "@hapi/boom": "^9.1.4",
+    "config": "workspace:*",
     "daruk": "^2.3.9",
+    "electron": "16.0.2",
     "electron-devtools-installer": "3.2.0",
     "electron-updater": "4.6.4",
     "ipfs-core": "^0.12.2",
