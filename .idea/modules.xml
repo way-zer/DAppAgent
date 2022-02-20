@@ -3,6 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/dapp-agent.iml" filepath="$PROJECT_DIR$/dapp-agent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/demo-blog/demo-blog.iml" filepath="$PROJECT_DIR$/packages/demo-blog/demo-blog.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/frontend-admin/frontend-admin.iml" filepath="$PROJECT_DIR$/packages/frontend-admin/frontend-admin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/main/main.iml" filepath="$PROJECT_DIR$/packages/main/main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/sdk/sdk.iml" filepath="$PROJECT_DIR$/packages/sdk/sdk.iml" />
     </modules>
   </component>
 </project>

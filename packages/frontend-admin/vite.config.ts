@@ -9,7 +9,6 @@ export default defineConfig({
     port: 3000,
   },
   plugins: [reactRefresh()],
-  publicDir: 'public',
   resolve: {
     alias: {
       '@api': join(__dirname, 'src/api'),

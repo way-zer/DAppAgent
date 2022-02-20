@@ -9,44 +9,36 @@ const {createServer, build} = require('vite');
 const mode = process.env.MODE = process.env.MODE || 'development';
 const appHost = process.argv[2] || 'test.dev.dapp';
 
-/** @type {import('vite').InlineConfig} */
-const sharedConfig = {
-  mode,
-  build: {
-    watch: {},
-  },
-};
-
-const getWatcher = ({name, configFile, writeBundle}) => {
-  return build({
-    ...sharedConfig,
-    configFile,
-    plugins: [{name, writeBundle}],
-  });
-};
+// const getWatcher = ({name, configFile, writeBundle}) => {
+//   return build({
+//     mode,
+//     configFile,
+//     plugins: [{name, writeBundle}],
+//   });
+// };
 
 
-/**
- * Start or restart App when source files are changed
- * @param {import('vite').ViteDevServer} viteDevServer
- * @returns {Promise<import('vite').RollupOutput | Array<import('vite').RollupOutput> | import('vite').RollupWatcher>}
- */
-const setupPreloadPackageWatcher = (viteDevServer) => {
-  return getWatcher({
-    name: 'reload-page-on-preload-package-change',
-    configFile: '../preload/vite.config.js',
-    writeBundle() {
-      viteDevServer.ws.send({
-        type: 'full-reload',
-      });
-    },
-  });
-};
+// /**
+//  * Start or restart App when source files are changed
+//  * @param {import('vite').ViteDevServer} viteDevServer
+//  * @returns {Promise<import('vite').RollupOutput | Array<import('vite').RollupOutput> | import('vite').RollupWatcher>}
+//  */
+// const setupPreloadPackageWatcher = (viteDevServer) => {
+//   return getWatcher({
+//     name: 'reload-page-on-preload-package-change',
+//     configFile: '../preload/vite.config.js',
+//     writeBundle() {
+//       viteDevServer.ws.send({
+//         type: 'full-reload',
+//       });
+//     },
+//   });
+// };
 
 (async () => {
   try {
     const viteDevServer = await createServer({
-      ...sharedConfig,
+      mode,
       server: {
         proxy: {
           '/api/': {
@@ -70,7 +62,7 @@ const setupPreloadPackageWatcher = (viteDevServer) => {
 
     await viteDevServer.listen();
 
-    await setupPreloadPackageWatcher(viteDevServer);
+    // await setupPreloadPackageWatcher(viteDevServer);
   } catch (e) {
     console.error(e);
   }
