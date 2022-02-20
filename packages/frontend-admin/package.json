@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "build": "vite build",
-    "dev": "node ../sdk/scripts/watch.js"
+    "dev": "vite"
   },
   "dependencies": {
     "@ant-design/icons": "^4.6.4",

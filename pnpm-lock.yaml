@@ -7,15 +7,12 @@ importers:
       '@typescript-eslint/eslint-plugin': 5.5.0
       '@typescript-eslint/parser': ^5.5.0
       asar: ^3.1.0
-      config: workspace:^1.0.0
       cross-env: 7.0.3
       eslint: 8.9.0
       lint-staged: 12.3.4
       simple-git-hooks: 2.7.0
       typescript: 4.5.5
       vite: 2.8.4
-    dependencies:
-      config: link:config
     devDependencies:
       '@typescript-eslint/eslint-plugin': 5.5.0_5a40cd8c09fe57450bd1f28bce5dcbcb
       '@typescript-eslint/parser': 5.5.0_eslint@8.9.0+typescript@4.5.5
@@ -26,9 +23,6 @@ importers:
       simple-git-hooks: 2.7.0
       typescript: 4.5.5
       vite: 2.8.4
-
-  config:
-    specifiers: {}
 
   packages/demo-blog:
     specifiers:

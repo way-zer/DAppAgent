@@ -3,16 +3,17 @@
   "private": true,
   "scripts": {
     "build": "vite build",
-    "dev": "node ../sdk/scripts/watch.js",
+    "dev": "vite",
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
-    "vue": "^3.2.23",
-    "vue-router": "4.0.12",
-    "sdk": "workspace:*"
+    "sdk": "workspace:*",
+    "vue": "^3.2.31",
+    "vue-router": "4.0.12"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "1.10.1",
-    "vue-tsc": "0.29.8"
+    "@vitejs/plugin-vue": "^2.2.2",
+    "vite": "2.7.13",
+    "vue-tsc": "^0.31.4"
   }
 }

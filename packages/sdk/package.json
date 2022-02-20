@@ -1,8 +1,19 @@
 {
   "name": "sdk",
-  "module": "index.ts",
+  "types": "dist/*.d.ts",
+  "exports": {
+    "./": "./dist/",
+    "./vite-plugin": "./dist/vite-plugin.js"
+  },
+  "files": [
+    "scripts",
+    "dist",
+    "src",
+    "services.d.ts"
+  ],
   "scripts": {
-    "cli": "node scripts/cli.js"
+    "cli": "node scripts/cli.js",
+    "build": "tsc"
   },
   "dependencies": {
     "axios": "^0.24.0"
