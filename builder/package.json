@@ -1,5 +1,6 @@
 {
   "name": "builder",
+  "private": true,
   "main": "dist/index.cjs",
   "scripts": {
     "compile": "node scripts/compile.js"

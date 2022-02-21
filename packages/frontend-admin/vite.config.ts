@@ -1,6 +1,6 @@
 import {defineConfig} from 'vite';
 import reactRefresh from '@vitejs/plugin-react-refresh';
-import dappAgent from 'sdk/vite-plugin';
+import dappAgent from '@dapp-agent/vite-plugin';
 import {join} from 'path';
 
 

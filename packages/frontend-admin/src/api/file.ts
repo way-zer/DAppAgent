@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useService } from 'sdk';
+import {useService} from '@dapp-agent/sdk';
 
 const testAppName = "test";
 

@@ -7,13 +7,13 @@
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
-    "sdk": "workspace:*",
+    "@dapp-agent/sdk": "workspace:*",
     "vue": "^3.2.31",
     "vue-router": "4.0.12"
   },
   "devDependencies": {
+    "@dapp-agent/vite-plugin": "workspace:^1.0.0",
     "@vitejs/plugin-vue": "^2.2.2",
-    "vite": "2.7.13",
     "vue-tsc": "^0.31.4"
   }
 }

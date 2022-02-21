@@ -12,11 +12,5 @@
       "dom",
       "dom.iterable"
     ]
-  },
-  "include": [
-    "src/**/*.vue",
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "types/**/*.d.ts",
-  ]
+  }
 }

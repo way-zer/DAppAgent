@@ -1,6 +1,6 @@
 import React from 'react';
 import {Divider, message, Popconfirm as PopConfirm, Table} from 'antd';
-import {useService} from 'sdk';
+import {useService} from '@dapp-agent/sdk';
 import usePromise from 'react-use-promise';
 
 const apps = useService('apps');

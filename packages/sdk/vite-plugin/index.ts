@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols
+
 import {mergeConfig, Plugin, UserConfig} from 'vite';
 
 const defaultConfig = {

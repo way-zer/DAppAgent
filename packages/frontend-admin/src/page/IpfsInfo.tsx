@@ -1,7 +1,7 @@
 import {Descriptions} from 'antd';
 import React from 'react';
 import 'antd/dist/antd.css';
-import {useService} from 'sdk';
+import {useService} from '@dapp-agent/sdk';
 import usePromise from 'react-use-promise';
 
 export default function IpfsInfo() {

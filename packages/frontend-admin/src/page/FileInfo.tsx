@@ -2,9 +2,9 @@ import { CaretDownOutlined, DownCircleTwoTone, HomeOutlined } from "@ant-design/
 import { createDirectory, deleteFile, fileInfo, copyFile } from "@api/file";
 import { Input, Button, message, Modal, Table, Space, Dropdown, Menu, Breadcrumb, Row, Col, Divider } from "antd";
 import React, { useEffect, useState } from "react"
-import FileUpload from "./FileUpload";
-import {Services, useService} from '../../../sdk';
-import { ColumnsType } from "antd/lib/table";
+import FileUpload from './FileUpload';
+import {Services, useService} from '@dapp-agent/sdk';
+import {ColumnsType} from 'antd/lib/table';
 
 
 interface columnItem{
