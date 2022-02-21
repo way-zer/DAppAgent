@@ -19,14 +19,14 @@ export default function dappAgent(option0?: Partial<Options>): Plugin {
           proxy: {
             '/api/': {
               target: backend,
-              toProxy: true,
+              autoRewrite: true,
               headers: {
                 'host': appHost,
               },
             },
             '/ipfs/': {
               target: backend,
-              toProxy: true,
+              autoRewrite: true,
               headers: {
                 'host': appHost,
               },
