@@ -1,7 +1,8 @@
-import {Identity, IdentityProvider} from 'orbit-db-identity-provider';
+import {IdentityProvider} from 'orbit-db-identity-provider';
+import Identity from 'orbit-db-identity-provider/src/identity';
 import {UserManager} from '/@/core/users';
 import PeerId from 'peer-id';
-import {base64pad} from 'multiformats/types/src/bases/base64';
+import {base64pad} from 'multiformats/bases/base64';
 
 const type = 'dappAgent';
 
@@ -37,6 +38,6 @@ export class MyIdentityProvider extends IdentityProvider {
 
   static getIdentity() {
     const id = UserManager.self().id;
-    return new Identity(id.toString(), base64pad.baseEncode(id.marshalPubKey()), '', '', type, MyIdentityProvider.inst);
+    return new Identity(id.toString(), base64pad.encode(id.marshalPubKey()), '', '', type, MyIdentityProvider.inst);
   }
 }

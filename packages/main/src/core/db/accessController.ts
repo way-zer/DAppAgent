@@ -1,11 +1,10 @@
 import AccessControllers from 'orbit-db-access-controllers/src/access-controllers';
 import OrbitDBAccessController from 'orbit-db-access-controllers/src/orbitdb-access-controller';
-import type {AccessController} from 'orbit-db-access-controllers/src/access-controller-interface';
 
 export type AccessType = 'private' | 'selfWrite'
 const superAdmins = [];//超级管理,可以编辑所有数据库
 
-export class MyAccessController extends OrbitDBAccessController implements AccessController {
+export class MyAccessController extends OrbitDBAccessController {
   static register() {
     AccessControllers.addAccessController({
       AccessController: MyAccessController,
@@ -24,7 +23,6 @@ export class MyAccessController extends OrbitDBAccessController implements Acces
   }) {
     if (!options.subType) throw new Error('Need subType');
     const ac = new MyAccessController(orbitDB, {
-      ...options,
       admin: [...superAdmins, orbitDB.identity.id],
     });
     ac.subType = options.subType;
