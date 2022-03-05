@@ -1,22 +1,13 @@
 import axios from 'axios';
-import {useService} from '@dapp-agent/sdk';
 
-export async function list() {
-  //return axios.get('/api/apps/list');
-  return useService("apps").listPrivate();
+export async function myAppList() {
+  return [1, 2, 3];
 }
 
-export async function create(name: string) {
-  //return axios.post('/api/apps/create?name=' + name);
-  return useService("apps").create(name);
+export async function recentAppList() {
+  return [4, 5, 6];
 }
 
-export async function info(name: string) {
-  //return axios.get('/api/apps/info?name=' + name);
-  return useService("apps").info(name);
-}
-
-export async function publish(name: string) {
- // return axios.post('/api/apps/publish?name=' + name);
-  return useService("apps").publish(name);
+export async function appInfo(id: string) {
+  return {id: id, name: 'app' + id};
 }

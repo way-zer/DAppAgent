@@ -5,6 +5,7 @@ import memoizee from 'memoizee';
 import Boom, {badRequest} from '@hapi/boom';
 import type {AccessType as AccessType0} from './accessController';
 import {MyAccessController} from './accessController';
+import {MyIdentityProvider} from '/@/core/db/identityProvider';
 
 export type DBType = 'docstore' | 'keyvalue' | 'feed' | 'eventlog' | 'counter'
 export type AccessType = AccessType0
@@ -34,6 +35,7 @@ export class DBManager {
     if (this.instUnsafe) return;
     MyAccessController.register();
     this.instUnsafe = await OrbitDB.createInstance(CoreIPFS.inst, {
+      identity: MyIdentityProvider.getIdentity(),
       directory: './DAppAgent/orbitDB',
     });
     console.log('OrbitDB ID is: ', this.instUnsafe.identity.id);

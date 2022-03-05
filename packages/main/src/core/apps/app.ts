@@ -1,12 +1,10 @@
 import {DagConfigFile, IPFSFile, JsonConfigFile} from '/@/util/ipfsFile';
 import {AppLocalMeta, AppMeta, ProgramMeta} from '/@/core/apps/define';
-import {keys, PrivateKey} from 'libp2p-crypto';
 import toBuffer from 'it-to-buffer';
 import {CID} from 'multiformats';
 import {DBManager, DBStore} from '/@/core/db';
 import Boom, {badData, notFound} from '@hapi/boom';
 import {CoreIPFS} from '/@/core/ipfs';
-import parseDuration from 'parse-duration';
 import {AppId} from '/@/core/apps/appId';
 import PeerId from 'peer-id';
 
@@ -50,10 +48,10 @@ export class App {
     return await this.privateKeyFile.exists();
   }
 
-  async privateKey(): Promise<PrivateKey | null> {
+  async privateKey(): Promise<PeerId | null> {
     try {
       let bs = await toBuffer(await this.privateKeyFile.read());
-      return await keys.unmarshalPrivateKey(bs);
+      return await PeerId.createFromProtobuf(bs);
     } catch (e) {
       return null;
     }
@@ -61,7 +59,7 @@ export class App {
 
   async publicIds(): Promise<AppId[]> {
     if (!await this.canModify()) return [];
-    const ipnsId = await PeerId.createFromPrivKey((await this.privateKey())!!.bytes);
+    const ipnsId = (await this.privateKey())!!;
     return [
       new AppId('ipns', ipnsId.toB58String()),
       new AppId('ipfs', (await this.appMeta.file.cid()).toString()),
@@ -70,10 +68,9 @@ export class App {
 
   async publishIPNS() {
     if (!(await this.appMeta.get()).recordSign) return;
-    const value: any = await this.appMeta.file.cid();
-    const valueB = new TextEncoder().encode(`/ipfs/${value}`);
-    const {name} = await CoreIPFS.inst.ipns.publish((await this.privateKey())!!, valueB, parseDuration(''));
-    console.log(`publish App ${this.id.toString()} to /ipns/${name}`);
+    const cid = await this.appMeta.file.cid();
+    const {ipns} = await CoreIPFS.publishIPNS((await this.privateKey())!!, cid);
+    console.log(`publish App ${this.id.toString()} to ${ipns}`);
   }
 
   //permission

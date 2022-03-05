@@ -9,28 +9,21 @@ import { BrowserRouter } from 'react-router-dom';
 const { Header, Content, Footer, Sider } = Layout;
 
 export default class App extends React.Component {
-	state = {
-		collapsed: false,
-	};
-
-	onCollapse = (collapsed: boolean) => {
-		this.setState({ collapsed });
-	};
-
 
 	render() {
-		const { collapsed } = this.state;
-		return (
-			<BrowserRouter>
-				<Layout style={{ minHeight: '100vh' }}>
-					<Sider collapsible collapsed={collapsed} onCollapse={this.onCollapse}>
-						<AppMenu />
-					</Sider>
-					<Content>
-						<AppRouter />
-					</Content>
-				</Layout>
-			</BrowserRouter>
-		);
-	}
+
+    return (
+      <BrowserRouter>
+        <Layout>
+          <Header style={{position: 'fixed', width: '100%'}}>
+            <AppMenu/>
+          </Header>
+          <Content style={{padding: '0 50px', marginTop: 64}}>
+            <AppRouter/>
+          </Content>
+          <Footer style={{textAlign: 'center'}}>This is footer</Footer>
+        </Layout>
+      </BrowserRouter>
+    );
+  }
 }

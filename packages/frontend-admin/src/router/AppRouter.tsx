@@ -1,25 +1,19 @@
-import { Route, Switch, withRouter, Redirect } from 'react-router-dom'
-import React from 'react'
-import IpfsInfo from '../page/IpfsInfo'
-import AppCreate from '../page/AppCreate'
-import AppInfo from '../page/AppInfo'
-import AppSearch from '../page/AppSearch'
-import FileInfo from '../page/FileInfo'
+import {Route, Switch, withRouter, Redirect} from 'react-router-dom';
+import React from 'react';
+import HomePage from '../page/HomePage';
+import UserSetting from '../page/UserSetting';
 
 
-class AppRouter extends React.Component{
-    render() {
-        return (
-            <Switch>
-                <Route exact path='/ipfsinfo' component={IpfsInfo}/>
-                <Route exact path='/appcreate' component={AppCreate} />
-                <Route exact path='/appinfo' component={AppInfo} />
-                <Route exact path='/appsearch' component={AppSearch} />
-                <Route exact path='/fileinfo' component={FileInfo} />
-                <Redirect to='/ipfsinfo' />
-            </Switch>
-        )
-    }
+class AppRouter extends React.Component {
+  render() {
+    return (
+      <Switch>
+        <Route exact path="/homepage" component={HomePage}/>
+        <Route exact path="/usersetting" component={UserSetting}/>
+        <Redirect to="/homepage"/>
+      </Switch>
+    );
+  }
 }
 
 export default withRouter(AppRouter);

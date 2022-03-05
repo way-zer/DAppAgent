@@ -11,28 +11,28 @@ export type AppLocalMeta = {
 
 interface AppsApi {
   /** @api() */
-  thisInfo(): Promise<{ id: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: object; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
+  thisInfo(): Promise<{ id: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: Record<string, any>; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
 
   /** @api({permission: 'apps.admin'}) */
   list(): Promise<{ id: string; url: string; modifiable: boolean; publicIds: string[]; }[]>;
 
   /** @api({permission: 'apps.admin'}) */
-  info(id: string): Promise<{ id: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: object; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
+  info(id: string): Promise<{ id: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: Record<string, any>; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
 
   /** @api({permission: 'apps.admin'}) */
   grantPermission(id: string, permissions: string[]): Promise<void>;
 
   /** @api({permission: 'apps.admin'}) */
-  create(name: string): Promise<{ id: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: object; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
+  create(name: string): Promise<{ id: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: Record<string, any>; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
 
   /** @api({permission: 'apps.admin'}) */
-  fork(name: string, fromApp: string): Promise<{ id: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: object; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
+  fork(name: string, fromApp: string): Promise<{ id: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: Record<string, any>; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
 
   /** @api({permission: 'apps.admin'}) */
   publish(id: string): Promise<void>;
 
   /** @api({permission: 'apps.admin'}) */
-  clone(id: string): Promise<{ id: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: object; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
+  clone(id: string): Promise<{ id: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: Record<string, any>; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
 
   /** @api({permission: 'apps.admin'}) */
   delete(id: string): Promise<void>;
@@ -43,6 +43,12 @@ interface AppsApi {
   /** @api({permission: 'apps.admin'}) */
   checkUpdate(id: string): Promise<void>;
 
+  /**
+   * desc.ext.* null to delete key
+   */
+  /** @api() */
+  updateDescSelf(desc: typeof AppsApi.DescStruct['TYPE']): Promise<void>;
+
   /** @api({permission: 'apps.admin'}) */
   updateDesc(id: string, desc: Partial<Pick<AppMeta, 'name' | 'desc' | 'icon' | 'ext'>>): Promise<void>;
 
@@ -51,15 +57,15 @@ interface AppsApi {
 }
 
 export interface Transaction {
-    id: string;
-    token: string;
-    from: string;
-    time: number;
-    app: string;
-    service: string;
-    payload: object;
-    timeout?: number;
-    _callback?: (response: object) => void;
+  id: string;
+  token: string;
+  from: string;
+  time: number;
+  app: string;
+  service: string;
+  payload: object;
+  timeout?: number;
+  _callback?: (response: object) => void;
 }
 
 /**
@@ -97,15 +103,20 @@ interface CallApi {
 }
 
 interface DBApi {
-    /** @api({permission: 'db.use'}) */
-    insert<T extends { _id: string }>(dbName: string, body: T): Promise<string>;
-    /** @api({permission: 'db.use'}) */
-    get<T extends { _id: string }>(dbName: string, _id: string): Promise<T>;
-    /** @api({permission: 'db.use'}) */
-    delete<T extends { _id: string }>(dbName: string, _id: string): Promise<string>;
+  /** @api({permission: 'db.use'}) */
+  insert<T extends { _id: string }>(dbName: string, body: T): Promise<string>;
+
+  /** @api({permission: 'db.use'}) */
+  get<T extends { _id: string }>(dbName: string, _id: string): Promise<T>;
+
+  /** @api({permission: 'db.use'}) */
+  delete<T extends { _id: string }>(dbName: string, _id: string): Promise<string>;
 
   /** @api({permission: 'db.use'}) */
   queryAll<T extends { _id: string }>(dbName: string, offset: number = 0, limit: number = -1): Promise<T[]>;
+
+  /** @api({permission: 'db.use'}) */
+  query<T extends { _id: string }>(dbName: string, filter: FilterQuery<T>, offset: number = 0, limit: number = -1): Promise<{ count: number; offset: number; limit: number; data: T[]; }>;
 }
 
 interface TestApi {

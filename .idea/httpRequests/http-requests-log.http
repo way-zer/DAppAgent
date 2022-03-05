@@ -1,470 +1,536 @@
-GET http://localhost:7001/api/db/test3
+GET http://localhost:7001/app.json
+dapp: dev:test
+
+<> 2022-01-27T223842.200.json
+
+###
+
+GET http://localhost:7001/app.jsonn
+dapp: dev:test
+
+<> 2022-01-27T223835.404.json
+
+###
+
+GET http://localhost:7001
+dapp: dev:test
+
+<> 2022-01-27T223803.200.html
+
+###
+
+POST http://localhost:7001/ipfs/upload
+Content-Type: text/plain
+
+TEST FILE
+
+<> 2022-01-27T223649.200.json
+
+###
+
+GET http://localhost:7001/ipfs/QmVK4zPx7uFs6mc5g74qa2xVGu1zWxu7GbsdTHMKWYm2Sq/README.html
+
+<> 2022-01-27T223531.200.html
+
+###
+
+POST http://localhost:7001/api/apps/list
+dapp: dev:test2
+
+<> 2022-01-27T223129.200.json
+
+###
+
+POST http://localhost:7001/api/apps/grantPermission
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: ipfs:bafybeicjlln6y43qskjenehojgme2dubc4gucnowcgcxwyy5kkchcqq4oa
 
-<> 2021-10-20T191156.200.json
+[
+  "dev:test2",
+  ["apps.admin"]
+]
+
+<> 2022-01-27T223124.200.txt
 
 ###
 
-GET http://localhost:7001/api/db/test3
+POST http://localhost:7001/api/apps/list
+dapp: dev:test2
+
+<> 2022-01-27T223102.403.json
+
+###
+
+POST http://localhost:7001/api/apps/info
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: ipfs:bafybeicjlln6y43qskjenehojgme2dubc4gucnowcgcxwyy5kkchcqq4oa
 
-<> 2021-10-20T183435.200.json
+[
+  "dev:test2"
+]
+
+<> 2022-01-27T223034.200.json
 
 ###
 
-GET http://localhost:7001/api/db/test3
+POST http://localhost:7001/api/apps/updateDesc
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: ipfs:bafybeicjlln6y43qskjenehojgme2dubc4gucnowcgcxwyy5kkchcqq4oa
 
-<> 2021-10-20T183401.200.json
+[
+  "dev:test2",
+  {
+    "desc": "Modified desc"
+  }
+]
+
+<> 2022-01-27T223028.200.txt
 
 ###
 
-PUT http://localhost:7001/api/db/test3
+POST http://localhost:7001/api/apps/checkUpdate
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: ipfs:bafybeicjlln6y43qskjenehojgme2dubc4gucnowcgcxwyy5kkchcqq4oa
 
-{
-  "_id": "a3",
-  "otherKey": 123456,
-  "desc": "test"
-}
+[
+  "dev:test2",
+  {
+    "desc": "Modified desc"
+  }
+]
 
-<> 2021-10-20T183353.406.json
+<> 2022-01-27T223001.200.txt
 
 ###
 
-GET http://localhost:7001/api/db/test3
+POST http://localhost:7001/api/apps/info
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: ipfs:bafybeicjlln6y43qskjenehojgme2dubc4gucnowcgcxwyy5kkchcqq4oa
 
-<> 2021-10-20T183339.200.json
+[
+  "dev:test2"
+]
+
+<> 2022-01-27T222735.200.json
 
 ###
 
-PUT http://localhost:7001/api/db/test1
+POST http://localhost:7001/api/apps/checkUpdate
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: ipfs:bafybeicjlln6y43qskjenehojgme2dubc4gucnowcgcxwyy5kkchcqq4oa
 
-{
-  "_id": "a3",
-  "otherKey": 123456,
-  "desc": "test"
-}
+[
+  "dev:test2",
+  {
+    "desc": "Modified desc"
+  }
+]
 
-<> 2021-10-20T183333.200.txt
+<> 2022-01-27T222732.200.txt
 
 ###
 
-GET http://localhost:7001/api/db/test3
+POST http://localhost:7001/api/apps/info
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: ipfs:bafybeicjlln6y43qskjenehojgme2dubc4gucnowcgcxwyy5kkchcqq4oa
 
-<> 2021-10-20T183325.200.json
+[
+  "dev:test2"
+]
+
+<> 2022-01-27T222711.200.json
 
 ###
 
-GET http://localhost:7001/api/db/test3
+POST http://localhost:7001/api/apps/checkUpdate
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: ipfs:bafybeicjlln6y43qskjenehojgme2dubc4gucnowcgcxwyy5kkchcqq4oa
 
-<> 2021-10-20T183318.200.json
+[
+  "dev:test2",
+  {
+    "desc": "Modified desc"
+  }
+]
 
-###
-
-GET http://localhost:7001/../.metadata
-DApp-Addr: ipfs:bafybeicjlln6y43qskjenehojgme2dubc4gucnowcgcxwyy5kkchcqq4oa
-
-<> 2021-10-20T183303.200.txt
-
-###
-
-GET http://localhost:7001/../.metadata
-DApp-Addr: ipfs:bafybeid4b5mqsucve2gp333ijdddwazttkr2o2mnbe67btqx6ucdjg2ts4
-
-<> 2021-10-20T183205.200.txt
+<> 2022-01-27T222708.200.txt
 
 ###
 
-GET http://localhost:7001/../.metadata
-DApp-Addr: ipfs:bafybeid4b5mqsucve2gp333ijdddwazttkr2o2mnbe67btqx6ucdjg2ts4
-
-<> 2021-10-20T183119.200.txt
-
-###
-
-GET http://localhost:7001/api/db/test3
+POST http://localhost:7001/api/apps/info
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: ipfs:bafybeid4b5mqsucve2gp333ijdddwazttkr2o2mnbe67btqx6ucdjg2ts4
 
-<> 2021-10-20T183054.404.json
+[
+  "dev:test2"
+]
+
+<> 2022-01-27T222637.200.json
 
 ###
 
-GET http://localhost:7001/api/db/test1
+POST http://localhost:7001/api/apps/syncProgram
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: ipfs:bafybeid4b5mqsucve2gp333ijdddwazttkr2o2mnbe67btqx6ucdjg2ts4
+
+[
+  "dev:test2",
+  "C:/Users/q1048/Projects/dapp-agent/packages/frontend-admin/dist"
+]
+
+<> 2022-01-27T222319.200.txt
 
 ###
 
-GET http://localhost:7001/api/db/test1
+POST http://localhost:7001/api/apps/info
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: ipfs:bafybeid4b5mqsucve2gp333ijdddwazttkr2o2mnbe67btqx6ucdjg2ts4
 
-<> 2021-10-20T181304.200.json
+[
+  "dev:test2"
+]
 
-###
-
-GET http://localhost:7001/api/apps/list
-
-<> 2021-10-20T181236.200.json
+<> 2022-01-27T221815.200.json
 
 ###
 
-GET http://localhost:7001/api/db/test1
+POST http://localhost:7001/api/apps/syncProgram
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: ipfs:bafybeid4b5mqsucve2gp333ijdddwazttkr2o2mnbe67btqx6ucdjg2ts4
 
-<> 2021-10-20T181143.200.json
+[
+  "dev:test2",
+  "C:/Users/q1048/Projects/dapp-agent/packages/frontend-admin/dist"
+]
+
+<> 2022-01-27T221528.404.json
 
 ###
 
-GET http://localhost:7001/api/db/test1
+POST http://localhost:7001/api/apps/syncProgram
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: ipfs:bafybeid4b5mqsucve2gp333ijdddwazttkr2o2mnbe67btqx6ucdjg2ts4
 
-<> 2021-10-20T181128.200.json
+[
+  "dev:test2",
+  "C:/Users/q1048/Projects/dapp-agent/packages/frontend-admin/dist"
+]
 
 ###
 
-GET http://localhost:7001/api/db/test1
+POST http://localhost:7001/api/apps/syncProgram
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: dev:test
 
-<> 2021-10-20T181123.200.json
+[
+  "dev:test2",
+  "C:/Users/q1048/Projects/dapp-agent/packages/frontend-admin/dist"
+]
 
-###
-
-GET http://localhost:7001/api/ipfs/status
-
-<> 2021-10-20T180956.200.txt
+<> 2022-01-27T221201.404.json
 
 ###
 
-GET http://localhost:7001/api/ipfs/status
-
-<> 2021-10-20T180949.200.txt
-
-###
-
-GET http://localhost:7001/api/ipfs/status
-
-###
-
-GET http://localhost:7001/api/ipfs/status
-
-###
-
-GET http://localhost:7001/api/ipfs/status
-
-<> 2021-10-20T180640.200.txt
-
-###
-
-GET http://localhost:7001/api/db/test1
+POST http://localhost:7001/api/apps/syncProgram
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: dev:test
 
-<> 2021-10-20T174047.200.json
+[
+  "dev:test2",
+  "C:/Users/q1048/Projects/dapp-agent/packages/frontend-admin/dist"
+]
+
+<> 2022-01-27T221024.404.json
 
 ###
 
-DELETE http://localhost:7001/api/db/test1/a3
+POST http://localhost:7001/api/apps/syncProgram
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: dev:test
 
-<> 2021-10-20T174042.200.txt
+[
+  "dev:test2",
+  "C:/Users/q1048/Projects/dapp-agent/packages/frontend-admin/dist"
+]
+
+<> 2022-01-27T220736.404.json
 
 ###
 
-GET http://localhost:7001/api/db/test1/a3
+POST http://localhost:7001/api/apps/syncProgram
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: dev:test
 
-<> 2021-10-20T174033.200.json
+[
+  "dev:test2",
+  "C:/Users/q1048/Projects/dapp-agent/packages/frontend-admin/dist"
+]
+
+<> 2022-01-27T220649.404.json
 
 ###
 
-GET http://localhost:7001/api/db/test1
+POST http://localhost:7001/api/apps/syncProgram
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: dev:test
 
-<> 2021-10-20T174029.200.json
+[
+  "dev:test2",
+  "C:/Users/q1048/Projects/dapp-agent/packages/frontend-admin/dist"
+]
+
+<> 2022-01-27T220546.404.json
 
 ###
 
-PUT http://localhost:7001/api/db/test1
+POST http://localhost:7001/api/apps/syncProgram
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: dev:test
 
-{
-  "_id": "a3",
-  "otherKey": 123456,
-  "desc": "test"
-}
+[
+  "dev:test2",
+  "C:/Users/q1048/Projects/dapp-agent/packages/frontend-admin/dist"
+]
 
-<> 2021-10-20T174024.200.txt
+<> 2022-01-27T220344.404.json
 
 ###
 
-GET http://localhost:7001/api/db/test1
+POST http://localhost:7001/api/apps/thisInfo
+dapp: dev:test
+
+<> 2022-01-27T215850.200.json
+
+###
+
+POST http://localhost:7001/api/apps/info
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: dev:test
 
-<> 2021-10-20T174011.200.json
+[
+  "dev:test3"
+]
+
+<> 2022-01-27T215832.200.json
 
 ###
 
-GET http://localhost:7001/api/db/test1
+POST http://localhost:7001/api/apps/fork
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: dev:test
+
+[
+  "test3",
+  "dev:test"
+]
+
+<> 2022-01-27T215722.200.json
 
 ###
 
-POST http://localhost:7001/api/db/test1/del
+POST http://localhost:7001/api/apps/delete
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: dev:test
+
+[
+  "dev:test3"
+]
+
+<> 2022-01-27T215713.200.txt
 
 ###
 
-POST http://localhost:7001/api/db/test1/del
+POST http://localhost:7001/api/apps/fork
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: dev:test
 
-<> 2021-10-20T172123.400.json
+[
+  "test3",
+  "dev:test"
+]
+
+<> 2022-01-27T215540.404.json
 
 ###
 
-GET http://localhost:7001/api/db/query?db=test1
+POST http://localhost:7001/api/apps/delete
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: dev:test
 
-<> 2021-10-20T172051.200.json
+[
+  "dev:test3"
+]
+
+<> 2022-01-27T215528.200.txt
 
 ###
 
-POST http://localhost:7001/api/db/action
+POST http://localhost:7001/api/apps/fork
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: dev:test
 
-{
-  "name": "test1",
-  "op": "put",
-  "args": [
-    {
-      "_id": "a2",
-      "otherKey": 123456,
-      "desc": "test"
-    }
-  ]
-}
+[
+  "test3",
+  "dev:test"
+]
 
-<> 2021-10-20T172043.200.txt
+<> 2022-01-27T215428.404.json
 
 ###
 
-POST http://localhost:7001/api/db/action
+POST http://localhost:7001/api/apps/list
+dapp: dev:test
+
+<> 2022-01-27T215424.200.json
+
+###
+
+POST http://localhost:7001/api/apps/delete
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: dev:test
 
-{
-  "name": "test1",
-  "op": "get",
-  "args": ["a"]
-}
+[
+  "dev:test3"
+]
 
-<> 2021-10-20T170835.200.json
+<> 2022-01-27T215416.200.txt
 
 ###
 
-GET http://localhost:7001/api/db/query?db=test1
+POST http://localhost:7001/api/apps/list
+dapp: dev:test
+
+<> 2022-01-27T215245.200.json
+
+###
+
+POST http://localhost:7001/api/apps/fork
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: dev:test
 
-<> 2021-10-20T170611.200.json
+[
+  "test3",
+  "dev:test"
+]
+
+<> 2022-01-27T215232.404.json
 
 ###
 
-GET http://localhost:7001/api/db/query?db=test1
+POST http://localhost:7001/api/apps/fork
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: dev:test
 
-<> 2021-10-20T170142.200.json
+[
+  "test3",
+  "dev:test"
+]
+
+<> 2022-01-27T214855.404.json
 
 ###
 
-GET http://localhost:7001/api/db/query?db=test1
+POST http://localhost:7001/api/apps/list
+dapp: dev:test
+
+<> 2022-01-27T213920.200.json
+
+###
+
+POST http://localhost:7001/api/apps/create
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: dev:test
+
+[
+  "test2"
+]
+
+<> 2022-01-27T213911.200.json
 
 ###
 
-POST http://localhost:7001/api/db/action
+POST http://localhost:7001/api/apps/info
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: dev:test
 
-{
-  "name": "test1",
-  "op": "all",
-  "args": []
-}
+[
+  "dev:test"
+]
 
-<> 2021-10-20T164902.406.json
+<> 2022-01-27T213904.200.json
 
 ###
 
-POST http://localhost:7001/api/db/action
+POST http://localhost:7001/api/apps/thisInfo
+dapp: dev:test
+
+<> 2022-01-27T213644.200.json
+
+###
+
+POST http://localhost:7001/api/apps/list
+dapp: dev:test
+
+<> 2022-01-27T213640.200.json
+
+###
+
+POST http://localhost:7001/api/apps/delete
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: dev:test
 
-{
-  "name": "test1",
-  "op": "query",
-  "args": [{"otherKey": 123456}]
-}
+[
+  "dev:test"
+]
 
-<> 2021-10-20T145434.406.json
+<> 2022-01-27T213621.200.txt
 
 ###
 
-POST http://localhost:7001/api/db/action
+POST http://localhost:7001/api/apps/list
+dapp: dev:test
+
+<> 2022-01-27T213611.200.json
+
+###
+
+POST http://localhost:7001/api/apps/thisInfo
+dapp: dev:test
+
+<> 2022-01-27T213515.200.json
+
+###
+
+POST http://localhost:7001/api/apps/list
+dapp: dev:test
+
+<> 2022-01-27T213435.200.json
+
+###
+
+POST http://localhost:7001/api/apps/delete
+dapp: dev:test
 Content-Type: application/json
-DApp-Addr: dev:test
 
-{
-  "name": "test1",
-  "op": "get",
-  "args": ["a"]
-}
+[
+  "dev:test"
+]
 
-<> 2021-10-20T145335.200.json
+<> 2022-01-27T213413.200.txt
 
 ###
 
-POST http://localhost:7001/api/db/action
-Content-Type: application/json
-DApp-Addr: dev:test
+POST http://localhost:7001/api/apps/list
+dapp: dev:test
 
-{
-  "name": "test1",
-  "op": "put",
-  "args": [{
-    "_id": "a",
-    "otherKey": 123456,
-    "desc": "test"
-  }]
-}
-
-<> 2021-10-20T145331.200.txt
+<> 2022-01-27T213413.404.json
 
 ###
 
-POST http://localhost:7001/api/db/action
-Content-Type: application/json
-DApp-Addr: dev:test
+POST http://localhost:7001/api/apps/list
+dapp: dev:test
 
-{
-  "name": "test1",
-  "op": "get",
-  "args": ["a"]
-}
-
-<> 2021-10-20T145322.200.json
-
-###
-
-POST http://localhost:7001/api/db/action
-Content-Type: application/json
-DApp-Addr: dev:test
-
-{
-  "name": "test1",
-  "op": "put",
-  "args": [{
-    "_id": "a",
-    "desc": "test"
-  }]
-}
-
-<> 2021-10-20T145216.200.txt
-
-###
-
-POST http://localhost:7001/api/db/action
-Content-Type: application/json
-DApp-Addr: dev:test
-
-{
-  "name": "test1",
-  "op": "put",
-  "args": [{
-    "_id": "a",
-    "desc": "test"
-  }]
-}
-
-###
-
-POST http://localhost:7001/api/db/action
-Content-Type: application/json
-DApp-Addr: dev:test
-
-{
-  "name": "test1",
-  "op": "put",
-  "args": [{
-    "_id": "a",
-    "desc": "test"
-  }]
-}
-
-<> 2021-10-20T145006.406.json
-
-###
-
-POST http://localhost:7001/api/db/action
-Content-Type: application/json
-DApp-Addr: dev:test
-
-{
-  "name": "test1",
-  "op": "put",
-  "args": [{
-    "_id": "a",
-    "desc": "test"
-  }]
-}
-
-<> 2021-10-20T144931.406.json
-
-###
-
-GET http://localhost:7001/../.metadata
-DApp-Addr: dev:test
-
-<> 2021-10-20T144832.200.txt
-
-###
-
-GET http://localhost:7001/../.metadata
-DApp-Addr: dev:test
-
-###
-
-GET http://localhost:7002/../.metadata
-DApp-Addr: dev:test
+<> 2022-01-27T213335.200.json
 
 ###
 

@@ -3,11 +3,12 @@ import {AppId, AppManager, AppMeta} from '/@/core/apps';
 import {useApp, useAppId, useAppModifiable} from '../hooks/useApp';
 import {withContext} from '/@/util/hook';
 import {toArray} from '/@/util';
-import assert from 'assert';
 import Boom from '@hapi/boom';
 import {CoreIPFS} from '/@/core/ipfs';
 import {globSource} from 'ipfs-core';
 import path from 'path';
+import {any, record, string} from 'superstruct';
+import {assertStruct, partialObject} from '/@/apis/hooks/assertStruct';
 
 export class AppsApi extends ExposedService {
   @api()
@@ -94,28 +95,37 @@ export class AppsApi extends ExposedService {
     return withContext(this.checkUpdateSelf, [useApp, app]);
   }
 
+  static DescStruct = partialObject({
+    name: string(),
+    desc: string(),
+    icon: string(),
+    ext: record(string(), any()),
+  });
+
+  /**
+   * desc.ext.* null to delete key
+   */
+  @api()
+  async updateDescSelf(desc: typeof AppsApi.DescStruct['TYPE']) {
+    desc = assertStruct(AppsApi.DescStruct, desc);
+    const app = await useAppModifiable();
+    const meta = await app.appMeta.get();
+    if (desc.ext) {
+      for (const key in desc.ext) {
+        if (desc.ext[key] === null)
+          delete meta.ext[key];
+        else
+          meta.ext[key] = desc.ext[key];
+      }
+      delete desc.ext;
+    }
+    Object.assign(meta, desc);
+    await app.appMeta.set(meta);
+  }
+
   @api({permission: 'apps.admin'})
   async updateDesc(id: string, desc: Partial<Pick<AppMeta, 'name' | 'desc' | 'icon' | 'ext'>>) {
-    const app = await withContext(useAppModifiable, [useAppId, AppId.fromString(id)]);
-    const meta = await app.appMeta.get();
-    const uncheck = desc as any;
-    if (desc.name) {
-      assert(typeof uncheck.name === 'string', Boom.badData('"name" must be string'));
-      meta.name = desc.name;
-    }
-    if (desc.desc) {
-      assert(typeof uncheck.desc === 'string', Boom.badData('"desc" must be string'));
-      meta.desc = desc.desc;
-    }
-    if (desc.icon) {
-      assert(typeof uncheck.icon === 'string', Boom.badData('"icon" must be string'));
-      meta.icon = desc.icon;
-    }
-    if (desc.ext) {
-      assert(typeof uncheck.ext === 'object', Boom.badData('"ext" must be object'));
-      meta.ext = desc.ext;
-    }
-    await app.appMeta.set(meta);
+    await withContext(this.updateDescSelf.bind(this, desc), [useAppId, AppId.fromString(id)]);
   }
 
   @api({permission: 'apps.syncProgram'})

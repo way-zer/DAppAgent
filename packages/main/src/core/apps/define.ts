@@ -10,7 +10,7 @@ export type ProgramMeta = {
   desc: string,
   author: string,
   icon: string,
-  ext: object,//开发者自行配置
+  ext: Record<string, any>,//开发者自行配置
   permissions: {
     node: string,
     desc: string,
@@ -31,7 +31,7 @@ export type AppMeta = {
   name: string,//默认使用代码中配置
   desc: string,//默认使用代码中配置
   icon: string,//默认使用代码中配置
-  ext: object,//可在fork时作为附加参数,或API修改
+  ext: Record<string, any>,//可在fork时作为附加参数,或API修改
 
   creator: StringFor<PeerId>,//自动填充
   fork?: CID,//来源cid,fork时自动填充

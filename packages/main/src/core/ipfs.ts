@@ -5,11 +5,9 @@ import type LibP2P from 'libp2p';
 import Boom from '@hapi/boom';
 import {toArray} from '/@/util';
 import config from 'config/main.json';
-
-export interface Secret {
-  id: string;
-  name: string;
-}
+import PeerId from 'peer-id';
+import {CID} from 'multiformats';
+import parseDuration from 'parse-duration';
 
 type FileContent = AsyncIterable<Uint8Array>
 
@@ -30,6 +28,7 @@ export class CoreIPFS {
   static async start() {
     if (this.instUnsafe) return;
     const bootstrapConfig = config.ipfs.bootstrap;
+    // @ts-ignore
     this.instUnsafe = await create({
       repo: './DAppAgent',
       config: {
@@ -83,6 +82,13 @@ export class CoreIPFS {
         throw Boom.notFound('Fail to resolve IPNS', {addr});
       }
     return addr;
+  }
+
+  static async publishIPNS(key: PeerId, cid: CID, duration: string = '2d') {
+    const ipfs = `/ipfs/${cid}`;
+    const encoded = new TextEncoder().encode(ipfs);
+    const {name} = await this.inst.ipns.publish(key.privKey, encoded, parseDuration(duration));
+    return {ipfs, ipns: `/ipns/${name}`};
   }
 
   static async getFile(path0: string): Promise<FileContent> {

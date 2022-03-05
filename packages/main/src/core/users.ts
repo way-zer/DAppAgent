@@ -1,32 +1,36 @@
-import type {Secret} from './ipfs';
 import {CoreIPFS} from './ipfs';
-
-
-export type User = Secret
+import PeerId from 'peer-id';
+import {DagConfigFile, IPFSFile} from '/@/util/ipfsFile';
+import Boom from '@hapi/boom';
 
 export interface UserMetadata {
   verifySign?: string;
 }
 
+export class User {
+  readonly metadataFile: DagConfigFile<UserMetadata>;
+
+  constructor(public readonly id: PeerId) {
+    this.metadataFile = new IPFSFile(`/ipns/${id.toB58String()}`).asDagConfig<UserMetadata>();
+  }
+
+  async updateMetadata(value: UserMetadata) {
+    if (!this.id.privKey) throw Boom.forbidden('Can only update self');
+    const cid = await CoreIPFS.inst.dag.put(value);
+    await CoreIPFS.publishIPNS(this.id, cid);
+  }
+}
+
+/** 储存用户信息及所有PeerId/密钥 */
 export class UserManager {
   static verifier: (app: User) => Promise<boolean> = async () => true;
 
-    static async self(): Promise<User> {
-      return CoreIPFS.inst.key.info('self');
-    }
+  static self() {
+    return new User(CoreIPFS.libp2p.peerId);
+  }
 
-    static async verify() {
-      const user = await this.self();
-      return UserManager.verifier(user);
-    }
-
-    /**
-     * @param user0 用户,留空为自己
-     */
-    static async getMetadata(user0?: User): Promise<UserMetadata> {
-      const user = user0 || await this.self();
-      throw '';/*TODO
-         通过metadata反JSON
-     */
-    }
+  static async verify() {
+    const user = await this.self();
+    return UserManager.verifier(user);
+  }
 }

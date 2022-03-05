@@ -8,12 +8,20 @@
   },
   "dependencies": {
     "@dapp-agent/sdk": "workspace:*",
+    "@vicons/utils": "^0.1.4",
+    "axios": "^0.26.0",
+    "highlight.js": "^11.4.0",
+    "md-editor-v3": "^1.10.2",
+    "naive-ui": "^2.25.2",
     "vue": "^3.2.31",
+    "vue-promised": "^2.2.0",
     "vue-router": "4.0.12"
   },
   "devDependencies": {
     "@dapp-agent/vite-plugin": "workspace:^1.0.0",
     "@vitejs/plugin-vue": "^2.2.2",
+    "stylus": "^0.54.8",
+    "unplugin-vue-components": "^0.17.19",
     "vue-tsc": "^0.31.4"
   }
 }

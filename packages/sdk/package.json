@@ -5,11 +5,11 @@
   "types": "dist/index.d.ts",
   "type": "module",
   "files": [
-    "dist",
-    "services.d.ts"
+    "dist"
   ],
   "scripts": {
-    "build": "tsc"
+    "build": "tsc && pnpm run cpDts",
+    "cpDts": "cp services.d.ts dist || copy services.d.ts dist"
   },
   "dependencies": {
     "axios": "^0.24.0"

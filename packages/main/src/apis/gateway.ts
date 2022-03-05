@@ -33,8 +33,9 @@ export class _Gateway {
   async upload(ctx: DarukContext) {
     const ipfs = CoreIPFS.inst;
     let body = ctx.request.body;
-    if (typeof body === 'object') body = JSON.stringify(body);
-    body = body || ctx.req; // for binary
+    if (ctx.request.type == 'application/octet-stream')
+      body = ctx.req;
+    else if (typeof body === 'object') body = JSON.stringify(body);
     const res = await ipfs.add({content: body}, {pin: false});
     ctx.body = {
       cid: res.cid.toString(),

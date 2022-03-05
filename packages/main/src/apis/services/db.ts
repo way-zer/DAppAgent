@@ -1,6 +1,7 @@
 import {api, ExposedService} from '/@/apis/services/index';
 import {useApp} from '/@/apis/hooks/useApp';
 import DocumentStore from 'orbit-db-docstore';
+import ruleJudgment, {FilterQuery} from 'rule-judgment';
 
 export class DBApi extends ExposedService {
   /**@internal*/
@@ -36,5 +37,21 @@ export class DBApi extends ExposedService {
     const db = await DBApi.useDatabase(dbName) as DocumentStore<T>;
     return db.query(() => true)
       .slice(offset, limit === -1 ? undefined : (offset + limit));
+  }
+
+  @api({permission: 'db.use'})
+  async query<T extends { _id: string }>(
+    dbName: string,
+    filter: FilterQuery<T>,
+    offset: number = 0,
+    limit: number = -1,
+  ) {
+    const db = await DBApi.useDatabase(dbName) as DocumentStore<T>;
+    const result = db.query(ruleJudgment<T>(filter as any));
+    return {
+      count: result.length,
+      offset, limit,
+      data: result.slice(offset, limit === -1 ? undefined : (offset + limit)),
+    };
   }
 }

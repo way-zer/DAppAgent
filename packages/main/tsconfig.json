@@ -12,7 +12,8 @@
     "noImplicitAny": false,
     "forceConsistentCasingInFileNames": true,
     "types": [
-      "vite/client"
+      "vite/client",
+      "@types/orbit-db"
     ]
   },
   "ts-node": {

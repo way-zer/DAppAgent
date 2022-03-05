@@ -6,11 +6,11 @@ import {ProgramMeta} from '/@/core/apps/define';
 import {AppId} from '/@/core/apps/appId';
 import Boom, {forbidden} from '@hapi/boom';
 import {simpleAppMeta} from '/@/core/apps/simpleApp';
-import {keys} from 'libp2p-crypto';
 import {IPFSFile} from '/@/util/ipfsFile';
 import assert from 'assert';
 import {DBManager} from '/@/core/db';
 import {useService} from '/@/apis/services';
+import PeerId from 'peer-id';
 
 export class AppManager {
   private static _list?: App[];
@@ -49,9 +49,8 @@ export class AppManager {
     if (from) meta.fork = await from.appMeta.file.cid();
     await app.appMeta.set(meta);
 
-    const key = await keys.generateKeyPair('Ed25519');
-    const keyBS = keys.marshalPrivateKey(key);
-    await app.privateKeyFile.write(keyBS);
+    const key = await PeerId.create({keyType: 'Ed25519'});
+    await app.privateKeyFile.write(key.marshal());
 
     await app.localData.set({
       firstUse: Date.now(),

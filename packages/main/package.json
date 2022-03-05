@@ -15,7 +15,7 @@
   "dependencies": {
     "@hapi/boom": "^9.1.4",
     "config": "workspace:*",
-    "daruk": "^2.3.9",
+    "daruk": "^2.3.11",
     "electron": "16.0.2",
     "electron-devtools-installer": "3.2.0",
     "electron-updater": "4.6.4",
@@ -26,20 +26,23 @@
     "libp2p-crypto": "^0.20.0",
     "memoizee": "^0.4.15",
     "mime": "^3.0.0",
-    "multiformats": "^9.4.14",
-    "orbit-db": "^0.28.0",
+    "multiformats": "^9.6.4",
+    "orbit-db": "^0.28.3",
     "orbit-db-access-controllers": "^0.3.2",
-    "orbit-db-store": "^4.3.2",
+    "orbit-db-identity-provider": "^0.4.0",
+    "orbit-db-store": "^4.3.3",
     "readable-stream": "^3.6.0",
-    "source-map-support": "^0.5.21"
+    "rule-judgment": "^1.1.5",
+    "source-map-support": "^0.5.21",
+    "superstruct": "^0.15.3"
   },
   "devDependencies": {
     "@types/electron-devtools-installer": "2.2.0",
-    "@types/memoizee": "^0.4.6",
-    "@types/node": "^16.11.10",
+    "@types/memoizee": "^0.4.7",
+    "@types/node": "^16.11.26",
     "@types/orbit-db": "workspace:*",
-    "ts-morph": "^13.0.2",
-    "ts-node": "^10.4.0",
+    "ts-morph": "^13.0.3",
+    "ts-node": "^10.5.0",
     "tsconfig-paths": "^3.12.0"
   }
 }

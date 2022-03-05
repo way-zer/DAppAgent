@@ -1,8 +1,8 @@
 import {ExposedService, useService} from '/@/apis/services/_define';
 import {App} from '/@/core/apps';
 import {CoreIPFS} from '/@/core/ipfs';
-import {PeerId} from 'ipfs-core';
 import Boom from '@hapi/boom';
+import {UserManager} from '/@/core/users';
 
 export class IntegrateApi extends ExposedService {
   // /**
@@ -27,11 +27,11 @@ export class IntegrateApi extends ExposedService {
     delete meta.recordSign;
     const metaCid = (await CoreIPFS.inst.dag.put(meta));
     const appKey = (await app.privateKey())!!;
-    const userId = CoreIPFS.libp2p.peerId;
+    const userId = UserManager.self().id;
     const result = await useService('call').request('sys:beian', 'appRecord', {
       cid: metaCid.toString(),
-      id: (await PeerId.createFromPrivKey(appKey.bytes)).toString(),
-      appSign: await appKey.sign(metaCid.bytes),
+      id: appKey.toString(),
+      appSign: await appKey.privKey.sign(metaCid.bytes),
       user: userId.toString(),
       userSign: await userId.privKey.sign(metaCid.bytes),
     }) as any;

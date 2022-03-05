@@ -60,8 +60,8 @@ function electron() {
           ssr: true,
           sourcemap: true,
           target: `node${node}`,
-        },
-        server: {watch: {}},
+          watch: {},
+        }
       });
     },
     writeBundle() {
