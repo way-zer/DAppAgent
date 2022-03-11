@@ -7,7 +7,7 @@ export interface Post {
   created: Date,
   updated: Date,
   content: string,
-  tags: { name: string, color: string }[]
+  tags: string[]
 }
 
 export type SiteInfo = Awaited<ReturnType<typeof getSiteInfo>>
@@ -24,7 +24,7 @@ export async function getSiteInfo() {
   };
 }
 
-export const siteInfo = ref(getSiteInfo());
+export const siteInfoAsync = ref(getSiteInfo());
 
 export async function updateSiteInfo(info: Omit<SiteInfo, 'isOwner'>) {
   await useService('apps').updateDescSelf({
@@ -34,9 +34,29 @@ export async function updateSiteInfo(info: Omit<SiteInfo, 'isOwner'>) {
       'social_github': info.social.github,
     },
   });
-  siteInfo.value = getSiteInfo();
+  siteInfoAsync.value = getSiteInfo();
 }
 
-export async function posts() {
-  return await useService('db').queryAll<Post>('posts');
+export async function getPosts(offset: number, limit: number) {
+  return await useService('db').query<Post>('posts', {}, offset, limit);
+}
+
+export async function getPost(id: string) {
+  return await useService('db').get<Post>('posts', id);
+}
+
+export async function setPost(post: Post) {
+  return await useService('db').insert('posts', post);
+}
+
+export function newID() {
+  let s = [] as string[];
+  let hexDigits = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  for (let i = 0; i < 36; i++) {
+    s[i] = hexDigits.charAt(Math.floor(Math.random() * 0x10));
+  }
+  s[14] = '4';
+  s[19] = hexDigits.charAt((s[19].charCodeAt(0) & 0x3) | 0x8);
+  s[8] = s[13] = s[18] = s[23] = '-';
+  return s.join('');
 }

@@ -1,0 +1,30 @@
+###创建应用
+POST {{host}}/api/apps/create
+dapp: {{appId}}
+Content-Type: application/json
+
+[
+  "blog"
+]
+
+###更新应用程序
+POST {{host}}/api/apps/syncProgram
+dapp: {{appId}}
+Content-Type: application/json
+
+[
+  "dev:blog",
+  "C:/Users/q1048/Projects/dapp-agent/packages/demo-blog/dist"
+]
+
+###授权
+POST {{host}}/api/apps/grantPermission
+dapp: {{appId}}
+Content-Type: application/json
+
+[
+  "dev:blog",
+  [
+    "db.use"
+  ]
+]

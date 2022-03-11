@@ -6,22 +6,22 @@
               negative-text="取消" @negative-click="show=false">
       <n-form>
         <n-form-item label="站点名" path="title">
-          <n-input v-model:value="data.title" placeholder="XXXX's blog"/>
+          <n-input v-model:value="siteInfo.title" placeholder="XXXX's blog"/>
         </n-form-item>
         <n-form-item-row label="头像">
-          <n-input v-model:value="data.avatar" placeholder="/ipfs/xxxx"/>
+          <n-input v-model:value="siteInfo.avatar" placeholder="/ipfs/xxxx"/>
           <n-upload :custom-request="upload" :show-file-list="false">
             <n-button>上传文件</n-button>
           </n-upload>
           <template #feedback>
             <n-card>
-              <n-image :src="data.avatar"/>
+              <n-image :src="siteInfo.avatar"/>
             </n-card>
           </template>
         </n-form-item-row>
         <n-form-item label="社交地址">
           <n-form-item label="Github" label-placement="left">
-            <n-input v-model:value="data.social.github" placeholder="github.com/xxx"/>
+            <n-input v-model:value="siteInfo.social.github" placeholder="github.com/xxx"/>
           </n-form-item>
         </n-form-item>
       </n-form>
@@ -31,13 +31,12 @@
 
 <script lang="ts" setup>
 import {ref} from 'vue';
-import {siteInfo, updateSiteInfo} from '/@/service';
+import {siteInfoAsync, updateSiteInfo} from '/@/service';
 import {UploadCustomRequestOptions} from 'naive-ui';
 import axios from 'axios';
 
 const show = ref(false);
-const rawData = await siteInfo.value;
-const data = ref(rawData);
+const siteInfo = ref({...await siteInfoAsync.value});
 
 function upload({file, onProgress, onFinish, onError}: UploadCustomRequestOptions) {
   console.log(file.file!!.size);
@@ -50,8 +49,8 @@ function upload({file, onProgress, onFinish, onError}: UploadCustomRequestOption
     },
   }).then((e) => {
     console.log(e.data);
-    data.value = {
-      ...data.value,
+    siteInfo.value = {
+      ...siteInfo.value,
       avatar: `/ipfs/${e.data.cid}?${file.name}`,
     };
     onFinish();
@@ -59,7 +58,7 @@ function upload({file, onProgress, onFinish, onError}: UploadCustomRequestOption
 }
 
 function save() {
-  const value = data.value as any;
+  const value = siteInfo.value as any;
   delete value.isOwner;
   updateSiteInfo(value);
   show.value = false;

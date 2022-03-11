@@ -1,13 +1,18 @@
 {
-  "name": "DappAgent",
-  "desc": "Frontend for DappAgent",
-  "author": "YangK",
+  "name": "Demo-Blog",
+  "desc": "个人博客站, Demo of DappAgent",
+  "author": "WayZer",
   "icon": "/favicon.ico",
   "ext": {},
   "permissions": [
-    "apps.admin",
-    "apps.syncProgram"
+    "db.use"
   ],
-  "databases": [],
+  "databases": [
+    {
+      "name": "posts",
+      "type": "docstore",
+      "access": "private"
+    }
+  ],
   "services": {}
 }
