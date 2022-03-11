@@ -1,7 +1,6 @@
 import type {DarukContext} from 'daruk';
 import {controller, get, post, priority} from 'daruk';
 import readable from 'it-to-stream';
-// @ts-ignore
 import {getType} from 'mime/lite';
 import {CoreIPFS} from '../core/ipfs';
 import {useContext, useParam} from './hooks/simple';

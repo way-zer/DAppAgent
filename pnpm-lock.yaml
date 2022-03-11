@@ -108,6 +108,7 @@ importers:
       electron-devtools-installer: 3.2.0
       electron-updater: 4.6.4
       ipfs-core: ^0.12.2
+      ipfs-core-types: ^0.8.1
       it-last: ^1.0.6
       it-to-stream: ^1.0.0
       libp2p: ^0.34.0
@@ -119,6 +120,8 @@ importers:
       orbit-db-access-controllers: ^0.3.2
       orbit-db-identity-provider: ^0.4.0
       orbit-db-store: ^4.3.3
+      parse-duration: ^1.0.2
+      peer-id: ^0.16.0
       readable-stream: ^3.6.0
       rule-judgment: ^1.1.5
       source-map-support: ^0.5.21
@@ -145,6 +148,8 @@ importers:
       orbit-db-access-controllers: 0.3.2
       orbit-db-identity-provider: 0.4.0
       orbit-db-store: 4.3.3
+      parse-duration: 1.0.2
+      peer-id: 0.16.0
       readable-stream: 3.6.0
       rule-judgment: 1.1.5
       source-map-support: 0.5.21
@@ -154,6 +159,7 @@ importers:
       '@types/memoizee': 0.4.7
       '@types/node': 16.11.26
       '@types/orbit-db': link:../orbit-db-types
+      ipfs-core-types: 0.8.4
       ts-morph: 13.0.3
       ts-node: 10.5.0_f94da96e4d78a751cdd66b59796b8fdd
       tsconfig-paths: 3.12.0
@@ -163,10 +169,13 @@ importers:
       '@types/elliptic': ^6.4.13
       '@types/events': ^3.0.0
       ipfs-core-types: ^0.8.1
+      lru: ^3.1.0
     dependencies:
       '@types/elliptic': 6.4.14
       '@types/events': 3.0.0
       ipfs-core-types: 0.8.4
+    devDependencies:
+      lru: 3.1.0
 
   packages/sdk:
     specifiers:
@@ -1625,7 +1634,7 @@ packages:
   /@types/accepts/1.3.5:
     resolution: { integrity: sha512-jOdnI/3qTpHABjM5cx1Hc0sKsPoYCp+DP/GJRGtDlPd7fiV9oXGGIcjW/ZOxLIvjGz8MA+uMZI9metHlgqbgwQ== }
     dependencies:
-      '@types/node': 16.11.26
+      '@types/node': 17.0.21
     dev: false
 
   /@types/bn.js/5.1.0:
@@ -1638,13 +1647,13 @@ packages:
     resolution: {integrity: sha512-ALYone6pm6QmwZoAgeyNksccT9Q4AWZQ6PvfwR37GT6r6FWUPguq6sUmNGSMV2Wr761oQoBxwGGa6DR5o1DC9g==}
     dependencies:
       '@types/connect': 3.4.35
-      '@types/node': 16.11.26
+      '@types/node': 17.0.21
     dev: false
 
   /@types/connect/3.4.35:
     resolution: {integrity: sha512-cdeYyv4KWoEgpBISTxWvqYsVy444DOqehiF3fM3ne10AmJ62RSyNkUnxMJXHQWRQQX2eR94m5y1IZyDwBjV9FQ==}
     dependencies:
-      '@types/node': 16.11.26
+      '@types/node': 17.0.21
     dev: false
 
   /@types/content-disposition/0.5.4:
@@ -1657,7 +1666,7 @@ packages:
       '@types/connect': 3.4.35
       '@types/express': 4.17.13
       '@types/keygrip': 1.0.2
-      '@types/node': 16.11.26
+      '@types/node': 17.0.21
     dev: false
 
   /@types/cron/1.7.3:
@@ -1690,7 +1699,7 @@ packages:
   /@types/express-serve-static-core/4.17.28:
     resolution: { integrity: sha512-P1BJAEAW3E2DJUlkgq4tOL3RyMunoWXqbSCygWo5ZIWTjUgN1YnaXWW4VWl/oc8vs/XoYibEGBKP0uZyF4AHig== }
     dependencies:
-      '@types/node': 16.11.26
+      '@types/node': 17.0.21
       '@types/qs': 6.9.7
       '@types/range-parser': 1.2.4
     dev: false
@@ -1707,7 +1716,7 @@ packages:
   /@types/formidable/1.2.5:
     resolution: {integrity: sha512-zu3mQJa4hDNubEMViSj937602XdDGzK7Q5pJ5QmLUbNxclbo9tZGt5jtwM352ssZ+pqo5V4H14TBvT/ALqQQcA==}
     dependencies:
-      '@types/node': 16.11.26
+      '@types/node': 17.0.21
     dev: false
 
   /@types/glob/7.2.0:
@@ -1919,7 +1928,7 @@ packages:
     resolution: { integrity: sha512-nCkHGI4w7ZgAdNkrEu0bv+4xNV/XDqW+DydknebMOQwkpDGx8G+HTlj7R7ABI8i8nKxVw0wtKPi1D+lPOkh4YQ== }
     dependencies:
       '@types/mime': 1.3.2
-      '@types/node': 16.11.26
+      '@types/node': 17.0.21
     dev: false
 
   /@types/throttle-debounce/2.1.0:
@@ -4044,7 +4053,6 @@ packages:
     transitivePeerDependencies:
       - node-fetch
       - supports-color
-    dev: false
 
   /dns-packet/5.3.1:
     resolution: { integrity: sha512-spBwIj0TK0Ey3666GwIdWVfUpLyubpU53BTCu8iPn4r4oXd9O14Hjg3EHw3ts2oed77/SeckunUYCyRlSngqHw== }
@@ -4355,7 +4363,6 @@ packages:
 
   /err-code/3.0.1:
     resolution: {integrity: sha512-GiaH0KJUewYok+eeY05IIgjtAe4Yltygk9Wqp1V5yVWLdhf0hYZchRjNIT9bb0mSwRcIusT3cx7PJUf3zEIfUA==}
-    dev: false
 
   /errno/0.1.8:
     resolution: {integrity: sha512-dJ6oBr5SQ1VSd9qkk7ByRgb/1SH4JZjCHSW/mr63/QcXO9zLVxvJ6Oy13nio03rxpSnVDDjFor75SjVeZWPW/A==}
@@ -5799,7 +5806,6 @@ packages:
       interface-store: 2.0.2
       nanoid: 3.3.1
       uint8arrays: 3.0.0
-    dev: false
 
   /interface-store/1.0.2:
     resolution: { integrity: sha512-rUBLYsgoWwxuUpnQoSUr+DR/3dH3reVeIu5aOHFZK31lAexmb++kR6ZECNRgrx6WvoaM3Akdo0A7TDrqgCzZaQ== }
@@ -5807,7 +5813,6 @@ packages:
 
   /interface-store/2.0.2:
     resolution: { integrity: sha512-rScRlhDcz6k199EkHqT8NpM87ebN89ICOzILoBHgaG36/WX50N32BnU/kpZgCGPLhARRAWUUX5/cyaIjt7Kipg== }
-    dev: false
 
   /internal-slot/1.0.3:
     resolution: { integrity: sha512-O0DB1JC/sPyZl7cIo78n5dR7eUSwwpYPiXRhTzNxZVAMUuB8vlnRFyLxdrVToks6XPLVnFfbzaVd5WLjhgg+vA== }
@@ -5846,7 +5851,6 @@ packages:
   /ip-regex/4.3.0:
     resolution: {integrity: sha512-B9ZWJxHHOHUhUjCPrMpLD4xEq35bUTClHM1S6CBU5ixQnkZmwipwgc96vAd7AAGM9TGHvJR+Uss+/Ak6UphK+Q==}
     engines: {node: '>=8'}
-    dev: false
 
   /ipaddr.js/2.0.1:
     resolution: {integrity: sha512-1qTgH9NG+IIJ4yfKs2e6Pp1bZg8wbDbKHT21HrLIeYBTRLgMYKnMTPAuI3Lcs61nfx5h1xlXnbJtH1kX5/d/ng==}
@@ -6044,7 +6048,6 @@ packages:
     transitivePeerDependencies:
       - node-fetch
       - supports-color
-    dev: false
 
   /ipfs-core-types/0.9.0:
     resolution: {integrity: sha512-VJ8vJSHvI1Zm7/SxsZo03T+zzpsg8pkgiIi5hfwSJlsrJ1E2v68QPlnLshGHUSYw89Oxq0IbETYl2pGTFHTWfg==}
@@ -6848,7 +6851,6 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       ip-regex: 4.3.0
-    dev: false
 
   /is-ipfs/6.0.2:
     resolution: {integrity: sha512-RinUnsggL4hlLoHlZcvs2+92OE46Uflg/YVU1m5fXhyDBS/zh3bq+i6Aw7IbzJZ9oZXJx26TgxpqCuCr+LH/DA==}
@@ -8671,7 +8673,6 @@ packages:
     engines: {node: '>= 0.4.0'}
     dependencies:
       inherits: 2.0.4
-    dev: false
 
   /ltgt/2.2.1:
     resolution: {integrity: sha1-81ypHEk/e3PaDgdJUwTxezH4fuU=}
@@ -8953,7 +8954,6 @@ packages:
 
   /ms/2.1.3:
     resolution: { integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA== }
-    dev: false
 
   /multiaddr-to-uri/8.0.0:
     resolution: { integrity: sha512-dq4p/vsOOUdVEd1J1gl+R2GFrXJQH8yjLtz4hodqdVbieg39LvBOdMQRdQnfbg5LSM/q1BYNVf5CBbwZFFqBgA== }
@@ -8976,7 +8976,6 @@ packages:
     transitivePeerDependencies:
       - node-fetch
       - supports-color
-    dev: false
 
   /multibase/0.7.0:
     resolution: {integrity: sha512-TW8q03O0f6PNFTQDvh3xxH03c8CjGaaYrjkl9UQPG6rz53TQzzxJVCIWVjzcbN/Q5Y53Zd0IBQBMVktVgNx4Fg==}
@@ -9021,7 +9020,6 @@ packages:
 
   /multiformats/9.6.4:
     resolution: { integrity: sha512-fCCB6XMrr6CqJiHNjfFNGT0v//dxOBMrOMqUIzpPc/mmITweLEyhvMpY9bF+jZ9z3vaMAau5E8B68DW77QMXkg== }
-    dev: false
 
   /multihashes/0.4.21:
     resolution: { integrity: sha512-uVSvmeCWf36pU2nB4/1kzYZjsXD9vofZKpgudqkceYY5g2aZZXJ5r9lxuzoRLl1OAp28XljXsEJ/X/85ZsKmKw== }
@@ -9209,7 +9207,6 @@ packages:
     resolution: {integrity: sha512-G3Z7vx0IFb/FQ4JxvtqGABsOTIqRWvgQz6e+erkB+JJD6LrszQtMozEHI4EkmgZQvnGHrpLVzUWk7t4sJCIkVw==}
     peerDependencies:
       node-fetch: '*'
-    dev: false
 
   /native-fetch/3.0.0_@achingbrain+node-fetch@2.6.7:
     resolution: {integrity: sha512-G3Z7vx0IFb/FQ4JxvtqGABsOTIqRWvgQz6e+erkB+JJD6LrszQtMozEHI4EkmgZQvnGHrpLVzUWk7t4sJCIkVw==}
@@ -10276,7 +10273,7 @@ packages:
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
       '@types/long': 4.0.1
-      '@types/node': 16.11.26
+      '@types/node': 17.0.21
       long: 4.0.0
     dev: false
 
@@ -11109,7 +11106,6 @@ packages:
     resolution: { integrity: sha512-HrsFvqZZheusncQRiEE7GatOAETrARKV/lnfYicIm8lbvp/JQOdADOfhjBd2DajvoszEyxSM6RlAAIZgEoeu/A== }
     dependencies:
       ms: 2.1.3
-    dev: false
 
   /recursive-readdir/2.2.2:
     resolution: { integrity: sha512-nRCcW9Sj7NuZwa2XvH9co8NPeXUBhZP7CRKJtU+cS6PW9FpCIFoI5ib0NT1ZrbNuPoRy0ylyCaUL8Gih4LSyFg== }
@@ -12380,7 +12376,6 @@ packages:
     resolution: { integrity: sha512-HRCx0q6O9Bfbp+HHSfQQKD7wU70+lydKVt4EghkdOvlK/NlrF90z+eXV34mUd48rNvVJXwkrMSPpCATkct8fJA== }
     dependencies:
       multiformats: 9.6.4
-    dev: false
 
   /unbox-primitive/1.0.1:
     resolution: { integrity: sha512-tZU/3NqK3dA5gpE1KtyiJUrEB0lxnGkMFHptJ7q6ewdZ8s12QrODwNbhIJStmJkd1QDXa1NRA8aF2A1zk/Ypyw== }
@@ -12609,7 +12604,6 @@ packages:
 
   /varint/6.0.0:
     resolution: { integrity: sha512-cXEIW6cfr15lFv563k4GuVuW/fiwjknytD37jIOLSdSWuOI6WnO/oKwmP2FQTU2l01LP8/M5TSAJpzUaGe3uWg== }
-    dev: false
 
   /vary/1.1.2:
     resolution: { integrity: sha1-IpnwLG3tMNSllhsLn3RSShj2NPw= }

@@ -1,4 +1,4 @@
-import {IPNSAPI} from 'ipfs-core/types/src/components/ipns';
+// noinspection JSUnusedGlobalSymbols,ES6UnusedImports
 
 declare module 'it-to-stream' {
   export function readable<T>(source: AsyncIterable<T>): ReadableStream<T>
@@ -22,10 +22,10 @@ declare module 'ipfs-http-response' {
   export const resolver: Resolver;
 }
 
-import 'ipfs-core-types';
-
+import IPFS from 'ipfs-core-types';
 declare module 'ipfs-core-types' {
   import type LibP2P from 'libp2p';
+  import {IPNSAPI} from 'ipfs-core/types/src/components/ipns';
 
   export interface IPFS {
     libp2p?: LibP2P;
@@ -33,7 +33,7 @@ declare module 'ipfs-core-types' {
   }
 }
 
-import 'daruk';
+import DarukRequest from 'daruk';
 
 declare module 'daruk' {
   export interface DarukRequest {
