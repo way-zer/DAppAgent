@@ -2,6 +2,7 @@ import {api, ExposedService} from '/@/apis/services/index';
 import {useApp} from '/@/apis/hooks/useApp';
 import DocumentStore from 'orbit-db-docstore';
 import ruleJudgment, {FilterQuery} from 'rule-judgment';
+import Boom from '@hapi/boom';
 
 export class DBApi extends ExposedService {
   /**@internal*/
@@ -19,7 +20,10 @@ export class DBApi extends ExposedService {
   @api({permission: 'db.use'})
   async get<T extends { _id: string }>(dbName: string, _id: string): Promise<T> {
     const db = await DBApi.useDatabase(dbName) as DocumentStore<T>;
-    return db.get(_id);
+    const res = db.get(_id);
+    if (res.length === 0)
+      throw Boom.notFound('date notfound by id', {db: dbName, id: _id});
+    return res[0];
   }
 
   @api({permission: 'db.use'})

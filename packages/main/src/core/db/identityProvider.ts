@@ -19,17 +19,21 @@ export class MyIdentityProvider extends IdentityProvider {
     return UserManager.self().id.toString();
   }
 
-  async signIdentity(data) {
-    return await UserManager.self().id.privKey.sign(data);
+  async signIdentity(data): Promise<string> {
+    return base64pad.encode(await UserManager.self().id.privKey.sign(data));
   }
 
-  async verity(sig, publicKey, data) {
-    const peer = await PeerId.createFromPubKey(publicKey);
-    return await peer.pubKey.verify(data, sig);
+  async sign(identity: Identity, data) {
+    return this.signIdentity(data);
   }
 
-  static async verifyIdentity(identity: Identity) {
-    const peer = await PeerId.createFromPubKey(identity.publicKey);
+  async verity(sig: string, publicKey: string, data) {
+    const peer = await PeerId.createFromPubKey(base64pad.decode(publicKey));
+    return await peer.pubKey.verify(data, base64pad.decode(sig));
+  }
+
+  async verifyIdentity(identity: Identity) {
+    const peer = await PeerId.createFromPubKey(base64pad.decode(identity.publicKey));
     return peer.equals(PeerId.parse(identity.id));
   }
 
