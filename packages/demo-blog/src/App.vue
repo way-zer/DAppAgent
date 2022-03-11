@@ -1,7 +1,11 @@
 <template>
   <n-config-provider>
     <n-global-style/>
-    <router-view/>
+    <n-dialog-provider>
+      <Suspense>
+        <router-view/>
+      </Suspense>
+    </n-dialog-provider>
   </n-config-provider>
 </template>
 

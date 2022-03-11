@@ -1,10 +1,10 @@
 <template>
   <title>{{siteInfo?.title}}</title>
-  <div id="user">
-    <img :src="data?.avatar" :alt="data?.title">
-    <n-h1>{{ data?.title }}</n-h1>
+  <n-spin id="user" :show="siteInfoLoading">
+    <img :src="siteInfo?.avatar" :alt="siteInfo?.title">
+    <n-h1>{{ siteInfo?.title }}</n-h1>
     <n-space justify="center" id="social">
-      <n-button v-if="data?.social?.github" text tag="a" target="_blank" :href="data?.social?.github">
+      <n-button v-if="siteInfo?.social?.github" text tag="a" target="_blank" :href="siteInfo?.social?.github">
         <n-icon key="github" size="22px">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512">
             <path
@@ -13,52 +13,95 @@
           </svg>
         </n-icon>
       </n-button>
-      <suspense v-if="data?.isOwner">
+      <suspense v-if="siteInfo?.isOwner">
         <setting v-slot="{onClick}">
-          <n-button text @click="onClick">
-            <n-icon key="DocumentSettings20Regular" size="22px">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                <g fill="none">
-                  <path
-                    d="M6 2a2 2 0 0 0-2 2v4.207a5.48 5.48 0 0 1 1-.185V4a1 1 0 0 1 1-1h4v3.5A1.5 1.5 0 0 0 11.5 8H15v8a1 1 0 0 1-1 1H9.743c-.314.38-.677.716-1.08 1H14a2 2 0 0 0 2-2V7.414a1.5 1.5 0 0 0-.44-1.06l-3.914-3.915A1.5 1.5 0 0 0 10.586 2H6zm8.793 5H11.5a.5.5 0 0 1-.5-.5V3.207L14.793 7zM3.065 10.442a2 2 0 0 1-1.43 2.478l-.462.118a4.709 4.709 0 0 0 .01 1.016l.35.083a2 2 0 0 1 1.456 2.519l-.127.422c.258.204.537.378.835.518l.325-.344a2 2 0 0 1 2.91.002l.337.358c.292-.135.568-.302.822-.498l-.156-.556a2 2 0 0 1 1.43-2.479l.46-.117a4.71 4.71 0 0 0-.01-1.017l-.348-.082a2 2 0 0 1-1.456-2.52l.126-.422a4.32 4.32 0 0 0-.835-.518l-.325.344a2 2 0 0 1-2.91-.001l-.337-.358a4.314 4.314 0 0 0-.821.497l.156.557zM5.499 14.5a1 1 0 1 1 0-2a1 1 0 0 1 0 2z"
-                    fill="currentColor"></path>
-                </g>
+          <n-tooltip v-if="siteInfo?.isOwner" trigger="hover">
+            编辑站点信息
+            <template #trigger>
+              <n-button text @click="onClick">
+                <n-icon key="DocumentSettings20Regular" size="22px">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <g fill="none">
+                      <path
+                        d="M6 2a2 2 0 0 0-2 2v4.207a5.48 5.48 0 0 1 1-.185V4a1 1 0 0 1 1-1h4v3.5A1.5 1.5 0 0 0 11.5 8H15v8a1 1 0 0 1-1 1H9.743c-.314.38-.677.716-1.08 1H14a2 2 0 0 0 2-2V7.414a1.5 1.5 0 0 0-.44-1.06l-3.914-3.915A1.5 1.5 0 0 0 10.586 2H6zm8.793 5H11.5a.5.5 0 0 1-.5-.5V3.207L14.793 7zM3.065 10.442a2 2 0 0 1-1.43 2.478l-.462.118a4.709 4.709 0 0 0 .01 1.016l.35.083a2 2 0 0 1 1.456 2.519l-.127.422c.258.204.537.378.835.518l.325-.344a2 2 0 0 1 2.91.002l.337.358c.292-.135.568-.302.822-.498l-.156-.556a2 2 0 0 1 1.43-2.479l.46-.117a4.71 4.71 0 0 0-.01-1.017l-.348-.082a2 2 0 0 1-1.456-2.52l.126-.422a4.32 4.32 0 0 0-.835-.518l-.325.344a2 2 0 0 1-2.91-.001l-.337-.358a4.314 4.314 0 0 0-.821.497l.156.557zM5.499 14.5a1 1 0 1 1 0-2a1 1 0 0 1 0 2z"
+                        fill="currentColor"></path>
+                    </g>
+                  </svg>
+                </n-icon>
+              </n-button>
+            </template>
+          </n-tooltip>
+        </setting>
+      </suspense>
+      <n-tooltip v-if="siteInfo?.isOwner" trigger="hover">
+        新建文章
+        <template #trigger>
+          <n-button text @click="newPost">
+            <n-icon key="CreateOutline" size="22px">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                <path d="M384 224v184a40 40 0 0 1-40 40H104a40 40 0 0 1-40-40V168a40 40 0 0 1 40-40h167.48" fill="none"
+                      stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"></path>
+                <path
+                  d="M459.94 53.25a16.06 16.06 0 0 0-23.22-.56L424.35 65a8 8 0 0 0 0 11.31l11.34 11.32a8 8 0 0 0 11.34 0l12.06-12c6.1-6.09 6.67-16.01.85-22.38z"
+                  fill="currentColor"></path>
+                <path
+                  d="M399.34 90L218.82 270.2a9 9 0 0 0-2.31 3.93L208.16 299a3.91 3.91 0 0 0 4.86 4.86l24.85-8.35a9 9 0 0 0 3.93-2.31L422 112.66a9 9 0 0 0 0-12.66l-9.95-10a9 9 0 0 0-12.71 0z"
+                  fill="currentColor"></path>
               </svg>
             </n-icon>
           </n-button>
-        </setting>
-      </suspense>
+        </template>
+      </n-tooltip>
     </n-space>
     <n-divider id="divider"/>
-  </div>
+  </n-spin>
   <n-list id="posts">
-    <n-list-item v-for="post of posts" :key="post.title">
-      <n-thing class="post" :title="post.title" :description="post.date.toLocaleDateString()"
-               @click="router.push('/post/'+post.id)">
-        <template #header-extra>
-          <n-tag v-for="tag of post.tags" :key="tag.name"
-                 round :color="{color:tag.color}">
-            {{ tag.name }}
-          </n-tag>
-        </template>
-      </n-thing>
-    </n-list-item>
+    <n-spin :show="postsLoading">
+      <n-list-item v-for="post of (posts?.data)" :key="post.title">
+        <n-thing class="post" :title="post.title" :description="new Date(post.updated.toString()).toLocaleString()"
+                 @click="router.push('/post/'+post._id)">
+          <template #header-extra>
+            <n-tag v-for="tag of post.tags" :key="tag" round>{{ tag }}</n-tag>
+          </template>
+        </n-thing>
+      </n-list-item>
+      <n-card v-if="!posts?.data?.length">
+        <n-empty description="无内容" size="huge">
+          <template #extra v-if="siteInfo?.isOwner">
+            <n-button @click="newPost">新建文章</n-button>
+          </template>
+        </n-empty>
+      </n-card>
+    </n-spin>
   </n-list>
+  <n-pagination
+    :item-count="posts?.count||0"
+    v-model:page="page"
+    v-model:page-size="pageSize"
+    :page-sizes="[10, 20, 30, 40]"
+    show-size-picker
+    style="justify-content: center"
+  />
 </template>
 
 <script lang="ts" setup>
 import {useRouter} from 'vue-router';
-import {siteInfo} from '/@/service';
+import {getPosts, newID, siteInfoAsync} from '/@/service';
 import {usePromise} from 'vue-promised';
 import Setting from '/@/components/modals/Setting.vue';
+import {computed, ref} from 'vue';
 
 const router = useRouter();
 
-const {data, isPending: loading} = usePromise(siteInfo);
-const posts = [
-  {id: 1, title: 'TEST', date: new Date(), tags: [{name: 'tag', color: 'rgba(106,204,71,0.81)'}]},
-  {id: 2, title: 'TEST', date: new Date(), tags: [{name: 'tag', color: '#388ad5'}]},
-];
+const {data: siteInfo, isPending: siteInfoLoading} = usePromise(siteInfoAsync);
+const page = ref(1);
+const pageSize = ref(10);
+const postsAsync = computed(() => getPosts(pageSize.value * (page.value - 1), pageSize.value));
+const {data: posts, isPending: postsLoading} = usePromise(postsAsync);
+
+function newPost() {
+  router.push('/edit/' + newID());
+}
 </script>
 
 <style lang="stylus" scoped>

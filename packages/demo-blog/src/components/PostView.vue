@@ -1,6 +1,9 @@
 <template>
   <n-page-header @back="back" id="post" :title="post.title">
-    <n-p class="subTitle">Updated at {{ post.update.toLocaleString() }}</n-p>
+    <template #extra>
+      <n-button v-if="siteInfo.isOwner" @click="edit">编辑</n-button>
+    </template>
+    <n-p class="subTitle">Updated at {{ new Date(post.updated.toString()).toLocaleString() }}</n-p>
     <div id="body">
       <editor v-model="post.content" preview-only previewTheme="vuepress"/>
     </div>
@@ -10,20 +13,23 @@
 </template>
 
 <script lang="ts" setup>
-import {useRouter} from 'vue-router';
+import {useRoute, useRouter} from 'vue-router';
 import Editor from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
+import {getPost, siteInfoAsync} from '/@/service';
+
+const siteInfo = await siteInfoAsync.value;
+const id = useRoute().params.id.toString();
+const post = await getPost(id);
 
 const router = useRouter();
 
-const post = {
-  title: '安装ArchWSL (Windows 下的Archlinux子系统)',
-  update: new Date(),
-  content: '# MARKDOWN\n## 2\n ```\ntest\n```',
-};
-
 function back() {
   router.push({path: '/'});
+}
+
+async function edit() {
+  await router.push({path: '/edit/' + id});
 }
 </script>
 

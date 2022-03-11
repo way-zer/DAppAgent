@@ -19,7 +19,9 @@ export default defineConfig({
       ],
     }),
     vue(),
-    dappAgent(),
+    dappAgent({
+      appHost: 'blog.dev.dapp',
+    }),
   ],
   resolve: {
     alias: {
