@@ -1,4 +1,4 @@
-import type {IPFS} from 'ipfs-core';
+import type {IPFS} from 'ipfs-core-types';
 import {create} from 'ipfs-core';
 import last from 'it-last';
 import type LibP2P from 'libp2p';
@@ -28,7 +28,6 @@ export class CoreIPFS {
   static async start() {
     if (this.instUnsafe) return;
     const bootstrapConfig = config.ipfs.bootstrap;
-    // @ts-ignore
     this.instUnsafe = await create({
       repo: './DAppAgent',
       config: {
@@ -50,7 +49,6 @@ export class CoreIPFS {
         },
       },
     });
-    // @ts-ignore
     this.libP2PUnsafe = this.inst.libp2p || null;
     console.log('IPFS ID is: ' + (await this.inst.id()).id);
   }

@@ -31,6 +31,8 @@
     "orbit-db-access-controllers": "^0.3.2",
     "orbit-db-identity-provider": "^0.4.0",
     "orbit-db-store": "^4.3.3",
+    "parse-duration": "^1.0.2",
+    "peer-id": "^0.16.0",
     "readable-stream": "^3.6.0",
     "rule-judgment": "^1.1.5",
     "source-map-support": "^0.5.21",
@@ -41,6 +43,7 @@
     "@types/memoizee": "^0.4.7",
     "@types/node": "^16.11.26",
     "@types/orbit-db": "workspace:*",
+    "ipfs-core-types": "^0.8.1",
     "ts-morph": "^13.0.3",
     "ts-node": "^10.5.0",
     "tsconfig-paths": "^3.12.0"
