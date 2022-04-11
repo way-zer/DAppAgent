@@ -21,6 +21,7 @@
     "electron-updater": "4.6.4",
     "ipfs-core": "^0.12.2",
     "it-last": "^1.0.6",
+    "it-to-buffer": "^2.0.2",
     "it-to-stream": "^1.0.0",
     "libp2p": "^0.34.0",
     "libp2p-crypto": "^0.20.0",
