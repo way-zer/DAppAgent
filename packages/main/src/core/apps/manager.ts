@@ -119,7 +119,7 @@ export class AppManager {
 
     /**克隆App到本地*/
     static async clone(id: AppId): Promise<App> {
-        if (await this.get(id) != null)
+        if (await this.get(id, false) != null)
             throw Boom.conflict('App exists', {app: id.toString()});
         const addr = await id.resolve();
         if (!addr)
@@ -152,12 +152,14 @@ export class AppManager {
         }
     }
 
-    static async delete(app: App) {
-        const i = (await this.list()).indexOf(app);
+    static async delete(id: AppId) {
+        const i = (await this.list()).findIndex(it => it.id.equals(id));
         if (i >= 0) {
-            this._list!!.splice(i);
+            const app = this._list!!.splice(i)[0];
             await CoreIPFS.inst.files.rm(app.appRoot, {recursive: true});
+            return true;
         }
+        return false;
     }
 
     static startRepublish() {

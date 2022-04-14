@@ -63,7 +63,7 @@ Content-Type: application/json
 ]
 
 ###克隆他人应用
-#TEST TODO
+#TEST ON 2022-04-14
 POST {{host}}/api/apps/clone
 dapp: {{appId}}
 Content-Type: application/json

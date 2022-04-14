@@ -84,8 +84,7 @@ export class AppsApi extends ExposedService {
 
     @api({permission: 'apps.admin'})
     async delete(id: string) {
-        const app = await withContext(useApp, [useAppId, AppId.fromString(id)]);
-        return await AppManager.delete(app);
+        return await AppManager.delete(AppId.fromString(id));
     }
 
     /// update

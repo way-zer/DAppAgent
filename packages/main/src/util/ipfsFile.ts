@@ -32,11 +32,12 @@ export class IPFSFile {
     }
 
     async cpFrom(path: IPFSPath) {
+
         const bak = this.path + '.bak';
         await CoreIPFS.inst.files.mv(this.path, bak).catch(() => null);
 
         try {
-            await CoreIPFS.inst.files.cp(path, this.path);
+            await CoreIPFS.inst.files.cp(path, this.path, {parents: true});
             await CoreIPFS.inst.files.rm(bak).catch(() => null);//del bak
         } catch {
             await CoreIPFS.inst.files.mv(bak, this.path).catch(() => null);//recover
