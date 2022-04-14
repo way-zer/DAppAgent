@@ -1,10 +1,10 @@
 ## IPFS MFS储存结构
 
 - /apps
-  - {id}
-    - meta - dag 应用元信息 AppMeta
-    - local - dag 应用本地配置文件 LocalData
-    - key - file 私钥(可用于签名,备案,IPNS)
+    - {id}
+        - meta - dag 应用元信息 AppMeta
+        - local - dag 应用本地配置文件 LocalData
+        - key - file 私钥(可用于签名,备案,IPNS)
 
 ## 应用元信息Dag AppMeta
 
@@ -44,8 +44,8 @@ type LocalData = {
 ## 应用代码 目录结构
 
 - /
-  - app.json
-  - html/css/js 等代码文件
+    - app.json
+    - html/css/js 等代码文件
 
 ### app.json 定义
 

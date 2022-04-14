@@ -8,19 +8,19 @@ import {SystemApi} from './system';
 export {ExposedService, api, useService} from './_define';
 
 class TestApi extends ExposedService {
-  @api()
-  async hello() {
-    return 'hello World';
-  }
+    @api()
+    async hello() {
+        return 'hello World';
+    }
 }
 
 export const services = {
-  test: new TestApi(),
-  apps: new AppsApi(),
-  call: new CallApi(),
-  db: new DBApi(),
-  system: new SystemApi(),
-  integrate: new IntegrateApi(),
+    test: new TestApi(),
+    apps: new AppsApi(),
+    call: new CallApi(),
+    db: new DBApi(),
+    system: new SystemApi(),
+    integrate: new IntegrateApi(),
 };
 
 export type Services = typeof services

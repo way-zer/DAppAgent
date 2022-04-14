@@ -11,10 +11,10 @@ export type DBType = 'docstore' | 'keyvalue' | 'feed' | 'eventlog' | 'counter'
 export type AccessType = AccessType0
 
 export interface DataBase {
-  name: string;
-  type: DBType;
-  access: AccessType;
-  addr?: string;
+    name: string;
+    type: DBType;
+    access: AccessType;
+    addr?: string;
 }
 
 export type DBStore = OrbitDBStore
@@ -24,56 +24,56 @@ export type DBStore = OrbitDBStore
  * 数据库类型 docstore keyvalue feed eventlog counter
  */
 export class DBManager {
-  static instUnsafe: OrbitDB | null = null;
+    static instUnsafe: OrbitDB | null = null;
 
-  static get inst() {
-    if (!this.instUnsafe) throw 'OrbitDB hasn\'t start';
-    return this.instUnsafe;
-  }
+    static get inst() {
+        if (!this.instUnsafe) throw 'OrbitDB hasn\'t start';
+        return this.instUnsafe;
+    }
 
-  static async start() {
-    if (this.instUnsafe) return;
-    MyAccessController.register();
-    this.instUnsafe = await OrbitDB.createInstance(CoreIPFS.inst, {
-      identity: MyIdentityProvider.getIdentity(),
-      directory: './DAppAgent/orbitDB',
+    static async start() {
+        if (this.instUnsafe) return;
+        MyAccessController.register();
+        this.instUnsafe = await OrbitDB.createInstance(CoreIPFS.inst, {
+            identity: MyIdentityProvider.getIdentity(),
+            directory: './DAppAgent/orbitDB',
+        });
+        console.log('OrbitDB ID is: ', this.instUnsafe.identity.id);
+    }
+
+    static async create(info: DataBase): Promise<string> {
+        if (!OrbitDB.isValidType(info.type))
+            throw badRequest('invalid Type: ' + info.type);
+        const db = await this.inst.create(info.name, info.type, {
+            accessController: {
+                type: 'dapp',
+                subType: info.access,
+            },
+        });
+        return db.address.toString();
+    }
+
+    static getDataBase = memoizee(async (info: DataBase) => {
+        if (!info.addr)
+            throw Boom.badRequest('Require addr', {info});
+        if (!OrbitDB.isValidType(info.type))
+            throw badRequest('invalid Type: ' + info.type);
+        const db = await this.inst.open(info.addr, {
+            type: info.type,
+            accessController: {
+                type: 'dapp',
+                subType: info.access,
+            },
+        });
+        await db.load();
+        return db as DBStore;
     });
-    console.log('OrbitDB ID is: ', this.instUnsafe.identity.id);
-  }
 
-  static async create(info: DataBase): Promise<string> {
-    if (!OrbitDB.isValidType(info.type))
-      throw badRequest('invalid Type: ' + info.type);
-    const db = await this.inst.create(info.name, info.type, {
-      accessController: {
-        type: 'dapp',
-        subType: info.access,
-      },
-    });
-    return db.address.toString();
-  }
-
-  static getDataBase = memoizee(async (info: DataBase) => {
-    if (!info.addr)
-      throw Boom.badRequest('Require addr', {info});
-    if (!OrbitDB.isValidType(info.type))
-      throw badRequest('invalid Type: ' + info.type);
-    const db = await this.inst.open(info.addr, {
-      type: info.type,
-      accessController: {
-        type: 'dapp',
-        subType: info.access,
-      },
-    });
-    await db.load();
-    return db as DBStore;
-  });
-
-  static async stop() {
-    const inst = this.instUnsafe;
-    if (inst === null) return;
-    this.instUnsafe = null;
-    await inst.stop();
-    console.log('Stopped IPFS');
-  }
+    static async stop() {
+        const inst = this.instUnsafe;
+        if (inst === null) return;
+        this.instUnsafe = null;
+        await inst.stop();
+        console.log('Stopped IPFS');
+    }
 }

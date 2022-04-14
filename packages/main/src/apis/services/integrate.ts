@@ -5,54 +5,54 @@ import Boom from '@hapi/boom';
 import {UserManager} from '/@/core/users';
 
 export class IntegrateApi extends ExposedService {
-  // /**
-  //  * 通过第三方进行实名认证
-  //  * @return string 认证签名
-  //  */
-  // async userVerify(user: User): Promise<string> {
-  //   /*TODO
-  //   通过self密钥,生成持有签名
-  //   将公钥(地址)及持有签名一起传递到第三方,获取认证签名
-  //    */
-  //   return MOCK_Verify_Sign;
-  //   }
-  //
-  //   /** 验证实名签名是否有效 */
-  //   async userVerifyOK(user: User, sign: string): Promise<boolean> {
-  //       //TODO 通过第三方公钥验证签名是否正确
-  //     return sign == MOCK_Verify_Sign;
-  //   }
-  async appRecord(app: App): Promise<string> {
-    const meta = await app.appMeta.get();
-    delete meta.recordSign;
-    const metaCid = (await CoreIPFS.inst.dag.put(meta));
-    const appKey = (await app.privateKey())!!;
-    const userId = UserManager.self().id;
-    const result = await useService('call').request('sys:beian', 'appRecord', {
-      cid: metaCid.toString(),
-      id: appKey.toString(),
-      appSign: await appKey.privKey.sign(metaCid.bytes),
-      user: userId.toString(),
-      userSign: await userId.privKey.sign(metaCid.bytes),
-    }) as any;
-    if (!result.sign)
-      throw Boom.notAcceptable('Fail to get app Sign', {app: app.id.toString()});
-    return result.sign;
-  }
+    // /**
+    //  * 通过第三方进行实名认证
+    //  * @return string 认证签名
+    //  */
+    // async userVerify(user: User): Promise<string> {
+    //   /*TODO
+    //   通过self密钥,生成持有签名
+    //   将公钥(地址)及持有签名一起传递到第三方,获取认证签名
+    //    */
+    //   return MOCK_Verify_Sign;
+    //   }
+    //
+    //   /** 验证实名签名是否有效 */
+    //   async userVerifyOK(user: User, sign: string): Promise<boolean> {
+    //       //TODO 通过第三方公钥验证签名是否正确
+    //     return sign == MOCK_Verify_Sign;
+    //   }
+    async appRecord(app: App): Promise<string> {
+        const meta = await app.appMeta.get();
+        delete meta.recordSign;
+        const metaCid = (await CoreIPFS.inst.dag.put(meta));
+        const appKey = (await app.privateKey())!!;
+        const userId = UserManager.self().id;
+        const result = await useService('call').request('sys:beian', 'appRecord', {
+            cid: metaCid.toString(),
+            id: appKey.toString(),
+            appSign: await appKey.privKey.sign(metaCid.bytes),
+            user: userId.toString(),
+            userSign: await userId.privKey.sign(metaCid.bytes),
+        }) as any;
+        if (!result.sign)
+            throw Boom.notAcceptable('Fail to get app Sign', {app: app.id.toString()});
+        return result.sign;
+    }
 
-  async appRecordOK(app: App, sign: string): Promise<boolean> {
-    //TODO 通过第三方公钥验证签名是否正确
-    console.log('TODO: appRecordOK', app, sign);
-    return true;
-  }
+    async appRecordOK(app: App, sign: string): Promise<boolean> {
+        //TODO 通过第三方公钥验证签名是否正确
+        console.log('TODO: appRecordOK', app, sign);
+        return true;
+    }
 
-  constructor() {
-    super();
-    App.verifier = async (app: App) => {
-      if (app.id.type === 'dev') return true;
-      const sign = (await app.appMeta.get()).recordSign;
-      if (!sign) return false;
-      return this.appRecordOK(app, sign);
-    };
-  }
+    constructor() {
+        super();
+        App.verifier = async (app: App) => {
+            if (app.id.type === 'dev') return true;
+            const sign = (await app.appMeta.get()).recordSign;
+            if (!sign) return false;
+            return this.appRecordOK(app, sign);
+        };
+    }
 }
