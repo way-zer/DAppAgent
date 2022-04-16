@@ -23,6 +23,7 @@ export type ProgramMeta = {
         type: DBType,
         access: AccessType,
     }[],
+    singlePageApp?: boolean//默认false。true将支持SPA应用路由。
     services: Record<string/*name*/, {
         url: string,
         background: boolean//默认false。false表示不显示窗口,在后台处理,可通过API显示

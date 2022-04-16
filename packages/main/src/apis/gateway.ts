@@ -48,7 +48,13 @@ export class _Gateway {
         let path = ctx.path;
         if (path.endsWith('/'))
             path += 'index.html';
-        ctx.type = getType(path);
-        ctx.body = readable(await app.getFile(path));
+        try {
+            ctx.body = readable(await app.getFile(path));
+            ctx.type = getType(path);
+        } catch (e) {
+            if (!(await app.programMeta.get()).singlePageApp) throw e;
+            ctx.body = readable(await app.getFile('/index.html'));
+            ctx.type = getType('index.html');
+        }
     }
 }
