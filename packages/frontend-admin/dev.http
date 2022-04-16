@@ -1,0 +1,65 @@
+###更新应用程序
+POST {{host}}/api/apps/syncProgram
+dapp: {{appId}}
+Content-Type: application/json
+
+[
+  "dev:test",
+  "C:/Users/q1048/Projects/dapp-agent/packages/frontend-admin/dist"
+]
+
+###更新描述
+#TEST ON 2022-01-27
+POST {{host}}/api/apps/updateDescSelf
+dapp: {{appId}}
+Content-Type: application/json
+
+[
+  {
+    "name": "设置中心",
+    "desc": "DappAgent管理前端。Frontend for DappAgent"
+  }
+]
+
+###当前应用信息
+#TEST ON 2022-01-27
+POST {{host}}/api/apps/thisInfo
+dapp: {{appId}}
+
+###删除他人应用
+POST {{host}}/api/apps/delete
+dapp: {{appId}}
+Content-Type: application/json
+
+[
+  "ipfs:bafyreibeinr3axu2yegedf7sljxrckhxftxoxwez7vkdu4fdc3m4oqjgry"
+]
+
+###克隆他人应用
+POST {{host}}/api/apps/clone
+dapp: {{appId}}
+Content-Type: application/json
+
+[
+  "ipfs:bafyreibeinr3axu2yegedf7sljxrckhxftxoxwez7vkdu4fdc3m4oqjgry"
+]
+
+###查询权限
+#TEST TODO
+POST {{host}}/api/apps/hasPermission
+dapp: ipfs:bafyreibeinr3axu2yegedf7sljxrckhxftxoxwez7vkdu4fdc3m4oqjgry
+Content-Type: application/json
+
+[
+  "apps.admin"
+]
+
+###请求权限
+#TEST TODO
+POST {{host}}/api/apps/requestPermission
+dapp: ipfs:bafyreibeinr3axu2yegedf7sljxrckhxftxoxwez7vkdu4fdc3m4oqjgry
+Content-Type: application/json
+
+[
+  "apps.admin"
+]

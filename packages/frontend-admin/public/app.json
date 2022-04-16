@@ -1,13 +1,36 @@
 {
-  "name": "DappAgent",
-  "desc": "Frontend for DappAgent",
-  "author": "YangK",
+  "name": "设置中心",
+  "desc": "DappAgent管理前端。Frontend for DappAgent",
+  "author": "YangK & WayZer",
+  "singlePageApp": true,
   "icon": "/favicon.ico",
   "ext": {},
   "permissions": [
-    "apps.admin",
-    "apps.syncProgram"
+    {
+      "node": "apps.admin",
+      "desc": "管理应用"
+    },
+    {
+      "node": "apps.syncProgram",
+      "desc": "管理应用"
+    },
+    {
+      "node": "system.info",
+      "desc": "列出系统信息"
+    },
+    {
+      "node": "system.admin",
+      "desc": "连接Peer"
+    },
+    {
+      "node": "system.selectDir",
+      "desc": "选择目录"
+    }
   ],
   "databases": [],
-  "services": {}
+  "services": {
+    "permission": {
+      "url": "/permission"
+    }
+  }
 }

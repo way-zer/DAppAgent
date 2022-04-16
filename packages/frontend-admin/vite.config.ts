@@ -6,13 +6,15 @@ import {join} from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  server: {
-    port: 3000,
-  },
-  plugins: [reactRefresh(), dappAgent()],
-  resolve: {
-    alias: {
-      '@api': join(__dirname, 'src/api'),
+    server: {
+        port: 3000,
     },
-  },
+    plugins: [reactRefresh(), dappAgent({
+        appHost: 'admin.sys.dapp',
+    })],
+    resolve: {
+        alias: {
+            '@api': join(__dirname, 'src/api'),
+        },
+    },
 });
