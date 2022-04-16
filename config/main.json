@@ -1,8 +1,11 @@
 {
-  "debug": false,
+  "debug": true,
   "port": 7001,
   "homeUrl": "http://localhost:3000",
   "ipfs": {
     "bootstrap": []
+  },
+  "sysApp": {
+    "admin": "ipfs:bafyreigyym66sol4hxxccb4qfamjef7vzhgfvhfoxumslrxw333m7dz2y4"
   }
 }

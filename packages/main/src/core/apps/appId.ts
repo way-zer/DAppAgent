@@ -3,6 +3,7 @@ import last from 'it-last';
 import {CoreIPFS} from '/@/core/ipfs';
 import {IPFSFile} from '/@/util/ipfsFile';
 import Boom from '@hapi/boom';
+import config from 'config/main.json';
 
 type KnownAppType = 'ipns' | 'ipfs' | 'sys' | 'dev'
 
@@ -17,10 +18,6 @@ export class AppId {
 
     get url() {
         return `dapp://${this.name}.${this.type}`;
-    }
-
-    permissionNode(permission: string) {
-        return `dapp.permissions.${this.type}-${this.name}.${permission}`;
     }
 
     equals(other: any) {
@@ -50,6 +47,8 @@ export class AppIdRegistry {
             case 'ipns':
             case 'sys':
                 return true;
+            case 'ipfs':
+            case 'dev':
             default:
                 return false;
         }
@@ -64,7 +63,10 @@ export class AppIdRegistry {
             case 'ipfs':
                 return CID.parse(id.name);
             case 'sys':
-                throw Boom.notImplemented('App resolve for sys');
+                const apps = config.sysApp;
+                if (!(id.name in apps))
+                    throw Boom.notFound('Sys app not exists', {id});
+                return await AppIdRegistry.resolve(AppId.fromString(apps[id.name]));
             case 'dev':
             default:
                 throw Boom.badRequest('NOT Support resolve');

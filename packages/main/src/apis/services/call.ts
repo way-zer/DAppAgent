@@ -15,21 +15,22 @@ export class CallApi extends ExposedService {
      * @param app 被调用应用id
      * @param service 需要调用的接口
      * @param payload 传给接口的参数
+     * @return 接口返回结果
      */
     @api()
-    async request(app: string, service: string, payload: object): Promise<object> {
+    async request(app: string, service: string, payload: Record<string, unknown>): Promise<Record<string, unknown>> {
         const from = await useApp();
         const callApp = await withContext(useApp, [useAppId, AppId.fromString(app)]);
-        let addr = await callApp.getService(service);
+        let {url, background} = await callApp.getService(service);
 
         const ts: Transaction = {
-            id: (Math.random() * 1e9).toFixed(0),
+            id: randomUUID(),
             token: randomUUID(),
             from: from.id.toString(), time: Date.now(),
             app, service, payload,
         };
         const param = JSON.stringify(ts);
-        const promise = new Promise<object>((resolve, reject) => {
+        const promise = new Promise<Record<string, unknown>>((resolve, reject) => {
             ts.timeout = Date.now() + 10_000;
             const tt = setInterval(() => {
                 if ((ts.timeout || 1e99) > Date.now()) return;
@@ -44,7 +45,7 @@ export class CallApi extends ExposedService {
             this.transactions.set(ts.id, ts);
         });
         console.log(param);
-        await ElectronHelper.createWindow(addr + '?param=' + encodeURI(param));
+        await ElectronHelper.createWindow(`${url}?id=${ts.id}`);
         return promise;
     }
 
@@ -55,7 +56,7 @@ export class CallApi extends ExposedService {
      * @param response 返回结果
      */
     @api()
-    async respond(id: string, token: string, response: object) {
+    async respond(id: string, token: string, response: Record<string, unknown>) {
         const ts = this.transactions.get(id);
         if (!ts) throw Boom.notAcceptable('Transaction not found', {id, token});
         if (ts.token != token) throw Boom.forbidden('token not correct', {id, token});
@@ -63,12 +64,17 @@ export class CallApi extends ExposedService {
         ts._callback!!(response);
     }
 
+    /**
+     * 获取请求详情
+     * @param id 指定TransactionId，不填为所有
+     * @param token Transaction Token，被请求app可以不填，如果传递给第三方App需传入
+     */
     @api()
-    async pullTransaction(token?: string) {
+    async pullTransaction(id?: string, token?: string) {
         const app = (await useApp()).id;
         const out = [] as Transaction[];
         for (const v of this.transactions.values()) {
-            if (v.app == app.toString() && (!token || v.token == token))
+            if ((v.app === app.toString() || v.token === token) && (!id || v.id === id))
                 out.push(v);
         }
         return out;
@@ -98,8 +104,8 @@ export interface Transaction {
 
     app: string;
     service: string;
-    payload: object;
+    payload: Record<string, unknown>;
 
     timeout?: number;
-    _callback?: (response: object) => void;
+    _callback?: (response: Record<string, unknown>) => void;
 }

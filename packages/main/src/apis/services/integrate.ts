@@ -34,10 +34,10 @@ export class IntegrateApi extends ExposedService {
             appSign: await appKey.privKey.sign(metaCid.bytes),
             user: userId.toString(),
             userSign: await userId.privKey.sign(metaCid.bytes),
-        }) as any;
+        });
         if (!result.sign)
             throw Boom.notAcceptable('Fail to get app Sign', {app: app.id.toString()});
-        return result.sign;
+        return result.sign as string;
     }
 
     async appRecordOK(app: App, sign: string): Promise<boolean> {
@@ -48,11 +48,11 @@ export class IntegrateApi extends ExposedService {
 
     constructor() {
         super();
-        App.verifier = async (app: App) => {
-            if (app.id.type === 'dev') return true;
-            const sign = (await app.appMeta.get()).recordSign;
-            if (!sign) return false;
-            return this.appRecordOK(app, sign);
-        };
+        // App.verifier = async (app: App) => {
+        //     if (app.id.type === 'dev') return true;
+        //     const sign = (await app.appMeta.get()).recordSign;
+        //     if (!sign) return false;
+        //     return this.appRecordOK(app, sign);
+        // };
     }
 }

@@ -1,4 +1,4 @@
-import {api, ExposedService} from '.';
+import {api, ExposedService, useService} from '.';
 import {AppId, AppManager, AppMeta} from '/@/core/apps';
 import {useApp, useAppId, useAppModifiable} from '../hooks/useApp';
 import {withContext} from '/@/util/hook';
@@ -9,6 +9,7 @@ import {globSource} from 'ipfs-core';
 import path from 'path';
 import {any, record, string} from 'superstruct';
 import {assertStruct, partialObject} from '/@/apis/hooks/assertStruct';
+import {AppPermission} from '/@/core/apps/define';
 
 export class AppsApi extends ExposedService {
     /// info
@@ -46,6 +47,21 @@ export class AppsApi extends ExposedService {
 
 
     /// permission
+    @api()
+    async hasPermission(node: string) {
+        const app = await useApp();
+        return await app.hasPermission(node);
+    }
+
+    @api()
+    async requestPermission(node: string) {
+        const app = await useApp();
+        if (await app.hasPermission(node)) return true;
+        let meta = (await app.programMeta.get()).permissions.find(it => it.node === node);
+        if (!meta)
+            throw Boom.badRequest('App need to add permission to app.json first', {node});
+        return await this.callRequestPermission([{...meta, optional: false}]);
+    }
 
     @api({permission: 'apps.admin'})
     async grantPermission(id: string, permissions: string[]) {
@@ -53,6 +69,13 @@ export class AppsApi extends ExposedService {
         for (const permission of permissions) {
             await app.grantPermission(permission);
         }
+    }
+
+    //internal api for requestPermission
+    async callRequestPermission(permissions: AppPermission[]): Promise<Boolean> {
+        return !!(await useService('call').request('sys:admin', 'permission', {
+            permissions,
+        }))['granted'];
     }
 
     /// manage

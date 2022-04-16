@@ -75,13 +75,13 @@ export class App {
 
     //permission
     async hasPermission(permission: string) {
-        if (this.id.toString() === 'dev:test') return true;
-        if (permission ! in (await this.programMeta.get()).permissions.map(it => it.node)) return false;
+        if (this.id.type == 'sys') return true;
+        if (!(await this.programMeta.get()).permissions.some(it => it.node === permission)) return false;
         return (await this.localData.get()).permissions[permission]?.granted || false;
     }
 
     async grantPermission(permission: string) {
-        if (permission ! in (await this.programMeta.get()).permissions.map(it => it.node)) return false;
+        if (!(await this.programMeta.get()).permissions.some(it => it.node === permission)) return false;
         const data = await this.localData.get();
         data.permissions[permission] = {granted: true, time: Date.now()};
         await this.localData.set(data);
@@ -98,11 +98,16 @@ export class App {
     }
 
     //service
-    async getService(name: string): Promise<string> {
+    async getService(name: string): Promise<{ url: string, background: boolean }> {
+        // return {url: 'http://localhost:3000/permission', background: false};
         const {services} = await this.programMeta.get();
         if (!services || !services[name])
             throw Boom.notFound('Not found service ' + name, {app: this.id, name, services});
-        return this.id.url + services[name];
+        const service = services[name];
+        return {
+            url: this.id.url + service.url,
+            background: !!service.background,
+        };
     }
 }
 

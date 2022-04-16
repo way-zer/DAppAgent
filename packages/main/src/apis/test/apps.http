@@ -83,18 +83,30 @@ Content-Type: application/json
 ]
 
 ###检查更新(自我)
-#TEST TODO
+#TEST ON 2022-04-16
 POST {{host}}/api/apps/checkUpdateSelf
 dapp: {{appId}}
 
 ###检查更新
-#TEST TODO
+#TEST ON 2022-04-16
 POST {{host}}/api/apps/checkUpdate
 dapp: {{appId}}
 Content-Type: application/json
 
 [
   "dev:test2"
+]
+
+###更新描述(自我)
+#TEST ON 2022-04-16
+POST {{host}}/api/apps/updateSelf
+dapp: {{appId}}
+Content-Type: application/json
+
+[
+  {
+    "desc": "Modified desc"
+  }
 ]
 
 ###更新描述
@@ -121,4 +133,14 @@ Content-Type: application/json
   [
     "apps.admin"
   ]
+]
+
+###请求权限
+#TEST ON 2022-04-16
+POST {{host}}/api/apps/requestPermission
+dapp: ipfs:bafyreibeinr3axu2yegedf7sljxrckhxftxoxwez7vkdu4fdc3m4oqjgry
+Content-Type: application/json
+
+[
+  "apps.admin"
 ]

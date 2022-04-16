@@ -2,7 +2,7 @@ import {App} from '/@/core/apps/app';
 import {CID} from 'multiformats';
 import {CoreIPFS} from '/@/core/ipfs';
 import {toArray} from '/@/util';
-import {ProgramMeta} from '/@/core/apps/define';
+import {AppPermission, ProgramMeta} from '/@/core/apps/define';
 import {AppId} from '/@/core/apps/appId';
 import Boom, {forbidden} from '@hapi/boom';
 import {simpleAppMeta} from '/@/core/apps/simpleApp';
@@ -24,7 +24,10 @@ export class AppManager {
     }
 
     static async get(id: AppId, load = true) {
-        const app = (await this.list()).find(it => it.id.equals(id));
+        let app = (await this.list()).find(it => it.id.equals(id));
+        if (load && !app && id.type === 'sys')
+            app = await this.clone(id);
+
         if (load && app) {
             await this.checkUpdate(app);
             await app.loadProgram();
@@ -101,6 +104,18 @@ export class AppManager {
         appMeta.program = program;
         await app.appMeta.set(appMeta);
         await app.loadProgram(true);
+
+        //检查授权
+        let permissions = [] as AppPermission[];
+        let newNeed = false;
+        for (let permission of meta.permissions) {
+            if (!await app.hasPermission(permission.node)) {
+                permissions.push(permission);
+                if (!permission.optional) newNeed = true;
+            }
+        }
+        if (newNeed)
+            await useService('apps').callRequestPermission(permissions);
     }
 
     /**发布应用,Need CanModify*/
@@ -142,7 +157,7 @@ export class AppManager {
         if (!app.id.needUpdate) return;
         const addr = await app.id.resolve();
         const old = await app.appMeta.file.cid();
-        if (addr && old.equals(addr)) {
+        if (addr && !old.equals(addr)) {
             await app.appMeta.file.cpFrom(addr);
             if (!await app.verify()) {
                 await app.appMeta.file.cpFrom(old);

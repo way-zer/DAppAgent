@@ -8,7 +8,7 @@ type StringFor<T> = string
 export type AppPermission = {
     node: string,
     desc: string,
-    optional: boolean//默认false, 将在用户安装应用时请求权限
+    optional?: boolean//默认false, 将在用户安装应用时请求权限
 }
 
 export type ProgramMeta = {
@@ -26,7 +26,7 @@ export type ProgramMeta = {
     singlePageApp?: boolean//默认false。true将支持SPA应用路由。
     services: Record<string/*name*/, {
         url: string,
-        background: boolean//默认false。false表示不显示窗口,在后台处理,可通过API显示
+        background?: boolean//默认false。false表示不显示窗口,在后台处理,可通过API显示
     }>
 }
 
