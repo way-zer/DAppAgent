@@ -26,7 +26,7 @@ function AppCube({id}: { id: string }) {
 
     return <Card actions={[
         <Button type={'link'} target={'_blank'} href={info?.url}>打开App</Button>,
-        <Button type={'link'}> 查看详情 </Button>,
+        <Button type={'link'} target={`/app/${id}`}> 查看详情 </Button>,
     ]}>
         <Avatar size={64} src={info?.icon}>{info?.name}</Avatar>
         <div>{info?.name}</div>

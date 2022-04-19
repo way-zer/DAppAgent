@@ -3,6 +3,7 @@ import React from 'react';
 import Home from './page/Home';
 import Setting from './page/Setting';
 import App from './page/App';
+import AppInfo from './page/AppInfo';
 import {PermissionRequest} from './extPage/permission';
 
 export default function AppRouter() {
@@ -11,6 +12,7 @@ export default function AppRouter() {
             <Route path="/" element={<App/>}>
                 <Route index element={<Home/>}/>
                 <Route path="setting" element={<Setting/>}/>
+                <Route path="/app/:appId" element={<AppInfo/>} />
             </Route>
             <Route path="/permission" element={<PermissionRequest/>}/>
             <Route path="*" element={<Navigate to="/"/>}/>
