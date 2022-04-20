@@ -1,11 +1,11 @@
 import React from 'react';
-import 'antd/dist/antd.css';
+import 'antd/dist/antd.min.css';
 import {Layout} from 'antd';
 import AppMenu from '../components/AppMenu';
 import UserAvatar from '../components/UserAvatar';
 import {Outlet} from 'react-router-dom';
 
-const {Header, Content, Footer, Sider} = Layout;
+const {Header, Content, Footer} = Layout;
 
 export default function App() {
     return <Layout>

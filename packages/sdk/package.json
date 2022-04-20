@@ -12,6 +12,6 @@
     "cpDts": "cp services.d.ts dist || copy services.d.ts dist"
   },
   "dependencies": {
-    "axios": "^0.24.0"
+    "axios": ">=0.24.0"
   }
 }

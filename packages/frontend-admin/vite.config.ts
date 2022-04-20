@@ -13,8 +13,16 @@ export default defineConfig({
         appHost: 'admin.sys.dapp',
     })],
     resolve: {
-        alias: {
-            '@api': join(__dirname, 'src/api'),
+        alias: [
+            {find: /^@api/, replacement: join(__dirname, 'src/api')},
+            {find: /^~/, replacement: ''},
+        ],
+    },
+    css: {
+        preprocessorOptions: {
+            less: {
+                javascriptEnabled: true,
+            },
         },
     },
 });

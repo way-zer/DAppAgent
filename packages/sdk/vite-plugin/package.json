@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc"
   },
-  "dependencies": {
-    "vite": "^2.8.4"
+  "peerDependencies": {
+    "vite": ">=2.8.4"
   }
 }

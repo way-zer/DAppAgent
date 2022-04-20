@@ -1,18 +1,20 @@
-import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom';
+import {BrowserRouter, Navigate, Route, Routes, useParams} from 'react-router-dom';
 import React from 'react';
 import Home from './page/Home';
 import Setting from './page/Setting';
 import App from './page/App';
 import AppInfo from './page/AppInfo';
 import {PermissionRequest} from './extPage/permission';
+import AppDetail from './page/Detail';
 
 export default function AppRouter() {
     return <BrowserRouter>
         <Routes>
             <Route path="/" element={<App/>}>
-                <Route index element={<Home/>}/>
                 <Route path="setting" element={<Setting/>}/>
-                <Route path="/app/:appId" element={<AppInfo/>} />
+                <Route path="/" element={<Home/>}>
+                    <Route path="detail/:id" element={<AppDetail/>}/>
+                </Route>
             </Route>
             <Route path="/permission" element={<PermissionRequest/>}/>
             <Route path="*" element={<Navigate to="/"/>}/>
