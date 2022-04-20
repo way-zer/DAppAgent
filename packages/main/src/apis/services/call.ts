@@ -31,7 +31,7 @@ export class CallApi extends ExposedService {
         };
         const param = JSON.stringify(ts);
         const promise = new Promise<Record<string, unknown>>((resolve, reject) => {
-            ts.timeout = Date.now() + 10_000;
+            ts.timeout = Date.now() + 30_000;
             const tt = setInterval(() => {
                 if ((ts.timeout || 1e99) > Date.now()) return;
                 reject(Boom.gatewayTimeout());

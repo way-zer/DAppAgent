@@ -16,9 +16,9 @@ ReactDOM.render(
 function initAxios() {
     axios.interceptors.response.use(undefined, (error => {
         if (axios.isAxiosError(error)) {
-            if (error.response?.status == 400) {
-                message.error(error.response?.data).then();
-            }
+            const {message: msg, data} = error.response?.data;
+            message.error(msg).then();
+            console.error(msg, data);
         }
         throw error;
     }));

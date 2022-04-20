@@ -2,10 +2,12 @@ import React from 'react';
 import usePromise from 'react-use-promise';
 import {useService} from '@dapp-agent/sdk';
 import {Avatar, Button, Card, Col, Row} from 'antd';
+import {Link, Outlet} from 'react-router-dom';
 
 export default function Home() {
     return <>
         <AppList/>
+        <Outlet/>
     </>;
 }
 
@@ -26,9 +28,9 @@ function AppCube({id}: { id: string }) {
 
     return <Card actions={[
         <Button type={'link'} target={'_blank'} href={info?.url}>打开App</Button>,
-        <Button type={'link'}> 查看详情 </Button>,
+        <Link to={'detail/' + info?.id}><Button type={'link'}>查看详情</Button></Link>,
     ]}>
         <Avatar size={64} src={info?.icon}>{info?.name}</Avatar>
         <div>{info?.name}</div>
     </Card>;
-};
+}

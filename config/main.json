@@ -1,11 +1,11 @@
 {
   "debug": true,
   "port": 7001,
-  "homeUrl": "http://localhost:3000",
+  "homeUrl": "dapp://admin.sys",
   "ipfs": {
     "bootstrap": []
   },
   "sysApp": {
-    "admin": "ipfs:bafyreigyym66sol4hxxccb4qfamjef7vzhgfvhfoxumslrxw333m7dz2y4"
+    "admin": "ipfs:bafyreiblhiwrqzpjgkf2zmop334zxcvpdsmkwzospgryak5pp5qop47g3e"
   }
 }

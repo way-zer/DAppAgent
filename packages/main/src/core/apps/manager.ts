@@ -11,6 +11,8 @@ import assert from 'assert';
 import {DBManager} from '/@/core/db';
 import {useService} from '/@/apis/services';
 import PeerId from 'peer-id';
+import {withContext} from '/@/util/hook';
+import {useAppId} from '/@/apis/hooks/useApp';
 
 export class AppManager {
     private static _list?: App[];
@@ -115,7 +117,9 @@ export class AppManager {
             }
         }
         if (newNeed)
-            await useService('apps').callRequestPermission(permissions);
+            await withContext(async () => {
+                await useService('apps').callRequestPermission(permissions).catch(console.warn);
+            }, [useAppId, app.id]);//fixme, can't transmit useApp
     }
 
     /**发布应用,Need CanModify*/

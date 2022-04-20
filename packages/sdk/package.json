@@ -11,7 +11,7 @@
     "build": "tsc && pnpm run cpDts",
     "cpDts": "cp services.d.ts dist || copy services.d.ts dist"
   },
-  "peerDependencies": {
+  "dependencies": {
     "axios": ">=0.24.0"
   }
 }

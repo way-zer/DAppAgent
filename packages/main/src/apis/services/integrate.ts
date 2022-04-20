@@ -23,6 +23,7 @@ export class IntegrateApi extends ExposedService {
     //     return sign == MOCK_Verify_Sign;
     //   }
     async appRecord(app: App): Promise<string> {
+        return 'TODO';
         const meta = await app.appMeta.get();
         delete meta.recordSign;
         const metaCid = (await CoreIPFS.inst.dag.put(meta));
