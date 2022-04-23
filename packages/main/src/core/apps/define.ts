@@ -1,34 +1,40 @@
 import {CID} from 'multiformats';
-import {AccessType, DBType} from '/@/core/db';
+import {AccessType, AccessTypeStruct, DBType, DBTypeStruct} from '/@/core/db';
 import PeerId from 'peer-id';
+import {array, boolean, defaulted, object, optional, record, string, unknown} from 'superstruct';
 
 type Timestamp = number //Date.now
 type StringFor<T> = string
 
-export type AppPermission = {
-    node: string,
-    desc: string,
-    optional?: boolean//默认false, 将在用户安装应用时请求权限
-}
+export const AppPermissionStruct = object({
+    node: string(),
+    desc: string(),
+    //非可选将在用户安装应用时请求权限
+    optional: defaulted(boolean(), false),
+});
 
-export type ProgramMeta = {
-    name: string,
-    desc: string,
-    author: string,
-    icon: string,
-    ext: Record<string, any>,//开发者自行配置
-    permissions: AppPermission[],
-    databases: {
-        name: string,//在同一个应用内必须唯一
-        type: DBType,
-        access: AccessType,
-    }[],
-    singlePageApp?: boolean//默认false。true将支持SPA应用路由。
-    services: Record<string/*name*/, {
-        url: string,
-        background?: boolean//默认false。false表示不显示窗口,在后台处理,可通过API显示
-    }>
-}
+export type AppPermission = typeof AppPermissionStruct['TYPE']
+
+export const ProgramMetaStruct = object({
+    name: string(),
+    desc: string(),
+    author: string(),
+    icon: defaulted(string(), ''),
+    ext: record(string(), unknown()),//开发者自行配置
+    permissions: array(AppPermissionStruct),
+    databases: array(object({
+        name: string(),//在同一个应用内必须唯一
+        type: DBTypeStruct,
+        access: AccessTypeStruct,
+    })),
+    singlePageApp: defaulted(boolean(), false),//默认false。true将支持SPA应用路由。
+    services: record(string()/*name*/, object({
+        url: string(),
+        background: defaulted(boolean(), false),//默认false。false表示不显示窗口,在后台处理,可通过API显示
+    })),
+});
+
+export type ProgramMeta = typeof ProgramMetaStruct['TYPE']
 
 export type AppMeta = {
     name: string,//默认使用代码中配置

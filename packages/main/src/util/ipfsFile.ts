@@ -87,11 +87,7 @@ export class DagConfigFile<T extends object> extends ConfigFile<T> {
 
     async set(value: T) {
         const cid = await CoreIPFS.inst.dag.put(value);
-        try {
-            await CoreIPFS.inst.files.rm(this.file.path);
-        } catch (_) {
-        }
-        await CoreIPFS.inst.files.cp(cid, this.file.path, {parents: true});
+        await this.file.cpFrom(cid);
     }
 }
 

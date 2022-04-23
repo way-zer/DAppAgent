@@ -38,6 +38,7 @@ export class App {
         this.programCID = (await this.appMeta.get()).program;
         this.programRoot = '/ipfs/' + this.programCID;
         this.programMeta = new IPFSFile(this.programRoot + '/app.json').asJsonConfig<ProgramMeta>();
+        await this.localData.edit({lastUse: Date.now()});
     }
 
     async getFile(path: string) {

@@ -2,7 +2,7 @@ import {App} from '/@/core/apps/app';
 import {CID} from 'multiformats';
 import {CoreIPFS} from '/@/core/ipfs';
 import {toArray} from '/@/util';
-import {AppPermission, ProgramMeta} from '/@/core/apps/define';
+import {AppPermission, ProgramMeta, ProgramMetaStruct} from '/@/core/apps/define';
 import {AppId} from '/@/core/apps/appId';
 import Boom, {forbidden} from '@hapi/boom';
 import {simpleAppMeta} from '/@/core/apps/simpleApp';
@@ -13,6 +13,7 @@ import {useService} from '/@/apis/services';
 import PeerId from 'peer-id';
 import {withContext} from '/@/util/hook';
 import {useAppId} from '/@/apis/hooks/useApp';
+import {assertStruct} from '/@/apis/hooks/assertStruct';
 
 export class AppManager {
     private static _list?: App[];
@@ -78,22 +79,12 @@ export class AppManager {
 
         //检查配置文件
         const meta = await new IPFSFile(`/ipfs/${program}/app.json`).asJsonConfig<ProgramMeta>().get();
-        const unsafe = meta as any;
-        assert(typeof unsafe.name === 'string', Boom.badData('"name" must be string'));
-        assert(typeof unsafe.desc === 'string', Boom.badData('"desc" must be string'));
-        assert(unsafe.icon && typeof unsafe.icon === 'string', Boom.badData('"icon" must be string'));
-        assert(typeof unsafe.ext === 'object', Boom.badData('"ext" must be object'));
-        assert(Array.isArray(unsafe.permissions), Boom.badData('"permissions" must be array'));
-        assert(Array.isArray(unsafe.databases), Boom.badData('"databases" must be array'));
-        assert(typeof unsafe.services === 'object', Boom.badData('"services" must be object'));
+        assertStruct(ProgramMetaStruct, meta);
 
         //补全数据库
         const appMeta = await app.appMeta.get();
         const dbs = new Set<string>();//check duplicate
         for (const dbInfo of meta.databases) {
-            assert(dbInfo.name && dbInfo.type && dbInfo.access, Boom.badData('Bad database definition', {
-                program, db: dbInfo,
-            }));
             assert(!dbs.has(dbInfo.name), Boom.badData('duplicate database definition', {program, db: dbInfo.name}));
             dbs.add(dbInfo.name);
             if (dbInfo.name in appMeta.databases) continue;
@@ -103,9 +94,12 @@ export class AppManager {
             });
         }
 
-        appMeta.program = program;
-        await app.appMeta.set(appMeta);
-        await app.loadProgram(true);
+        if (!program.equals(app.programCID)) {
+            appMeta.updated = Date.now();
+            appMeta.program = program;
+            await app.appMeta.set(appMeta);
+            await app.loadProgram(true);
+        }
 
         //检查授权
         let permissions = [] as AppPermission[];

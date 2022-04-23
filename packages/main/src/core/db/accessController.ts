@@ -1,7 +1,9 @@
 import AccessControllers from 'orbit-db-access-controllers/src/access-controllers';
 import OrbitDBAccessController from 'orbit-db-access-controllers/src/orbitdb-access-controller';
+import {enums} from 'superstruct';
 
-export type AccessType = 'private' | 'selfWrite'
+export const AccessTypeStruct = enums(['private', 'selfWrite']);
+export type AccessType = typeof AccessTypeStruct['TYPE']
 const superAdmins = [];//超级管理,可以编辑所有数据库
 
 export class MyAccessController extends OrbitDBAccessController {

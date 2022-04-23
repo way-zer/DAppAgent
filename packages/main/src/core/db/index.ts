@@ -4,10 +4,13 @@ import {CoreIPFS} from '../ipfs';
 import memoizee from 'memoizee';
 import Boom, {badRequest} from '@hapi/boom';
 import type {AccessType as AccessType0} from './accessController';
-import {MyAccessController} from './accessController';
+import {AccessTypeStruct, MyAccessController} from './accessController';
 import {MyIdentityProvider} from '/@/core/db/identityProvider';
+import {enums} from 'superstruct';
 
-export type DBType = 'docstore' | 'keyvalue' | 'feed' | 'eventlog' | 'counter'
+export const DBTypeStruct = enums(['docstore', 'keyvalue', 'feed', 'eventlog', 'counter']);
+export type DBType = typeof DBTypeStruct['TYPE']
+export {AccessTypeStruct} from './accessController';
 export type AccessType = AccessType0
 
 export interface DataBase {
