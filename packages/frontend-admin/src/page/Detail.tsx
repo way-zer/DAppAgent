@@ -58,7 +58,7 @@ export default function AppDetail() {
             <ProDescriptions.Item label={'其他ID'} span={3}>
                 <div>
                     <ul>{info?.publicIds?.map(it => <li key={it}>{it}</li>)}</ul>
-                    {info?.recordSign || <Alert type={'warning'} description={'应用未发布，无法分享'}/>}
+                    {info?.recordSign ? '' : <Alert type={'warning'} description={'应用未发布，无法分享'}/>}
                 </div>
             </ProDescriptions.Item>
             <ProDescriptions.Item label={'已授予权限'} span={3}>

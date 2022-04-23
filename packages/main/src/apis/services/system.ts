@@ -19,6 +19,7 @@ export class SystemApi extends ExposedService {
                 ...it,
                 addr: it.addr.toString(),
             })),
+            address: ipfsStatus.addresses.map(it => it.toString()),
         };
     }
 
