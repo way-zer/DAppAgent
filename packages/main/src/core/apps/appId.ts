@@ -4,6 +4,8 @@ import {CoreIPFS} from '/@/core/ipfs';
 import {IPFSFile} from '/@/util/ipfsFile';
 import Boom from '@hapi/boom';
 import config from 'config/main.json';
+import PeerId from 'peer-id';
+import {bases} from 'multiformats/basics';
 
 type KnownAppType = 'ipns' | 'ipfs' | 'sys' | 'dev'
 
@@ -57,7 +59,8 @@ export class AppIdRegistry {
     static async resolve(id: AppId): Promise<CID | null> {
         switch (id.type) {
             case 'ipns':
-                const addr = await last(CoreIPFS.inst.name.resolve(id.name, {recursive: true})).catch(() => null);
+                const ipnsId = PeerId.createFromBytes(bases.base32.decode(id.name)).toB58String();
+                const addr = await last(CoreIPFS.inst.name.resolve(ipnsId, {recursive: true})).catch(() => null);
                 if (!addr) return null;
                 return await new IPFSFile(addr).cid();
             case 'ipfs':

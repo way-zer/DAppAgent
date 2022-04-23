@@ -7,6 +7,7 @@ import Boom, {badData, notFound} from '@hapi/boom';
 import {CoreIPFS} from '/@/core/ipfs';
 import {AppId} from '/@/core/apps/appId';
 import PeerId from 'peer-id';
+import {bases} from 'multiformats/basics';
 
 export class App {
     static verifier: (app: App) => Promise<boolean> = async () => true;
@@ -61,7 +62,7 @@ export class App {
         if (!await this.canModify()) return [];
         const ipnsId = (await this.privateKey())!!;
         return [
-            new AppId('ipns', ipnsId.toB58String()),
+            new AppId('ipns', bases.base32.encode(ipnsId.toBytes())),
             new AppId('ipfs', (await this.appMeta.file.cid()).toString()),
         ];
     }

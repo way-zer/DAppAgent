@@ -2,6 +2,7 @@ import type {IPFS} from 'ipfs-core-types';
 import {create} from 'ipfs-core';
 import last from 'it-last';
 import type LibP2P from 'libp2p';
+import type {Connection} from 'libp2p';
 import Boom from '@hapi/boom';
 import {toArray} from '/@/util';
 import config from 'config/main.json';
@@ -50,6 +51,12 @@ export class CoreIPFS {
             },
         });
         this.libP2PUnsafe = this.inst.libp2p || null;
+        this.libp2p.connectionManager.on('peer:connect', (con: Connection) => {
+            console.log('New peer connect: ', con.remoteAddr.toString(), con.remotePeer.toString());
+        });
+        this.libp2p.connectionManager.on('peer:disconnect', (con) => {
+            console.log('Peer disconnect: ', con.remoteAddr.toString(), con.remotePeer.toString());
+        });
         console.log('IPFS ID is: ' + (await this.inst.id()).id);
     }
 
@@ -69,6 +76,7 @@ export class CoreIPFS {
             repo: await this.instUnsafe?.repo?.stat(),
             peers: await this.instUnsafe?.swarm?.peers() || [],
             bandwidth: await toArray(this.instUnsafe?.stats?.bw()),
+            addresses: await this.instUnsafe?.swarm?.localAddrs() || [],
         };
     }
 
