@@ -1,4 +1,13 @@
-import {app, BrowserWindow, dialog, Menu, protocol, Tray} from 'electron';
+import {
+    app,
+    BrowserWindow,
+    dialog,
+    Menu,
+    protocol,
+    Tray,
+    UploadRawData,
+    UploadFile,
+} from 'electron';
 import {URL} from 'url';
 import {request} from 'http';
 import globalConfig from 'config/main.json';
@@ -8,6 +17,7 @@ import {CoreIPFS} from '/@/core/ipfs';
 import {DBManager} from '/@/core/db';
 import {Apis} from '/@/apis';
 import {AppManager} from '/@/core/apps';
+import * as fs from 'fs';
 
 let iconPath, preloadPath;
 if (import.meta.env.DEV) {
@@ -60,14 +70,29 @@ export class ElectronHelper {
         await Apis.start();
         protocol.registerStreamProtocol('dapp', (req, callback) => {
             const url = new URL(req.url);
-            const req2 = request(`http://127.0.0.1:${globalConfig.port}${url.pathname}`, {
+            const newUrl = req.url.replace(`${url.protocol}//${url.host}`, `http://127.0.0.1:${globalConfig.port}`);
+            const req2 = request(newUrl, {
                 method: req.method,
-                headers: Object.assign({}, req.headers, {'Host': new URL(req.url).hostname + '.dapp'}),
+                headers: {
+                    ...req.headers,
+                    'Host': url.hostname + '.dapp',
+                    'x-url': req.url,
+                },
             }, callback);
             req2.on('error', (err) => {
                 throw err;
             });
-            req2.write((req.uploadData || [])[0]?.bytes || '');
+            // mistake type in electron api
+            // @ts-ignore
+            req.uploadData?.forEach((it: UploadRawData | UploadFile) => {
+                switch (it.type) {
+                    case 'rawData':
+                        req2.write(it.bytes);
+                        break;
+                    case 'file':
+                        req2.write(fs.readFileSync(it.filePath));
+                }
+            });
             req2.end();
         });
         await this.setTray();

@@ -33,15 +33,14 @@ export class _Api {
         if (!apiMeta)
             throw Boom.notFound('method not exist', {serviceName, methodName});
 
-        ctx.body = await withContext(async () => {
-            return await this.callMethod(apiMeta, service, service[methodName], args);
-        }, [useContext, ctx]);
+        ctx.body = await withContext(() => this.callMethod(apiMeta, service, service[methodName], args),
+            [useContext, ctx]);
         ctx.status = 200;
     }
 
     async callMethod(meta: ApiMeta, service: any, f: Function, args: any[]) {
         if (meta.permission && !await (await useApp()).hasPermission(meta.permission))
             throw Boom.forbidden('app don\'t have permission, request first.', {permission: meta.permission});
-        return f.call(service, ...args);
+        return await f.call(service, ...args);
     }
 }

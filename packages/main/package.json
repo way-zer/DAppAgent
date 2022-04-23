@@ -17,14 +17,14 @@
     "config": "workspace:*",
     "daruk": "^2.3.11",
     "electron": "16.0.2",
-    "electron-devtools-installer": "3.2.0",
-    "electron-updater": "4.6.4",
-    "ipfs-core": "^0.12.2",
+    "electron-devtools-installer": "^3.2.0",
+    "electron-updater": "^5.0.1",
+    "ipfs-core": "^0.14.2",
     "it-last": "^1.0.6",
     "it-to-buffer": "^2.0.2",
     "it-to-stream": "^1.0.0",
-    "libp2p": "^0.34.0",
-    "libp2p-crypto": "^0.20.0",
+    "libp2p": "^0.36.2",
+    "libp2p-crypto": "^0.21.2",
     "memoizee": "^0.4.15",
     "mime": "^3.0.0",
     "multiformats": "^9.6.4",
@@ -37,16 +37,16 @@
     "readable-stream": "^3.6.0",
     "rule-judgment": "^1.1.5",
     "source-map-support": "^0.5.21",
-    "superstruct": "^0.15.3"
+    "superstruct": "^0.15.4",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "@types/electron-devtools-installer": "2.2.0",
+    "@types/electron-devtools-installer": "2.2.2",
     "@types/memoizee": "^0.4.7",
-    "@types/node": "^16.11.26",
+    "@types/node": "^17.0.25",
     "@types/orbit-db": "workspace:*",
-    "ipfs-core-types": "^0.8.1",
-    "ts-morph": "^13.0.3",
-    "ts-node": "^10.5.0",
-    "tsconfig-paths": "^3.12.0"
+    "ipfs-core-types": "^0.10.2",
+    "ts-morph": "^14.0.0",
+    "tsconfig-paths": "^3.14.1"
   }
 }

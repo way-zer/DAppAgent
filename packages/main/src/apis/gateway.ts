@@ -1,9 +1,9 @@
 import type {DarukContext} from 'daruk';
-import {controller, get, post, priority} from 'daruk';
+import {controller, get, post, priority, query} from 'daruk';
 import readable from 'it-to-stream';
 import {getType} from 'mime/lite';
 import {CoreIPFS} from '../core/ipfs';
-import {useContext, useParam} from './hooks/simple';
+import {useContext, useParam, useQuery} from './hooks/simple';
 import {useApp} from './hooks/useApp';
 import {withContext} from '/@/util/hook';
 import Boom from '@hapi/boom';
@@ -23,7 +23,9 @@ export class _Gateway {
         } catch (e: any) {
             throw Boom.badRequest(e.message || e?.toString());
         }
-        ctx.type = getType(ctx.querystring || 'index.html');
+        let fileName = ctx.querystring as string || path.split('/').reverse()[0];
+        if (!fileName.includes('.')) fileName = 'index.html';
+        ctx.type = getType(fileName);
         ctx.body = readable(CoreIPFS.inst.cat(path));
     }
 
@@ -34,8 +36,10 @@ export class _Gateway {
         let body = ctx.request.body;
         if (ctx.request.type == 'application/octet-stream')
             body = ctx.req;
-        else if (typeof body === 'object') body = JSON.stringify(body);
-        const res = await ipfs.add({content: body}, {pin: false});
+        else if (typeof body === 'object')
+            body = JSON.stringify(body);
+
+        const res = await ipfs.add(body, {pin: false});
         ctx.body = {
             cid: res.cid.toString(),
             size: res.size,

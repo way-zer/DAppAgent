@@ -16,7 +16,7 @@ export class MyIdentityProvider extends IdentityProvider {
     }
 
     async getId(): Promise<string> {
-        return UserManager.self().id.toString();
+        return MyIdentityProvider.getIdentity().id;
     }
 
     async signIdentity(data): Promise<string> {
@@ -27,14 +27,14 @@ export class MyIdentityProvider extends IdentityProvider {
         return this.signIdentity(data);
     }
 
-    async verity(sig: string, publicKey: string, data) {
+    async verify(sig: string, publicKey: string, data) {
         const peer = await PeerId.createFromPubKey(base64pad.decode(publicKey));
         return await peer.pubKey.verify(data, base64pad.decode(sig));
     }
 
     async verifyIdentity(identity: Identity) {
         const peer = await PeerId.createFromPubKey(base64pad.decode(identity.publicKey));
-        return peer.equals(PeerId.parse(identity.id));
+        return peer.equals(PeerId.createFromB58String(identity.id));
     }
 
     //ext
@@ -42,6 +42,6 @@ export class MyIdentityProvider extends IdentityProvider {
 
     static getIdentity() {
         const id = UserManager.self().id;
-        return new Identity(id.toString(), base64pad.encode(id.marshalPubKey()), '', '', type, MyIdentityProvider.inst);
+        return new Identity(id.toB58String(), base64pad.encode(id.marshalPubKey()), '', '', type, MyIdentityProvider.inst);
     }
 }

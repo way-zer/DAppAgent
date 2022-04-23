@@ -5,7 +5,10 @@
   "icon": "/favicon.ico",
   "ext": {},
   "permissions": [
-    "db.use"
+    {
+      "node": "db.use",
+      "desc": "使用数据库储存文章数据"
+    }
   ],
   "databases": [
     {
