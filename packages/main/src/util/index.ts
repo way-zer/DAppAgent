@@ -22,8 +22,13 @@ export async function decodeText(file: AsyncIterable<Uint8Array>): Promise<strin
     return context;
 }
 
-export function peerIdBase32(pid: string): string {
-    return PeerId.createFromB58String(pid).toString();
+export function peerIdB58ToBase32(pid: string): string {
+    try {
+        const id = PeerId.createFromB58String(pid);
+        return bases.base32.encode(id.toBytes());
+    } catch {
+        return 'BAD_DATA';
+    }
 }
 
 export function cidBase32(cid: string | CID): string {

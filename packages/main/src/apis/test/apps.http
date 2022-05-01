@@ -144,3 +144,18 @@ Content-Type: application/json
 [
   "apps.admin"
 ]
+
+###导入密钥
+#TEST ON 2022-05-01
+POST {{host}}/api/apps/importKey
+dapp: {{appId}}
+Content-Type: application/json
+
+[
+  "dev:test",
+  {
+    "id": "12D3KooWBfRW2DHase5JtRQt4Zzj9whDnvsL19zvfHNMf7X9zwtq",
+    "privKey": "SECRET",
+    "pubKey": "SECRET"
+  }
+]

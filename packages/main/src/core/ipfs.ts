@@ -1,5 +1,5 @@
-import type {IPFS} from 'ipfs-core-types';
 import {create} from 'ipfs-core';
+import type {IPFS} from 'ipfs-core';
 import last from 'it-last';
 import type LibP2P from 'libp2p';
 import type {Connection} from 'libp2p';
@@ -17,12 +17,12 @@ export class CoreIPFS {
     static libP2PUnsafe: LibP2P | null = null;
 
     static get inst(): IPFS {
-        if (!this.instUnsafe) throw 'IPFS hasn\'t start';
+        if (!this.instUnsafe) throw Boom.notAcceptable('IPFS hasn\'t start');
         return this.instUnsafe;
     }
 
     static get libp2p() {
-        if (!this.libP2PUnsafe) throw 'LibP2P hasn\'t start';
+        if (!this.libP2PUnsafe) throw Boom.notAcceptable('IPFS hasn\'t start');
         return this.libP2PUnsafe;
     }
 
@@ -58,6 +58,14 @@ export class CoreIPFS {
             console.log('Peer disconnect: ', con.remoteAddr.toString(), con.remotePeer.toString());
         });
         console.log('IPFS ID is: ' + (await this.inst.id()).id);
+        this.inst.key.import;
+        if (import.meta.env.DEV)
+            import('ipfs-http-server').then(async ({HttpApi}) => {
+                // @ts-ignore
+                let api = new HttpApi(this.inst);
+                await api.start();
+                console.log('IPFS Api server:', api.apiAddr);
+            });
     }
 
     static async stop() {
@@ -73,10 +81,10 @@ export class CoreIPFS {
             running: this.instUnsafe !== null && this.inst.isOnline(),
             version: await this.instUnsafe?.version(),
             id: await this.instUnsafe?.id(),
-            repo: await this.instUnsafe?.repo?.stat(),
+            // repo stat is too slow
+            // repo: await this.instUnsafe?.stats?.repo(),
             peers: await this.instUnsafe?.swarm?.peers() || [],
             bandwidth: await toArray(this.instUnsafe?.stats?.bw()),
-            addresses: await this.instUnsafe?.swarm?.localAddrs() || [],
         };
     }
 

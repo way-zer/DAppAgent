@@ -42,6 +42,7 @@ export type AppMeta = {
     icon: string,//默认使用代码中配置
     ext: Record<string, any>,//可在fork时作为附加参数,或API修改
 
+    id: string,//应用的公钥Id,B58String
     creator: StringFor<PeerId>,//自动填充
     fork?: CID,//来源cid,fork时自动填充
     updated: Timestamp,//自动生成

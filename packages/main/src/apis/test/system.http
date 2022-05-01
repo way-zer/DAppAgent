@@ -20,4 +20,12 @@ Content-Type: application/json
 POST {{host}}/api/system/selectDir
 dapp: {{appId}}
 
-###
+### 导出密钥
+#TEST ON 2022-05-01
+POST {{host}}/api/system/exportKeys
+dapp: {{appId}}
+
+### 导入用户密钥
+#TODO TEST
+POST {{host}}/api/system/exportKeys
+dapp: {{appId}}

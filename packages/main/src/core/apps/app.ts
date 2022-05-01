@@ -7,7 +7,7 @@ import Boom, {badData, notFound} from '@hapi/boom';
 import {CoreIPFS} from '/@/core/ipfs';
 import {AppId} from '/@/core/apps/appId';
 import PeerId from 'peer-id';
-import {bases} from 'multiformats/basics';
+import {peerIdB58ToBase32} from '/@/util';
 
 export class App {
     static verifier: (app: App) => Promise<boolean> = async () => true;
@@ -29,13 +29,16 @@ export class App {
 
     //All Api Behind need loadProgram
 
+    uniqueId!: string;
     programCID!: CID;
     programRoot!: string;
     programMeta!: JsonConfigFile<ProgramMeta>;
 
     async loadProgram(force = false) {
         if (!force && this.programRoot) return;
-        this.programCID = (await this.appMeta.get()).program;
+        const meta = (await this.appMeta.get());
+        this.uniqueId = meta.id;
+        this.programCID = meta.program;
         this.programRoot = '/ipfs/' + this.programCID;
         this.programMeta = new IPFSFile(this.programRoot + '/app.json').asJsonConfig<ProgramMeta>();
         await this.localData.edit({lastUse: Date.now()});
@@ -43,6 +46,13 @@ export class App {
 
     async getFile(path: string) {
         return await new IPFSFile(this.programRoot + path).read();
+    }
+
+    async publicIds(): Promise<AppId[]> {
+        return [
+            new AppId('ipns', peerIdB58ToBase32(this.uniqueId)),
+            new AppId('ipfs', (await this.appMeta.file.cid()).toString()),
+        ];
     }
 
     //private app
@@ -57,15 +67,6 @@ export class App {
         } catch (e) {
             return null;
         }
-    }
-
-    async publicIds(): Promise<AppId[]> {
-        if (!await this.canModify()) return [];
-        const ipnsId = (await this.privateKey())!!;
-        return [
-            new AppId('ipns', bases.base32.encode(ipnsId.toBytes())),
-            new AppId('ipfs', (await this.appMeta.file.cid()).toString()),
-        ];
     }
 
     async publishIPNS() {

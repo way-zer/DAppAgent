@@ -12,7 +12,6 @@ import {URL} from 'url';
 import {request} from 'http';
 import globalConfig from 'config/main.json';
 // import icon from 'config/buildResources/icon.png?url';
-import {useService} from '/@/apis/services';
 import {CoreIPFS} from '/@/core/ipfs';
 import {DBManager} from '/@/core/db';
 import {Apis} from '/@/apis';
@@ -58,16 +57,17 @@ export class ElectronHelper {
                 window.focus();
             }
         });
-        setTimeout(async () => {
+        const startBackend = (async () => {
+            await Apis.start();
             await CoreIPFS.start();
             await DBManager.start();
             AppManager.startRepublish();
-        });
+        })();
         app.whenReady().then(() => this.afterReady());
+        Promise.all([startBackend, app.whenReady()]).then(() => this.createWindow());
     }
 
     static async afterReady() {
-        await Apis.start();
         protocol.registerStreamProtocol('dapp', (req, callback) => {
             const url = new URL(req.url);
             const newUrl = req.url.replace(`${url.protocol}//${url.host}`, `http://127.0.0.1:${globalConfig.port}`);
@@ -101,33 +101,11 @@ export class ElectronHelper {
     static async setTray() {
         const tray = new Tray(iconPath);
         tray.setTitle('DappAgent');
+        tray.on('double-click', () => this.createWindow());
         tray.setContextMenu(Menu.buildFromTemplate([
-            {
-                label: '打开主窗口', click: () => {
-                    this.createWindow(globalConfig.homeUrl).catch(e => {
-                        console.error('Fail to create window', e);
-                    });
-                },
-            },
-            {
-                label: '创建测试应用', click: () => {
-                    useService('apps').create('test').catch(e => {
-                        console.error('Fail to create app', e);
-                    });
-                },
-            },
-            {
-                label: '打开测试应用', click: () => {
-                    this.createWindow('dapp://test.dev').catch(e => {
-                        console.error('Fail to create window', e);
-                    });
-                },
-            },
-            {
-                label: '退出', click: () => {
-                    app.quit();
-                },
-            },
+            {label: '打开主窗口', click: () => this.createWindow()},
+            {label: '重启', click: this.relaunch},
+            {label: '退出', click: app.quit},
         ]));
         tray.on('right-click', () => {
             tray.popUpContextMenu();
@@ -135,16 +113,29 @@ export class ElectronHelper {
         this.tray = tray;
     }
 
-    static async createWindow(url: string) {
-        const window = new BrowserWindow({
-            show: false,
-            webPreferences: {
-                nativeWindowOpen: true,
-                // preload: preloadPath
-            },
-        });
-        window.on('ready-to-show', () => window.show());
-        await window.loadURL(url);
+    static relaunch() {
+        app.relaunch();
+        app.exit();
+    }
+
+    static async createWindow(url: string = globalConfig.homeUrl) {
+        try {
+            const window = new BrowserWindow({
+                show: false,
+                webPreferences: {
+                    nativeWindowOpen: true,
+                    // preload: preloadPath
+                },
+            });
+            window.on('ready-to-show', () => window.show());
+            window.on('show', () => window.focus());
+            await window.loadURL(url);
+        } catch (e) {
+            await dialog.showMessageBox({
+                type: 'error',
+                message: 'Fail to create window: ' + e,
+            });
+        }
     }
 
     static async selectDir() {
@@ -152,5 +143,14 @@ export class ElectronHelper {
             properties: ['openDirectory'],
         });
         return result.canceled ? null : result.filePaths[0];
+    }
+
+    static async showConfirmDialog(message: string): Promise<Boolean> {
+        const result = await dialog.showMessageBox({
+            type: 'question', message,
+            buttons: ['确认', '取消'], cancelId: 1,
+
+        });
+        return result.response === 0;
     }
 }

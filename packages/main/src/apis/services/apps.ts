@@ -10,6 +10,7 @@ import path from 'path';
 import {any, record, string} from 'superstruct';
 import {assertStruct, partialObject} from '/@/apis/hooks/assertStruct';
 import {AppPermission} from '/@/core/apps/define';
+import PeerId from 'peer-id';
 
 export class AppsApi extends ExposedService {
     /// info
@@ -20,6 +21,7 @@ export class AppsApi extends ExposedService {
         return {
             ...meta,
             id: app.id.toString(),
+            uniqueId: app.uniqueId,
             url: app.id.url,
             fork: meta.fork?.toString(),
             program: meta.program.toString(),
@@ -158,6 +160,22 @@ export class AppsApi extends ExposedService {
     }
 
     /// util
+    @api({permission: 'apps.admin'})
+    async importKey(id: string, key0: PeerId.JSONPeerId) {
+        const app = await withContext(useApp, [useAppId, AppId.fromString(id)]);
+        if (await app.canModify())
+            throw Boom.badRequest('App already have key', {id});
+        const key = await PeerId.createFromJSON(key0);
+        if (app.uniqueId && app.uniqueId !== key.toB58String())
+            throw Boom.badRequest('Key not match this app', {id, expect: app.uniqueId, get: key.toB58String()});
+        if (!key.privKey)
+            throw Boom.badRequest('Key must include private', {id, key: key0});
+        await app.privateKeyFile.write(key.marshal());
+        if (!app.uniqueId) {
+            await app.appMeta.edit({id: key.toB58String()});
+            await app.loadProgram(true);//reload uniqueId
+        }
+    }
 
     @api({permission: 'apps.syncProgram'})
     async syncProgram(id: string, dir: string) {

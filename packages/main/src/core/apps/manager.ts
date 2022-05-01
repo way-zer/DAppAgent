@@ -28,8 +28,10 @@ export class AppManager {
 
     static async get(id: AppId, load = true) {
         let app = (await this.list()).find(it => it.id.equals(id));
-        if (load && !app && id.type === 'sys')
+        if (load && !app && id.type === 'sys') {
+            console.log('System app ' + id + ' not found, try clone');
             app = await this.clone(id);
+        }
 
         if (load && app) {
             await this.checkUpdate(app);
@@ -49,13 +51,14 @@ export class AppManager {
         const id = new AppId('dev', name);
         if (await this.get(id) != null)
             throw Boom.conflict('App exists', {name});
+
         const app = new App(id);
+        const key = await PeerId.create({keyType: 'Ed25519'});
 
         const meta = await simpleAppMeta();
+        meta.id = key.toB58String();
         if (from) meta.fork = await from.appMeta.file.cid();
         await app.appMeta.set(meta);
-
-        const key = await PeerId.create({keyType: 'Ed25519'});
         await app.privateKeyFile.write(key.marshal());
 
         await app.localData.set({

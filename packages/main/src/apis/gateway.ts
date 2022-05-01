@@ -16,7 +16,7 @@ export class _Gateway {
     async getByCid(ctx: DarukContext) {
         const path = '/ipfs/' + useParam(ctx, 'cidPath');
         try {
-            const stat = await CoreIPFS.inst.files.stat(path);
+            const stat = await CoreIPFS.inst.files.stat(path, {timeout: 3000});
             if (stat.type == 'directory')
                 // noinspection ExceptionCaughtLocallyJS
                 throw path + ' is a directory.';

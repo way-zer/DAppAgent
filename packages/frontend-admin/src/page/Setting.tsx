@@ -17,8 +17,11 @@ function Status() {
             <Descriptions bordered column={2}>
                 <DescriptionsItem label={'IPFS状态'}>{status?.ipfs ? '运行中' : '未启动'}</DescriptionsItem>
                 <DescriptionsItem label={'OrbitDB状态'}>{status?.orbitDB ? '运行中' : '未启动'}</DescriptionsItem>
+                <DescriptionsItem label={'节点ID'} span={2}>
+                    {status?.id?.id}
+                </DescriptionsItem>
                 <DescriptionsItem label={'本地IP'} span={2}>
-                    {status?.address?.map(peer => <>
+                    {status?.id?.addresses?.map(peer => <>
                         <span>{peer}</span><br/>
                     </>)}
                 </DescriptionsItem>

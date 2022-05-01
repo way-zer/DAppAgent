@@ -11,39 +11,58 @@ export type AppLocalMeta = {
 
 interface AppsApi {
     /** @api() */
-    thisInfo(): Promise<{ id: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: Record<string, any>; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
+    thisInfo(): Promise<{ id: string; uniqueId: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: Record<string, any>; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
+
     /** @api({permission: 'apps.admin'}) */
     list(): Promise<{ id: string; url: string; modifiable: boolean; publicIds: string[]; }[]>;
+
     /** @api({permission: 'apps.admin'}) */
-    info(id: string): Promise<{ id: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: Record<string, any>; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
+    info(id: string): Promise<{ id: string; uniqueId: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: Record<string, any>; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
+
     /** @api() */
     hasPermission(node: string): Promise<boolean>;
+
     /** @api() */
     requestPermission(node: string): Promise<true | Boolean>;
+
     /** @api({permission: 'apps.admin'}) */
     grantPermission(id: string, permissions: string[]): Promise<void>;
+
     callRequestPermission(permissions: AppPermission[]): Promise<Boolean>;
+
     /** @api({permission: 'apps.admin'}) */
-    create(name: string): Promise<{ id: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: Record<string, any>; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
+    create(name: string): Promise<{ id: string; uniqueId: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: Record<string, any>; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
+
     /** @api({permission: 'apps.admin'}) */
-    fork(name: string, fromApp: string): Promise<{ id: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: Record<string, any>; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
+    fork(name: string, fromApp: string): Promise<{ id: string; uniqueId: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: Record<string, any>; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
+
     /** @api({permission: 'apps.admin'}) */
     publish(id: string): Promise<void>;
+
     /** @api({permission: 'apps.admin'}) */
-    clone(id: string): Promise<{ id: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: Record<string, any>; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
+    clone(id: string): Promise<{ id: string; uniqueId: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: Record<string, any>; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
+
     /** @api({permission: 'apps.admin'}) */
     delete(id: string): Promise<boolean>;
+
     /** @api() */
     checkUpdateSelf(): Promise<void>;
+
     /** @api({permission: 'apps.admin'}) */
     checkUpdate(id: string): Promise<void>;
+
     /**
      * desc.ext.* null to delete key
      */
     /** @api() */
     updateDescSelf(desc: typeof AppsApi.DescStruct['TYPE']): Promise<void>;
+
     /** @api({permission: 'apps.admin'}) */
     updateDesc(id: string, desc: Partial<Pick<AppMeta, 'name' | 'desc' | 'icon' | 'ext'>>): Promise<void>;
+
+    /** @api({permission: 'apps.admin'}) */
+    importKey(id: string, key0: PeerId.JSONPeerId): Promise<void>;
+
     /** @api({permission: 'apps.syncProgram'}) */
     syncProgram(id: string, dir: string): Promise<string>;
 }
@@ -122,10 +141,16 @@ interface IntegrateApi {
 
 interface SystemApi {
     /** @api({permission: 'system.info'}) */
-    status(): Promise<{ ipfs: boolean; orbitDB: boolean; bandwidth: { totalIn: string; totalOut: string; rateIn: number; rateOut: number; }[]; peers: { addr: string; peer: string; latency?: string | undefined; muxer?: string | undefined; streams?: string[] | undefined; direction?: 'inbound' | 'outbound' | undefined; }[]; address: string[]; }>;
+    status(): Promise<{ ipfs: boolean; orbitDB: boolean; versions: { version?: string | undefined; commit?: string | undefined; repo?: string | undefined; system?: string | undefined; golang?: string | undefined; 'ipfs-core'?: string | undefined; 'interface-ipfs-core'?: string | undefined; 'ipfs-http-client'?: string | undefined; }; id: { addresses: string[]; id?: string | undefined; publicKey?: string | undefined; agentVersion?: string | undefined; protocolVersion?: string | undefined; protocols?: string[] | undefined; }; peers: { addr: string; peer: string; latency?: string | undefined; muxer?: string | undefined; streams?: string[] | undefined; direction?: 'inbound' | 'outbound' | undefined; }[]; bandwidth: { totalIn: string; totalOut: string; rateIn: number; rateOut: number; }[]; }>;
 
     /** @api({permission: 'system.admin'}) */
     connectPeer(addr: string): Promise<void>;
+
+    /** @api({permission: 'system.admin'}) */
+    importPeerKey(key0: PeerId.JSONPeerId): Promise<void>;
+
+    /** @api({permission: 'system.admin'}) */
+    exportKeys(): Promise<NodeJS.ReadableStream>;
 
     /** @api({permission: 'system.selectDir'}) */
     selectDir(): Promise<string | null>;
