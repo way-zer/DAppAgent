@@ -1,8 +1,8 @@
-import React, {createRef} from 'react';
-import {Avatar, Dropdown, Input, InputRef, Menu, Modal} from 'antd';
+import React from 'react';
+import {Avatar, Dropdown, Menu} from 'antd';
 import {AntDesignOutlined} from '@ant-design/icons';
 import {useService} from '@dapp-agent/sdk';
-import {useNavigate} from 'react-router-dom';
+import {showInputModal} from '../util';
 
 export default function UserAvatar() {
     return (
@@ -18,29 +18,15 @@ export default function UserAvatar() {
 function UserPopover() {
     return <Menu>
         <Menu.Item onClick={showPeerModal}>连接Peer</Menu.Item>
-        <Menu.Item onClick={showCloneModal}>Clone应用</Menu.Item>
     </Menu>;
 }
 
 function showPeerModal() {
-    let input = createRef<InputRef>();
-    Modal.confirm({
+    showInputModal({
         title: '连接Peer',
-        content: <Input placeholder="请输入peer地址" ref={input}/>,
-        async onOk() {
-            await useService('system').connectPeer(input.current!!.input!!.value);
-        },
-    });
-}
-
-function showCloneModal() {
-    let input = createRef<InputRef>();
-    Modal.confirm({
-        title: 'Clone应用',
-        content: <Input placeholder="请输入应用地址" ref={input}/>,
-        async onOk() {
-            await useService('apps').clone(input.current!!.input!!.value);
-            useNavigate()(0);
+        tip: '请输入peer地址',
+        async callback(value) {
+            await useService('system').connectPeer(value);
         },
     });
 }

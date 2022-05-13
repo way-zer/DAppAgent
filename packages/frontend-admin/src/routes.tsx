@@ -1,9 +1,8 @@
-import {BrowserRouter, Navigate, Route, Routes, useParams} from 'react-router-dom';
+import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom';
 import React from 'react';
 import Home from './page/Home';
 import Setting from './page/Setting';
 import App from './page/App';
-import AppInfo from './page/AppInfo';
 import {PermissionRequest} from './extPage/permission';
 import AppDetail from './page/Detail';
 
