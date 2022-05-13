@@ -135,6 +135,7 @@ importers:
       superstruct: ^0.15.4
       ts-morph: ^14.0.0
       tsconfig-paths: ^3.14.1
+      uint8arrays: ^3.0.0
     dependencies:
       '@hapi/boom': 9.1.4
       config: link:../../config
@@ -163,6 +164,7 @@ importers:
       rule-judgment: 1.1.5_lodash@4.17.21
       source-map-support: 0.5.21
       superstruct: 0.15.4
+      uint8arrays: 3.0.0
     devDependencies:
       '@types/electron-devtools-installer': 2.2.2
       '@types/memoizee': 0.4.7

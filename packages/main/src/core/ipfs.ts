@@ -9,6 +9,7 @@ import config from 'config/main.json';
 import PeerId from 'peer-id';
 import {CID} from 'multiformats';
 import parseDuration from 'parse-duration';
+import {fromString as uint8ArrayFromString} from 'uint8arrays/from-string';
 
 type FileContent = AsyncIterable<Uint8Array>
 
@@ -98,11 +99,15 @@ export class CoreIPFS {
         return addr;
     }
 
+    //copy from ipfs.name.publish
     static async publishIPNS(key: PeerId, cid: CID, duration: string = '2d') {
         const ipfs = `/ipfs/${cid}`;
-        const encoded = new TextEncoder().encode(ipfs);
-        const {name} = await this.inst.ipns.publish(key.privKey, encoded, parseDuration(duration));
-        return {ipfs, ipns: `/ipns/${name}`};
+        try {
+            const {name} = await this.inst.ipns.publish(key.privKey, uint8ArrayFromString(ipfs), parseDuration(duration));
+            return {ipfs, ipns: `/ipns/${name}`};
+        } catch (e) {
+            throw Boom.notAcceptable('Fail to publish IPNS ' + e, {ipfs, key: cid.toString(), raw: e});
+        }
     }
 
     static async getFile(path0: string): Promise<FileContent> {

@@ -39,7 +39,8 @@
     "readable-stream": "^3.6.0",
     "rule-judgment": "^1.1.5",
     "source-map-support": "^0.5.21",
-    "superstruct": "^0.15.4"
+    "superstruct": "^0.15.4",
+    "uint8arrays": "^3.0.0"
   },
   "devDependencies": {
     "@types/electron-devtools-installer": "2.2.2",
