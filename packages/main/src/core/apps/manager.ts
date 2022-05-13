@@ -35,8 +35,13 @@ export class AppManager {
         }
 
         if (load && app) {
-            if ((Date.now() - (await app.localData.get()).lastCheckUpdate || 0) > config.app.updateInterval * 1000)
-                await this.checkUpdate(app);
+            if ((Date.now() - (await app.localData.get()).lastCheckUpdate || 0) > config.app.updateInterval * 1000) {
+                try {
+                    await this.checkUpdate(app);
+                } catch (e) {
+                    console.warn(`Fail to auto update for ${app.id}`, e);
+                }
+            }
             await app.loadProgram();
         }
         return app;
