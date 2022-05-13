@@ -14,6 +14,7 @@ import PeerId from 'peer-id';
 import {withContext} from '/@/util/hook';
 import {useAppId} from '/@/apis/hooks/useApp';
 import {assertStruct} from '/@/apis/hooks/assertStruct';
+import config from 'config/main.json';
 
 export class AppManager {
     private static _list?: App[];
@@ -34,7 +35,8 @@ export class AppManager {
         }
 
         if (load && app) {
-            await this.checkUpdate(app);
+            if ((Date.now() - (await app.localData.get()).lastCheckUpdate || 0) > config.app.updateInterval * 1000)
+                await this.checkUpdate(app);
             await app.loadProgram();
         }
         return app;
@@ -65,6 +67,7 @@ export class AppManager {
             firstUse: Date.now(),
             lastUse: Date.now(),
             permissions: {},
+            lastCheckUpdate: Date.now(),
         });
 
         if (from) {
@@ -146,6 +149,7 @@ export class AppManager {
             firstUse: Date.now(),
             lastUse: Date.now(),
             permissions: {},
+            lastCheckUpdate: Date.now(),
         });
         if (!await app.verify())
             throw forbidden('App not verify', {app: id.toString()});
@@ -159,13 +163,30 @@ export class AppManager {
         const addr = await app.id.resolve();
         const old = await app.appMeta.file.cid();
         if (addr && !old.equals(addr)) {
+            const oldMeta = await app.appMeta.get();
             await app.appMeta.file.cpFrom(addr);
-            if (!await app.verify()) {
-                await app.appMeta.file.cpFrom(old);
-                throw forbidden('App not verify', {app: app.id.toString(), newAddr: addr.toString()});
+            let ok = false;
+            try {
+                const newTime = (await app.appMeta.get()).updated;
+                if (newTime < oldMeta.updated) {
+                    // noinspection ExceptionCaughtLocallyJS
+                    throw Boom.conflict('New Version is older than now', {
+                        app: app.id.toString(), nowTime: oldMeta.updated, newTime,
+                    });
+                }
+
+                if (!await app.verify()) {
+                    // noinspection ExceptionCaughtLocallyJS
+                    throw Boom.forbidden('App not verify', {app: app.id.toString(), newAddr: addr.toString()});
+                }
+                ok = true;
+            } finally {
+                if (!ok)
+                    await app.appMeta.file.cpFrom(old);
+                await app.loadProgram(true);
             }
-            await app.loadProgram(true);
         }
+        await app.localData.edit({lastCheckUpdate: Date.now()});
     }
 
     static async delete(id: AppId) {

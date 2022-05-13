@@ -2,6 +2,7 @@
 export type AppLocalMeta = {
     firstUse: Timestamp,
     lastUse: Timestamp,
+    lastCheckUpdate: Timestamp,
     permissions: Record<string, {
         granted: boolean,
         time: Timestamp
@@ -11,13 +12,13 @@ export type AppLocalMeta = {
 
 interface AppsApi {
     /** @api() */
-    thisInfo(): Promise<{ id: string; uniqueId: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: Record<string, any>; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
+    thisInfo(): Promise<{ name: string; desc: string; icon: string; ext: { [x: string]: any; }; id: string; uniqueId: string; url: string; fork: string | undefined; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; program: { cid: string; name: string; desc: string; author: string; icon: string; ext: Record<string, unknown>; permissions: { desc: string; node: string; optional: boolean; }[]; databases: { name: string; type: 'docstore' | 'keyvalue' | 'feed' | 'eventlog' | 'counter'; access: 'private' | 'selfWrite'; }[]; singlePageApp: boolean; services: Record<string, { url: string; background: boolean; }>; }; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
 
     /** @api({permission: 'apps.admin'}) */
     list(): Promise<{ id: string; url: string; modifiable: boolean; publicIds: string[]; }[]>;
 
     /** @api({permission: 'apps.admin'}) */
-    info(id: string): Promise<{ id: string; uniqueId: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: Record<string, any>; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
+    info(id: string): Promise<{ name: string; desc: string; icon: string; ext: { [x: string]: any; }; id: string; uniqueId: string; url: string; fork: string | undefined; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; program: { cid: string; name: string; desc: string; author: string; icon: string; ext: Record<string, unknown>; permissions: { desc: string; node: string; optional: boolean; }[]; databases: { name: string; type: 'docstore' | 'keyvalue' | 'feed' | 'eventlog' | 'counter'; access: 'private' | 'selfWrite'; }[]; singlePageApp: boolean; services: Record<string, { url: string; background: boolean; }>; }; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
 
     /** @api() */
     hasPermission(node: string): Promise<boolean>;
@@ -31,16 +32,16 @@ interface AppsApi {
     callRequestPermission(permissions: AppPermission[]): Promise<Boolean>;
 
     /** @api({permission: 'apps.admin'}) */
-    create(name: string): Promise<{ id: string; uniqueId: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: Record<string, any>; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
+    create(name: string): Promise<{ name: string; desc: string; icon: string; ext: { [x: string]: any; }; id: string; uniqueId: string; url: string; fork: string | undefined; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; program: { cid: string; name: string; desc: string; author: string; icon: string; ext: Record<string, unknown>; permissions: { desc: string; node: string; optional: boolean; }[]; databases: { name: string; type: 'docstore' | 'keyvalue' | 'feed' | 'eventlog' | 'counter'; access: 'private' | 'selfWrite'; }[]; singlePageApp: boolean; services: Record<string, { url: string; background: boolean; }>; }; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
 
     /** @api({permission: 'apps.admin'}) */
-    fork(name: string, fromApp: string): Promise<{ id: string; uniqueId: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: Record<string, any>; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
+    fork(name: string, fromApp: string): Promise<{ name: string; desc: string; icon: string; ext: { [x: string]: any; }; id: string; uniqueId: string; url: string; fork: string | undefined; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; program: { cid: string; name: string; desc: string; author: string; icon: string; ext: Record<string, unknown>; permissions: { desc: string; node: string; optional: boolean; }[]; databases: { name: string; type: 'docstore' | 'keyvalue' | 'feed' | 'eventlog' | 'counter'; access: 'private' | 'selfWrite'; }[]; singlePageApp: boolean; services: Record<string, { url: string; background: boolean; }>; }; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
 
     /** @api({permission: 'apps.admin'}) */
     publish(id: string): Promise<void>;
 
     /** @api({permission: 'apps.admin'}) */
-    clone(id: string): Promise<{ id: string; uniqueId: string; url: string; fork: string | undefined; program: string; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; name: string; desc: string; icon: string; ext: Record<string, any>; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
+    clone(id: string): Promise<{ name: string; desc: string; icon: string; ext: { [x: string]: any; }; id: string; uniqueId: string; url: string; fork: string | undefined; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; program: { cid: string; name: string; desc: string; author: string; icon: string; ext: Record<string, unknown>; permissions: { desc: string; node: string; optional: boolean; }[]; databases: { name: string; type: 'docstore' | 'keyvalue' | 'feed' | 'eventlog' | 'counter'; access: 'private' | 'selfWrite'; }[]; singlePageApp: boolean; services: Record<string, { url: string; background: boolean; }>; }; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
 
     /** @api({permission: 'apps.admin'}) */
     delete(id: string): Promise<boolean>;
@@ -56,13 +57,10 @@ interface AppsApi {
      */
     /** @api() */
     updateDescSelf(desc: typeof AppsApi.DescStruct['TYPE']): Promise<void>;
-
     /** @api({permission: 'apps.admin'}) */
     updateDesc(id: string, desc: Partial<Pick<AppMeta, 'name' | 'desc' | 'icon' | 'ext'>>): Promise<void>;
-
     /** @api({permission: 'apps.admin'}) */
     importKey(id: string, key0: PeerId.JSONPeerId): Promise<void>;
-
     /** @api({permission: 'apps.syncProgram'}) */
     syncProgram(id: string, dir: string): Promise<string>;
 }

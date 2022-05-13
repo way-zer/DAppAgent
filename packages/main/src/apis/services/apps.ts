@@ -18,16 +18,24 @@ export class AppsApi extends ExposedService {
     async thisInfo() {
         const app = await useApp();
         const meta = await app.appMeta.get();
+        const programMeta = await app.programMeta.get();
         return {
             ...meta,
+            name: meta.name || programMeta.name,
+            desc: meta.desc || programMeta.desc,
+            icon: meta.icon || programMeta.icon,
+            ext: {...programMeta.ext, ...meta.ext},
             id: app.id.toString(),
             uniqueId: app.uniqueId,
             url: app.id.url,
             fork: meta.fork?.toString(),
-            program: meta.program.toString(),
             modifiable: await app.canModify(),
             publicIds: (await app.publicIds()).map(it => it.toString()),
             localData: (await app.localData.get()),
+            program: {
+                ...programMeta,
+                cid: meta.program.toString(),
+            },
         };
     }
 
@@ -141,14 +149,19 @@ export class AppsApi extends ExposedService {
         desc = assertStruct(AppsApi.DescStruct, desc);
         const app = await useAppModifiable();
         const meta = await app.appMeta.get();
+        const programMeta = await app.programMeta.get();
         if (desc.ext) {
             for (const key in desc.ext) {
-                if (desc.ext[key] === null)
+                if (desc.ext[key] === null || desc.ext[key] === programMeta.ext[key])
                     delete meta.ext[key];
                 else
                     meta.ext[key] = desc.ext[key];
             }
             delete desc.ext;
+        }
+        for (const key in desc) {
+            if (desc[key] == programMeta[key])
+                delete desc[key];
         }
         Object.assign(meta, desc);
         await app.appMeta.set(meta);

@@ -1,9 +1,8 @@
-import {AppMeta, ProgramMeta} from '/@/core/apps/define';
+import {AppMeta, ProgramMeta, ProgramMetaStruct} from '/@/core/apps/define';
 import {CID} from 'multiformats';
 import {CoreIPFS} from '/@/core/ipfs';
-import {IPFSFile} from '/@/util/ipfsFile';
 
-const simpleProgramMeta: ProgramMeta = {
+const simpleProgramMeta: ProgramMeta = ProgramMetaStruct.create({
     name: 'SimpleApp',
     desc: 'Simple App',
     author: 'WayZer',
@@ -12,7 +11,7 @@ const simpleProgramMeta: ProgramMeta = {
     permissions: [],
     databases: [],
     services: {},
-};
+});
 
 export async function simpleProgram(): Promise<[CID, ProgramMeta]> {
     const files = CoreIPFS.inst.files;
@@ -30,20 +29,13 @@ export async function simpleProgram(): Promise<[CID, ProgramMeta]> {
  * NOT fill: fork,databases
  */
 export async function simpleAppMeta(program?: CID): Promise<AppMeta> {
-    let programMeta: ProgramMeta;
-    if (program) {
-        programMeta = await new IPFSFile(`/ipfs/${program}/app.json`).asJsonConfig<ProgramMeta>().get();
-    } else {
-        [program, programMeta] = await simpleProgram();
-    }
+    if (!program)
+        [program] = await simpleProgram();
     return {
-        name: programMeta.name,
-        desc: programMeta.desc,
-        icon: programMeta.icon,
-        ext: programMeta.ext,
-
+        id: 'TO_FILL',
         creator: CoreIPFS.libp2p.peerId.toB58String(),
         updated: Date.now(),
+        ext: {},
         databases: {},
         program,
     };

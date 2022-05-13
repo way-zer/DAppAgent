@@ -147,7 +147,7 @@ export class ElectronHelper {
 
     static async showConfirmDialog(message: string): Promise<Boolean> {
         const result = await dialog.showMessageBox({
-            type: 'question', message,
+            type: 'warning', message,
             buttons: ['确认', '取消'], cancelId: 1,
 
         });

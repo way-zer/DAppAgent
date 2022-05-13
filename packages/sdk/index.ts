@@ -1,21 +1,34 @@
 // @ts-ignore
 import type {Services} from './services';
-import axios from 'axios';
+import axios, {AxiosRequestConfig} from 'axios';
 
 // @ts-ignore
 export type {Services} from './services';
 
-/** Set this if using custom library */
-export var postFunction: (url: string, body: any[]) => Promise<any> = axios.post;
+export type ServiceReturn<Service extends keyof Services, F extends keyof Services[Service]> =
+    Services[Service][F] extends (...args: any) => Promise<infer R> ? R : never
 
-export function useService<T extends keyof Services>(serviceName: T): Omit<Services[T], 'apis'> {
-  return new Proxy({}, {
-    get(target: {}, name: string | symbol): any {
-      if (typeof name !== 'string')
-        throw 'api name must be string';
-      return function (...args: any[]) {
-        return postFunction(`/api/${serviceName}/${name}`, args).then(it => it.data);
-      };
-    },
-  }) as any;
+export function useService<T extends keyof Services>(serviceName: T, axiosConfig?: AxiosRequestConfig<any[]>): Omit<Services[T], 'apis'> {
+    return new Proxy({}, {
+        get(target: {}, name: string | symbol): any {
+            if (typeof name !== 'string')
+                throw 'api name must be string';
+            return function (...args: any[]) {
+                return axios.post(`/api/${serviceName}/${name}`, args, axiosConfig).then(it => it.data);
+            };
+        },
+    }) as any;
+}
+
+export async function ipfsUploadFile(file: File, onUploadProgress?: (e: ProgressEvent) => void): Promise<string> {
+    console.debug('Upload ' + file + ' to ipfs');
+    const result = await axios.post('/ipfs/upload', file, {
+        headers: {
+            'content-type': 'application/octet-stream',
+        },
+        onUploadProgress,
+    });
+    const url = `/ipfs/${result.data.cid}?${encodeURI(file.name)}`;
+    console.debug(`End upload ${url}`);
+    return url;
 }

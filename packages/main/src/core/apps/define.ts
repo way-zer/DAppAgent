@@ -37,9 +37,9 @@ export const ProgramMetaStruct = object({
 export type ProgramMeta = typeof ProgramMetaStruct['TYPE']
 
 export type AppMeta = {
-    name: string,//默认使用代码中配置
-    desc: string,//默认使用代码中配置
-    icon: string,//默认使用代码中配置
+    name?: string,//默认使用代码中配置
+    desc?: string,//默认使用代码中配置
+    icon?: string,//默认使用代码中配置
     ext: Record<string, any>,//可在fork时作为附加参数,或API修改
 
     id: string,//应用的公钥Id,B58String
@@ -54,6 +54,7 @@ export type AppMeta = {
 export type AppLocalMeta = {
     firstUse: Timestamp,
     lastUse: Timestamp,
+    lastCheckUpdate: Timestamp,
     permissions: Record<string, {
         granted: boolean,
         time: Timestamp
