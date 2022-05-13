@@ -32,27 +32,17 @@
 <script lang="ts" setup>
 import {ref} from 'vue';
 import {siteInfoAsync, updateSiteInfo} from '/@/service';
+import {ipfsUploadFile} from '@dapp-agent/sdk';
 import {UploadCustomRequestOptions} from 'naive-ui';
-import axios from 'axios';
 
 const show = ref(false);
 const siteInfo = ref({...await siteInfoAsync.value});
 
 function upload({file, onProgress, onFinish, onError}: UploadCustomRequestOptions) {
-  console.log(file.file!!.size);
-  axios.post('/ipfs/upload', file.file, {
-    headers: {
-      'content-type': 'application/octet-stream',
-    },
-    onUploadProgress({loaded, total}) {
-      onProgress({percent: Math.ceil(loaded / total) * 100});
-    },
-  }).then((e) => {
-    console.log(e.data);
-    siteInfo.value = {
-      ...siteInfo.value,
-      avatar: `/ipfs/${e.data.cid}?${file.name}`,
-    };
+  ipfsUploadFile(file.file!!, ({loaded, total}) => {
+    onProgress({percent: Math.ceil(loaded / total) * 100});
+  }).then(url => {
+    siteInfo.value = {...siteInfo.value, avatar: url};
     onFinish();
   }).catch(onError);
 }
