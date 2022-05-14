@@ -1,5 +1,9 @@
 import {DarukServer} from 'daruk';
 import assert from 'assert';
+import http from 'http';
+import https from 'https';
+import key from 'config/ssl.key?raw';
+import cert from 'config/ssl.crt?raw';
 import globalConfig from 'config/main.json';
 
 export const Apis = {
@@ -13,6 +17,19 @@ export const Apis = {
         assert(apis);
 
         await daruk.binding();
-        await daruk.listen(globalConfig.port);
+        let httpsServer = https.createServer({key, cert}, daruk.app.callback());
+        daruk.httpServer = httpsServer;
+        daruk.emit('serverReady', daruk.httpServer);
+
+        http.createServer()
+            .on('request', daruk.app.callback())
+            .on('connect', (req, socket, head) => {
+                if (req.url!!.split(':')[0].endsWith('.dapp')) {
+                    socket.write(`HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`);
+
+                    httpsServer.emit('connection', socket);
+                } else console.log('OTHER ' + req.url);
+            })
+            .listen(globalConfig.port);
     },
 };

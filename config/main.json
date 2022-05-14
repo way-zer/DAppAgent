@@ -1,9 +1,12 @@
 {
   "debug": true,
   "port": 7001,
-  "homeUrl": "dapp://admin.sys",
+  "homeUrl": "https://admin.sys.dapp",
   "app": {
-    "updateInterval": 3600
+    "updateInterval": 3600,
+    "integrate": {
+      "publicKey": ""
+    }
   },
   "ipfs": {
     "bootstrap": []

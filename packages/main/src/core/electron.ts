@@ -32,19 +32,12 @@ export class ElectronHelper {
     static tray: Tray;
 
     static init() {
-        protocol.registerSchemesAsPrivileged([
-            {
-                scheme: 'dapp',
-                privileges: {//as https
-                    standard: true,
-                    secure: true,
-                    allowServiceWorkers: true,
-                    corsEnabled: true,
-                    supportFetchAPI: true,
-                    stream: true,
-                },
-            },
-        ]);
+        app.on('certificate-error', (event, _1, url, _2, _3, callback) => {
+            if (new URL(url).host.endsWith('.dapp')) {
+                event.preventDefault();
+                callback(true);
+            }
+        });
         app.on('window-all-closed', () => false);//Keep tray
         app.on('browser-window-created', (_, window) => {
             this.running.add(window);
@@ -68,32 +61,11 @@ export class ElectronHelper {
     }
 
     static async afterReady() {
-        protocol.registerStreamProtocol('dapp', (req, callback) => {
-            const url = new URL(req.url);
-            const newUrl = req.url.replace(`${url.protocol}//${url.host}`, `http://127.0.0.1:${globalConfig.port}`);
-            const req2 = request(newUrl, {
-                method: req.method,
-                headers: {
-                    ...req.headers,
-                    'Host': url.hostname + '.dapp',
-                    'x-url': req.url,
-                },
-            }, callback);
-            req2.on('error', (err) => {
-                throw err;
-            });
-            // mistake type in electron api
-            // @ts-ignore
-            req.uploadData?.forEach((it: UploadRawData | UploadFile) => {
-                switch (it.type) {
-                    case 'rawData':
-                        req2.write(it.bytes);
-                        break;
-                    case 'file':
-                        req2.write(fs.readFileSync(it.filePath));
-                }
-            });
-            req2.end();
+        app.configureHostResolver({
+            enableBuiltInResolver: true,
+        });
+        app.on('session-created', async (session) => {
+            await session.setProxy({pacScript: `http://127.0.0.1:${globalConfig.port}/_/pac`});
         });
         await this.setTray();
     }

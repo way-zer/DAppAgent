@@ -32,6 +32,9 @@ export class CoreIPFS {
         const bootstrapConfig = config.ipfs.bootstrap;
         this.instUnsafe = await create({
             repo: './DAppAgent',
+            preload: {
+                enabled: false,
+            },
             config: {
                 Bootstrap: bootstrapConfig,
                 Addresses: {

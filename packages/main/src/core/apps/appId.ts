@@ -19,7 +19,7 @@ export class AppId {
     }
 
     get url() {
-        return `dapp://${this.name}.${this.type}`;
+        return `https://${this.name}.${this.type}.dapp`;
     }
 
     equals(other: any) {
