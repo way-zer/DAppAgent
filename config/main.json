@@ -5,7 +5,8 @@
   "app": {
     "updateInterval": 3600,
     "integrate": {
-      "publicKey": ""
+      "publicKey": null,
+      "privateKey": null
     }
   },
   "ipfs": {
