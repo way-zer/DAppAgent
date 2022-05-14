@@ -42,3 +42,7 @@ export function parseCID(cid: string): CID {
         throw Boom.badRequest('invalid cid: ' + e.message, {input: cid});
     }
 }
+
+export function sleep(time: number) {
+    return new Promise(resolve => setTimeout(resolve, time));
+}

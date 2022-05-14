@@ -50,14 +50,13 @@ export class ElectronHelper {
                 window.focus();
             }
         });
-        const startBackend = (async () => {
-            await Apis.start();
-            await CoreIPFS.start();
-            await DBManager.start();
-            AppManager.startRepublish();
-        })();
-        app.whenReady().then(() => this.afterReady());
-        Promise.all([startBackend, app.whenReady()]).then(() => this.createWindow());
+        Promise.all([
+            Apis.start(),
+            CoreIPFS.start()
+                .then(() => AppManager.startRepublish()),
+            DBManager.start(),
+            app.whenReady().then(() => this.afterReady()),
+        ]).then(() => this.createWindow());
     }
 
     static async afterReady() {

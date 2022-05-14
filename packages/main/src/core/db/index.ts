@@ -7,6 +7,7 @@ import type {AccessType as AccessType0} from './accessController';
 import {AccessTypeStruct, MyAccessController} from './accessController';
 import {MyIdentityProvider} from '/@/core/db/identityProvider';
 import {enums} from 'superstruct';
+import {sleep} from '/@/util';
 
 export const DBTypeStruct = enums(['docstore', 'keyvalue', 'feed', 'eventlog', 'counter']);
 export type DBType = typeof DBTypeStruct['TYPE']
@@ -37,6 +38,8 @@ export class DBManager {
     static async start() {
         if (this.instUnsafe) return;
         MyAccessController.register();
+        while (CoreIPFS.instUnsafe == null)
+            await sleep(100);
         this.instUnsafe = await OrbitDB.createInstance(CoreIPFS.inst, {
             identity: MyIdentityProvider.getIdentity(),
             directory: './DAppAgent/orbitDB',
