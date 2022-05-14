@@ -5,6 +5,7 @@ import {randomUUID} from 'crypto';
 import {AppId} from '/@/core/apps';
 import {ElectronHelper} from '/@/core/electron';
 import {withContext} from '/@/util/hook';
+import {WatchDog} from '/@/util/watchDog';
 
 /**
  * 跨应用调用接口
@@ -23,30 +24,32 @@ export class CallApi extends ExposedService {
         const callApp = await withContext(useApp, [useAppId, AppId.fromString(app)]);
         let {url, background} = await callApp.getService(service);
 
+        const timeout = new WatchDog(30_000);//first time 30s timeout
         const ts: Transaction = {
             id: randomUUID(),
             token: randomUUID(),
             from: from.id.toString(), time: Date.now(),
-            app, service, payload,
+            app, service, payload, timeout,
         };
-        const param = JSON.stringify(ts);
-        const promise = new Promise<Record<string, unknown>>((resolve, reject) => {
-            ts.timeout = Date.now() + 30_000;
-            const tt = setInterval(() => {
-                if ((ts.timeout || 1e99) > Date.now()) return;
-                reject(Boom.gatewayTimeout());
-                this.transactions.delete(ts.id);
-                clearInterval(tt);
-            }, 10_000);
-            ts._callback = (response) => {
-                clearInterval(tt);
-                resolve(response);
-            };
+        if (background) {
+            const doge = this.backGroundAlive.get(callApp.id.toString());
+            if (!doge || doge.hasTimeout) {
+                background = false;
+                this.backGroundAlive.delete(callApp.id.toString());
+            }
+        }
+        if (!background)
+            await ElectronHelper.createWindow(`${url}?id=${ts.id}`);
+        timeout.food();
+        timeout.timeoutTime = 10_000;
+
+        return new Promise<Record<string, unknown>>(async (resolve, reject) => {
+            ts._callback = resolve;
             this.transactions.set(ts.id, ts);
+            await timeout.timeout;
+            if (this.transactions.delete(ts.id))
+                reject(Boom.gatewayTimeout());
         });
-        console.log(param);
-        await ElectronHelper.createWindow(`${url}?id=${ts.id}`);
-        return promise;
     }
 
     /**
@@ -71,10 +74,15 @@ export class CallApi extends ExposedService {
      */
     @api()
     async pullTransaction(id?: string, token?: string) {
-        const app = (await useApp()).id;
+        const app = (await useApp()).id.toString();
+        if (!id) {
+            if (!this.backGroundAlive.has(app))
+                this.backGroundAlive.set(app, new WatchDog(10_000));
+            this.backGroundAlive.get(app)!!.food();
+        }
         const out = [] as Transaction[];
         for (const v of this.transactions.values()) {
-            if ((v.app === app.toString() || v.token === token) && (!id || v.id === id))
+            if ((v.app === app || v.token === token) && (!id || v.id === id))
                 out.push(v);
         }
         return out;
@@ -90,10 +98,11 @@ export class CallApi extends ExposedService {
         const ts = this.transactions.get(id);
         if (!ts) throw Boom.notAcceptable('Transaction not found', {id, token});
         if (ts.token != token) throw Boom.forbidden('token not correct', {id, token});
-        ts.timeout = Date.now() + 10_000;
+        ts.timeout.food();
     }
 
     private transactions = new Map<string, Transaction>();
+    private backGroundAlive = new Map<string, WatchDog>();
 }
 
 export interface Transaction {
@@ -106,6 +115,6 @@ export interface Transaction {
     service: string;
     payload: Record<string, unknown>;
 
-    timeout?: number;
+    timeout: WatchDog;
     _callback?: (response: Record<string, unknown>) => void;
 }
