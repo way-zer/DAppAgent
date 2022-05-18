@@ -66,7 +66,7 @@ export class IntegrateApi extends ExposedService {
      */
     @api()
     async _generateKeyPair() {
-        return await PeerId.create({keyType: 'Ed25519', bits: 384});
+        return (await PeerId.create({keyType: 'Ed25519', bits: 384})).toJSON();
     }
 
     /**

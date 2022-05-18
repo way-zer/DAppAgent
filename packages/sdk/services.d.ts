@@ -28,42 +28,10 @@ interface AppsApi {
 
     /** @api({permission: 'apps.admin'}) */
     grantPermission(id: string, permissions: string[]): Promise<void>;
-
-    callRequestPermission(permissions: AppPermission[]): Promise<Boolean>;
-
-    /** @api({permission: 'apps.admin'}) */
-    create(name: string): Promise<{ name: string; desc: string; icon: string; ext: { [x: string]: any; }; id: string; uniqueId: string; url: string; fork: string | undefined; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; program: { cid: string; name: string; desc: string; author: string; icon: string; ext: Record<string, unknown>; permissions: { desc: string; node: string; optional: boolean; }[]; databases: { name: string; type: 'docstore' | 'keyvalue' | 'feed' | 'eventlog' | 'counter'; access: 'private' | 'selfWrite'; }[]; singlePageApp: boolean; services: Record<string, { url: string; background: boolean; }>; }; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
-
-    /** @api({permission: 'apps.admin'}) */
-    fork(name: string, fromApp: string): Promise<{ name: string; desc: string; icon: string; ext: { [x: string]: any; }; id: string; uniqueId: string; url: string; fork: string | undefined; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; program: { cid: string; name: string; desc: string; author: string; icon: string; ext: Record<string, unknown>; permissions: { desc: string; node: string; optional: boolean; }[]; databases: { name: string; type: 'docstore' | 'keyvalue' | 'feed' | 'eventlog' | 'counter'; access: 'private' | 'selfWrite'; }[]; singlePageApp: boolean; services: Record<string, { url: string; background: boolean; }>; }; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
-
-    /** @api({permission: 'apps.admin'}) */
-    publish(id: string): Promise<void>;
-
-    /** @api({permission: 'apps.admin'}) */
-    clone(id: string): Promise<{ name: string; desc: string; icon: string; ext: { [x: string]: any; }; id: string; uniqueId: string; url: string; fork: string | undefined; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; program: { cid: string; name: string; desc: string; author: string; icon: string; ext: Record<string, unknown>; permissions: { desc: string; node: string; optional: boolean; }[]; databases: { name: string; type: 'docstore' | 'keyvalue' | 'feed' | 'eventlog' | 'counter'; access: 'private' | 'selfWrite'; }[]; singlePageApp: boolean; services: Record<string, { url: string; background: boolean; }>; }; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
-
-    /** @api({permission: 'apps.admin'}) */
-    delete(id: string): Promise<boolean>;
-
-    /** @api() */
-    checkUpdateSelf(): Promise<void>;
-
-    /** @api({permission: 'apps.admin'}) */
-    checkUpdate(id: string): Promise<void>;
-
-    /**
-     * desc.ext.* null to delete key
-     */
-    /** @api() */
-    updateDescSelf(desc: typeof AppsApi.DescStruct['TYPE']): Promise<void>;
-    /** @api({permission: 'apps.admin'}) */
-    updateDesc(id: string, desc: Partial<Pick<AppMeta, 'name' | 'desc' | 'icon' | 'ext'>>): Promise<void>;
-    /** @api({permission: 'apps.admin'}) */
-    importKey(id: string, key0: PeerId.JSONPeerId): Promise<void>;
-    /** @api({permission: 'apps.syncProgram'}) */
-    syncProgram(id: string, dir: string): Promise<string>;
 }
+
+/** Not resolve */
+type WatchDog = {};
 
 export interface Transaction {
     id: string;
@@ -73,7 +41,7 @@ export interface Transaction {
     app: string;
     service: string;
     payload: Record<string, unknown>;
-    timeout?: number;
+    timeout: WatchDog;
     _callback?: (response: Record<string, unknown>) => void;
 }
 
@@ -132,9 +100,22 @@ interface TestApi {
     hello(): Promise<string>;
 }
 
+/** Not resolve */
+type JSONPeerId = {};
+
 interface IntegrateApi {
-    appRecord(app: App): Promise<string>;
-    appRecordOK(app: App, sign: string): Promise<boolean>;
+    /**
+     * 通过第三方进行实名认证
+     * @return string 认证签名
+     */
+    /** @api() */
+    requestVerified(): Promise<void>;
+    /**
+     * @internal 内部接口
+     * 生成一堆供使用的密钥对
+     */
+    /** @api() */
+    _generateKeyPair(): Promise<JSONPeerId>;
 }
 
 interface SystemApi {

@@ -1,21 +1,49 @@
 {
-  "name": "builder",
+  "name": "dapp-agent",
   "private": true,
-  "main": "dist/index.cjs",
+  "main": "index.js",
   "scripts": {
-    "compile": "node scripts/compile.js"
+    "compile": "node build.js"
   },
-  "browserslist": [
-    "Chrome 96"
-  ],
-  "dependencies": {},
+  "repository": "https://github.com/way-zer/DAppAgent",
+  "dependencies": {
+    "@hapi/boom": "^9.1.4",
+    "@ipld/dag-cbor": "^7.0.1",
+    "axios": "^0.27.2",
+    "daruk": "^2.3.11",
+    "electron-devtools-installer": "^3.2.0",
+    "electron-updater": "^5.0.1",
+    "ipfs-core": "^0.14.2",
+    "it-last": "^1.0.6",
+    "it-to-buffer": "^2.0.2",
+    "it-to-stream": "^1.0.0",
+    "jszip": "^3.9.1",
+    "libp2p": "^0.36.2",
+    "libp2p-crypto": "^0.21.2",
+    "lodash": "^4.17.21",
+    "memoizee": "^0.4.15",
+    "mime": "^3.0.0",
+    "multiformats": "^9.6.4",
+    "orbit-db": "^0.28.3",
+    "orbit-db-access-controllers": "^0.3.2",
+    "orbit-db-identity-provider": "^0.4.0",
+    "orbit-db-store": "^4.3.3",
+    "parse-duration": "^1.0.2",
+    "peer-id": "^0.16.0",
+    "readable-stream": "^3.6.0",
+    "rule-judgment": "^1.1.5",
+    "source-map-support": "^0.5.21",
+    "superstruct": "^0.15.4",
+    "uint8arrays": "^3.0.0"
+  },
   "devDependencies": {
-    "electron": "16.0.2",
-    "electron-builder": "22.14.5"
+    "electron": "18.2.3",
+    "electron-builder": "23.0.3"
   },
   "pnpm": {
     "overrides": {
       "abstract-leveldown": "^7.2.0"
     }
-  }
+  },
+  "version": "22.05.000"
 }

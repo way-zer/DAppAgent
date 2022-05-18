@@ -3,28 +3,37 @@ import {join} from 'path';
 import {rmdirSync} from 'fs';
 import {spawn} from 'child_process';
 import electronPath from 'electron';
-import {build, createLogger, defineConfig, Plugin} from 'vite';
+import {build, createLogger, defineConfig, mergeConfig, Plugin} from 'vite';
 
 const PACKAGE_ROOT = __dirname;
 
-
-/**
- * @type {import('vite').UserConfig}
- * @see https://vitejs.dev/config/
- */
-const config = {
-    mode: process.env.MODE, plugins: [electron()], root: PACKAGE_ROOT, resolve: {
+const config = defineConfig({
+    mode: process.env.MODE, plugins: [electron()], root: PACKAGE_ROOT,
+    resolve: {
         alias: {
             '/@/': join(PACKAGE_ROOT, 'src') + '/',
         },
-    }, build: {
-        outDir: 'dist', assetsDir: '.', emptyOutDir: true, brotliSize: false, minify: true,
+    },
+    build: {
+        ssr: true,
+        sourcemap: true,
+        target: `node${node}`,
+
+        outDir: 'dist',
+        assetsDir: '.',
+        emptyOutDir: true,
+        brotliSize: false,
+        minify: true,
 
         lib: {
             entry: 'src/index.ts', formats: ['cjs'],
         },
     },
-};
+    ssr: {
+        noExternal: 'config',
+        target: 'node',
+    },
+});
 
 export default config;
 
@@ -37,19 +46,16 @@ function electron() {
     let spawnProcess = null;
     return {
         name: 'electron-dev', enforce: 'pre', config(config, {command, mode}) {
+            config.mode = mode;
             if (command === 'serve') {
                 enable = true;
-                config.mode = mode;
                 config.build.minify = false;
+                config.watch = {};
                 build(config).then();
                 return new Promise(() => {
                 });//never
             }
-            return defineConfig({
-                build: {
-                    ssr: true, sourcemap: true, target: `node${node}`, watch: {},
-                },
-            });
+            return config;
         }, writeBundle() {
             if (spawnProcess !== null) {
                 spawnProcess.kill('SIGINT');

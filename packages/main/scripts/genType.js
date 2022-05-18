@@ -49,7 +49,7 @@ for (const file of dir.getSourceFiles()) {
     for (const method of structure.methods) {
       const raw = cls.getMethodOrThrow(method.name);
       if (!raw.getDecorator('api')) {
-        delete structure.methods[method.name];
+        structure.methods.splice(structure.methods.indexOf(method));
         continue;
       }
       method.docs.push({description: raw.getDecorator('api').getText()});
