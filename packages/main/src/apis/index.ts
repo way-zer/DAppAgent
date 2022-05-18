@@ -4,7 +4,7 @@ import http from 'http';
 import https from 'https';
 import key from 'config/ssl.key?raw';
 import cert from 'config/ssl.crt?raw';
-import globalConfig from 'config/main.json';
+import globalConfig from '/@/config';
 
 export const Apis = {
     async start() {

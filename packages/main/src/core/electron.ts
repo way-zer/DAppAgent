@@ -10,7 +10,7 @@ import {
 } from 'electron';
 import {URL} from 'url';
 import {request} from 'http';
-import globalConfig from 'config/main.json';
+import globalConfig from '/@/config';
 // import icon from 'config/buildResources/icon.png?url';
 import {CoreIPFS} from '/@/core/ipfs';
 import {DBManager} from '/@/core/db';

@@ -5,7 +5,7 @@ import Boom from '@hapi/boom';
 import {UserManager} from '/@/core/users';
 import {bases, codecs} from 'multiformats/basics';
 import PeerId from 'peer-id';
-import config from 'config/main.json';
+import config from '/@/config';
 import {sleep} from '/@/util';
 
 const encoding = bases.base64pad;

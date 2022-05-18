@@ -3,7 +3,7 @@ import last from 'it-last';
 import {CoreIPFS} from '/@/core/ipfs';
 import {IPFSFile} from '/@/util/ipfsFile';
 import Boom from '@hapi/boom';
-import config from 'config/main.json';
+import config from '/@/config';
 import PeerId from 'peer-id';
 import {bases} from 'multiformats/basics';
 

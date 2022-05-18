@@ -14,7 +14,7 @@ import PeerId from 'peer-id';
 import {withContext} from '/@/util/hook';
 import {useAppId} from '/@/apis/hooks/useApp';
 import {assertStruct} from '/@/apis/hooks/assertStruct';
-import config from 'config/main.json';
+import config from '/@/config';
 
 export class AppManager {
     private static _list?: App[];

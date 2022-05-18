@@ -5,7 +5,7 @@ import type LibP2P from 'libp2p';
 import type {Connection} from 'libp2p';
 import Boom from '@hapi/boom';
 import {toArray} from '/@/util';
-import config from 'config/main.json';
+import config from '/@/config';
 import PeerId from 'peer-id';
 import {CID} from 'multiformats';
 import parseDuration from 'parse-duration';

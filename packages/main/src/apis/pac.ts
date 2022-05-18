@@ -1,6 +1,6 @@
 import type {DarukContext} from 'daruk';
 import {controller, get} from 'daruk';
-import globalConfig from 'config/main.json';
+import globalConfig from '/@/config';
 
 @controller('/_/')
 export class _Pac {
