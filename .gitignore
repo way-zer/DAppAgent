@@ -59,3 +59,4 @@ thumbs.db
 DAppAgent/
 /logs/
 .pnpm*.log
+/config/main.dev.config.js

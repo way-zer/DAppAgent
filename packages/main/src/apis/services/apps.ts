@@ -160,8 +160,10 @@ export class AppsApi extends ExposedService {
             delete desc.ext;
         }
         for (const key in desc) {
-            if (desc[key] == programMeta[key])
+            if (desc[key] == programMeta[key]) {
                 delete desc[key];
+                delete meta[key];
+            }
         }
         Object.assign(meta, desc);
         await app.appMeta.set(meta);

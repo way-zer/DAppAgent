@@ -30,19 +30,3 @@ export function peerIdB58ToBase32(pid: string): string {
         return 'BAD_DATA';
     }
 }
-
-export function cidBase32(cid: string | CID): string {
-    return (CID.asCID(cid) || CID.parse(cid.toString())).toV1().toString(bases.base32.encoder);
-}
-
-export function parseCID(cid: string): CID {
-    try {
-        return CID.parse(cid);
-    } catch (e: any) {
-        throw Boom.badRequest('invalid cid: ' + e.message, {input: cid});
-    }
-}
-
-export function sleep(time: number) {
-    return new Promise(resolve => setTimeout(resolve, time));
-}

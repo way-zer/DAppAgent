@@ -19,6 +19,6 @@ export default {
         ],
     },
     'sysApp': {
-        'admin': 'ipfs:bafyreifztvbl3xrgrghhqjichfompts5rur5hjniqvumobm2zazxweiyji',
+        'admin': 'ipfs:bafyreigydrb7qrtm4o27ighuc4b2tg6einghrn2l6uytj45lwbhya623g4',
     },
 };

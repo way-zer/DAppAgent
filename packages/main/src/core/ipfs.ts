@@ -55,12 +55,12 @@ export class CoreIPFS {
             },
         });
         this.libP2PUnsafe = this.inst.libp2p || null;
-        this.libp2p.connectionManager.on('peer:connect', (con: Connection) => {
-            console.log('New peer connect: ', con.remoteAddr.toString(), con.remotePeer.toString());
-        });
-        this.libp2p.connectionManager.on('peer:disconnect', (con) => {
-            console.log('Peer disconnect: ', con.remoteAddr.toString(), con.remotePeer.toString());
-        });
+        // this.libp2p.connectionManager.on('peer:connect', (con: Connection) => {
+        //     console.log('New peer connect: ', con.remoteAddr.toString(), con.remotePeer.toString());
+        // });
+        // this.libp2p.connectionManager.on('peer:disconnect', (con) => {
+        //     console.log('Peer disconnect: ', con.remoteAddr.toString(), con.remotePeer.toString());
+        // });
         console.log('IPFS ID is: ' + (await this.inst.id()).id);
         this.inst.key.import;
         if (import.meta.env.DEV)
@@ -69,6 +69,8 @@ export class CoreIPFS {
                 let api = new HttpApi(this.inst);
                 await api.start();
                 console.log('IPFS Api server:', api.apiAddr);
+            }).catch(e => {
+                console.warn('Fail to start Api server', e);
             });
     }
 
@@ -102,15 +104,23 @@ export class CoreIPFS {
         return addr;
     }
 
+    static async resolveIPNS(key: PeerId): Promise<string | null> {
+        const addr = await last(CoreIPFS.inst.name.resolve(key.toB58String(), {recursive: true})).catch(() => null);
+        if (!addr) return null;
+        return addr;
+    }
+
     //copy from ipfs.name.publish
     static async publishIPNS(key: PeerId, cid: CID, duration: string = '2d') {
         const ipfs = `/ipfs/${cid}`;
         try {
-            const {name} = await this.inst.ipns.publish(key.privKey, uint8ArrayFromString(ipfs), parseDuration(duration));
-            return {ipfs, ipns: `/ipns/${name}`};
+            await this.inst.ipns.publish(key.privKey, uint8ArrayFromString(ipfs), parseDuration(duration));
         } catch (e) {
-            throw Boom.notAcceptable('Fail to publish IPNS ' + e, {ipfs, key: cid.toString(), raw: e});
+            console.warn('Fail to publish', key.toB58String(), '->', cid.toString(), e);
+            //No throw, as DHT often timeout, the record stored in local
+            // throw Boom.notAcceptable('Fail to publish IPNS ' + e, {ipfs, key: cid.toString(), raw: e});
         }
+        return {ipfs, ipns: `/ipns/${key.toB58String()}`};
     }
 
     static async getFile(path0: string): Promise<FileContent> {

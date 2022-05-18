@@ -1,0 +1,10 @@
+# integrate接口
+
+### 验证是否实名
+#TEST ON 2022-01-27
+POST {{host}}/api/integrate/requestVerified
+dapp: {{appId}}
+
+### 生成密钥对
+POST {{host}}/api/integrate/_generateKeyPair
+dapp: {{appId}}

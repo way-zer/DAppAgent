@@ -14,6 +14,8 @@
   },
   "dependencies": {
     "@hapi/boom": "^9.1.4",
+    "@ipld/dag-cbor": "^7.0.1",
+    "axios": "^0.27.2",
     "config": "workspace:*",
     "daruk": "^2.3.11",
     "electron": "16.0.2",

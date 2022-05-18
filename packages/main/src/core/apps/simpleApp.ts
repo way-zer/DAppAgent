@@ -6,7 +6,7 @@ const simpleProgramMeta: ProgramMeta = ProgramMetaStruct.create({
     name: 'SimpleApp',
     desc: 'Simple App',
     author: 'WayZer',
-    icon: '/favicon.ico',
+    icon: '/ipfs/QmNjyM7BqsP9zVS5fTfZWJ6cDcFr8Bh6mphHdjRo3FJAA5?favicon.png',
     ext: {},
     permissions: [],
     databases: [],

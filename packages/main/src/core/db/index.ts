@@ -7,7 +7,7 @@ import type {AccessType as AccessType0} from './accessController';
 import {AccessTypeStruct, MyAccessController} from './accessController';
 import {MyIdentityProvider} from '/@/core/db/identityProvider';
 import {enums} from 'superstruct';
-import {sleep} from '/@/util';
+import {sleep} from '/@/util/async';
 
 export const DBTypeStruct = enums(['docstore', 'keyvalue', 'feed', 'eventlog', 'counter']);
 export type DBType = typeof DBTypeStruct['TYPE']

@@ -11,13 +11,19 @@ export class User {
     readonly metadataFile: DagConfigFile<UserMetadata>;
 
     constructor(public readonly id: PeerId) {
-        this.metadataFile = new IPFSFile(`/ipns/${id.toB58String()}`).asDagConfig<UserMetadata>();
+        this.metadataFile = new IPFSFile(`/user/${id.toB58String()}`).asDagConfig<UserMetadata>();
     }
 
-    async updateMetadata(value: UserMetadata) {
+    async loadMetadata() {
+        const addr = await CoreIPFS.resolveIPNS(this.id);
+        if (!addr) throw Boom.notFound('IPNS notfound for ' + this.id.toB58String());
+        await this.metadataFile.file.cpFrom(addr);
+        this.metadataFile.invalidCache();
+    }
+
+    async publishMetadata() {
         if (!this.id.privKey) throw Boom.forbidden('Can only update self');
-        const cid = await CoreIPFS.inst.dag.put(value);
-        await CoreIPFS.publishIPNS(this.id, cid);
+        await CoreIPFS.publishIPNS(this.id, await this.metadataFile.file.cid());
     }
 }
 

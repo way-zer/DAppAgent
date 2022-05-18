@@ -15,10 +15,12 @@ import {withContext} from '/@/util/hook';
 import {useAppId} from '/@/apis/hooks/useApp';
 import {assertStruct} from '/@/apis/hooks/assertStruct';
 import config from '/@/config';
+import {onceF} from '/@/util/async';
 
 export class AppManager {
     private static _list?: App[];
 
+    @onceF
     static async list() {
         if (this._list) return this._list;
         await CoreIPFS.inst.files.mkdir('/apps').catch(() => undefined);
@@ -170,10 +172,12 @@ export class AppManager {
         if (addr && !old.equals(addr)) {
             const oldMeta = await app.appMeta.get();
             await app.appMeta.file.cpFrom(addr);
+            app.appMeta.invalidCache();
             let ok = false;
             try {
                 const newTime = (await app.appMeta.get()).updated;
                 if (newTime < oldMeta.updated) {
+                    await app.localData.edit({lastCheckUpdate: Date.now()});
                     // noinspection ExceptionCaughtLocallyJS
                     throw Boom.conflict('New Version is older than now', {
                         app: app.id.toString(), nowTime: oldMeta.updated, newTime,
@@ -186,8 +190,10 @@ export class AppManager {
                 }
                 ok = true;
             } finally {
-                if (!ok)
+                if (!ok) {
                     await app.appMeta.file.cpFrom(old);
+                    app.appMeta.invalidCache();
+                }
                 await app.loadProgram(true);
             }
         }

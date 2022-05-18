@@ -2,6 +2,7 @@ import Boom from '@hapi/boom';
 import {CoreIPFS} from '/@/core/ipfs';
 import {decodeText} from '/@/util/index';
 import {CID} from 'ipfs-core';
+import {debounceLast} from '/@/util/async';
 
 export class IPFSFile {
     constructor(public readonly path: string) {
@@ -31,12 +32,15 @@ export class IPFSFile {
         return (await this.stat()).cid;
     }
 
+    @debounceLast
     async cpFrom(path: CID | string) {
         const tmp = this.path + '.tmp';
+        await CoreIPFS.inst.files.rm(tmp).catch(() => null);//del old
         await CoreIPFS.inst.files.cp(path, tmp, {parents: true, timeout: 10000});
         await CoreIPFS.inst.files.rm(this.path).catch(() => null);//del old
         await CoreIPFS.inst.files.mv(tmp, this.path);
     }
+
 
     /**@throws Boom.notfound */
     async read(): Promise<AsyncIterable<Uint8Array>> {
@@ -64,6 +68,10 @@ export abstract class ConfigFile<T extends object> {
     abstract get0(): Promise<T>
 
     abstract set0(value: T): Promise<void>
+
+    invalidCache() {
+        this.cache = ConfigFile.NotInit;
+    }
 
     async get(): Promise<T> {
         if (this.cache != ConfigFile.NotInit)

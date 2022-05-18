@@ -102,10 +102,12 @@ importers:
   packages/main:
     specifiers:
       '@hapi/boom': ^9.1.4
+      '@ipld/dag-cbor': ^7.0.1
       '@types/electron-devtools-installer': 2.2.2
       '@types/memoizee': ^0.4.7
       '@types/node': ^17.0.25
       '@types/orbit-db': workspace:*
+      axios: ^0.27.2
       config: workspace:*
       daruk: ^2.3.11
       electron: 16.0.2
@@ -138,6 +140,8 @@ importers:
       uint8arrays: ^3.0.0
     dependencies:
       '@hapi/boom': 9.1.4
+      '@ipld/dag-cbor': 7.0.1
+      axios: 0.27.2
       config: link:../../config
       daruk: 2.3.11
       electron: 16.0.2
@@ -1304,7 +1308,7 @@ packages:
   /@ipld/car/3.2.3:
     resolution: { integrity: sha512-pXE5mFJlXzJVaBwqAJKGlKqMmxq8H2SLEWBJgkeBDPBIN8ZbscPc3I9itkSQSlS/s6Fgx35Ri3LDTDtodQjCCQ== }
     dependencies:
-      '@ipld/dag-cbor': 7.0.0
+      '@ipld/dag-cbor': 7.0.1
       multiformats: 9.6.4
       varint: 6.0.0
     dev: false
@@ -1316,8 +1320,8 @@ packages:
       multiformats: 9.6.4
     dev: false
 
-  /@ipld/dag-cbor/7.0.0:
-    resolution: { integrity: sha512-us/dagGvfQ+acO8uyAfozUQ21xxvI6ZrCWwfbOuk+o+cSpCIKY30lUYRuN3kzWLvTJHvbuCVPVEH38ynM1ZBgw== }
+  /@ipld/dag-cbor/7.0.1:
+    resolution: { integrity: sha512-XqG8VEzHjQDC/Qcy5Gyf1kvAav5VuAugc6c7VtdaRLI+3d8lJrUP3F76GYJNNXuEnRZ58cCBnNNglkIGTdg1+A== }
     dependencies:
       cborg: 1.8.0
       multiformats: 9.6.4
@@ -2650,7 +2654,7 @@ packages:
     dev: false
 
   /asynckit/0.4.0:
-    resolution: { integrity: sha1-x57Zf380y48robyXkLzDZkdLS3k= }
+    resolution: { integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q== }
     dev: false
 
   /atob/2.1.2:
@@ -2688,6 +2692,15 @@ packages:
     resolution: { integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA== }
     dependencies:
       follow-redirects: 1.14.9
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
+  /axios/0.27.2:
+    resolution: { integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ== }
+    dependencies:
+      follow-redirects: 1.14.9
+      form-data: 4.0.0
     transitivePeerDependencies:
       - debug
     dev: false
@@ -4924,6 +4937,15 @@ packages:
       mime-types: 2.1.34
     dev: false
 
+  /form-data/4.0.0:
+    resolution: { integrity: sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww== }
+    engines: { node: '>= 6' }
+    dependencies:
+      asynckit: 0.4.0
+      combined-stream: 1.0.8
+      mime-types: 2.1.34
+    dev: false
+
   /formidable/1.2.6:
     resolution: { integrity: sha512-KcpbcpuLNOwrEjnbpMC0gS+X8ciDoZE1kkqzat4a8vrprf+s9pKNQ/QIwWfbfs4ltgmFl3MD177SNTkve3BwGQ== }
     deprecated: 'Please upgrade to latest, formidable@v2 or formidable@v3! Check these notes: https://bit.ly/2ZEqIau'
@@ -5714,7 +5736,7 @@ packages:
     dependencies:
       '@chainsafe/libp2p-noise': 5.0.2
       '@ipld/car': 3.2.3
-      '@ipld/dag-cbor': 7.0.0
+      '@ipld/dag-cbor': 7.0.1
       '@ipld/dag-json': 8.0.7
       '@ipld/dag-pb': 2.1.15
       '@multiformats/murmur3': 1.1.1
@@ -5788,7 +5810,7 @@ packages:
     resolution: { integrity: sha512-IeIJJo6CDNCnTFz2hTSzzBDX34/jJmlyxk65NJAS+kgvel9aPRYaSestymDJWvOZj4/bBtiJ8X2CsRQoaVyIBg== }
     engines: { node: '>=15.0.0', npm: '>=3.0.0' }
     dependencies:
-      '@ipld/dag-cbor': 7.0.0
+      '@ipld/dag-cbor': 7.0.1
       '@ipld/dag-json': 8.0.7
       '@ipld/dag-pb': 2.1.15
       any-signal: 3.0.0
