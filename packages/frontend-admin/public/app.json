@@ -3,7 +3,7 @@
   "desc": "DappAgent管理前端。Frontend for DappAgent",
   "author": "YangK & WayZer",
   "singlePageApp": true,
-  "icon": "/favicon.ico",
+  "icon": "/ipfs/QmNjyM7BqsP9zVS5fTfZWJ6cDcFr8Bh6mphHdjRo3FJAA5?favicon.png",
   "ext": {},
   "permissions": [
     {
@@ -31,6 +31,9 @@
   "services": {
     "permission": {
       "url": "/permission"
+    },
+    "verify": {
+      "url": "/verify"
     }
   }
 }

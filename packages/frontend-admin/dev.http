@@ -63,3 +63,8 @@ Content-Type: application/json
 [
   "apps.admin"
 ]
+
+### 验证是否实名
+#TEST ON 2022-01-27
+POST {{host}}/api/integrate/requestVerified
+dapp: {{appId}}
