@@ -143,7 +143,7 @@ export default function AppDetail() {
                 <Space>
                     <Button onClick={() => useService('apps').checkUpdate(id)}>检查更新</Button>
                     {info?.modifiable ? <>
-                        <EditButton info={info}>更新信息</EditButton>
+                        <EditButton info={info} refresh={infoR.refresh}>更新信息</EditButton>
                         <Button onClick={updateProgram}>更新代码</Button>
                         <Button onClick={publish}>发布应用</Button>
                     </> : <>
@@ -163,7 +163,9 @@ export default function AppDetail() {
     </Modal>;
 }
 
-function EditButton({info, children}: { info: ServiceReturn<'apps', 'info'>, children: ReactNode }) {
+function EditButton({info, children, refresh}: {
+    info: ServiceReturn<'apps', 'info'>, children: ReactNode, refresh: () => void
+}) {
     const [visible, setVisible] = useState(false);
     const [form] = Form.useForm();
 
@@ -173,6 +175,8 @@ function EditButton({info, children}: { info: ServiceReturn<'apps', 'info'>, chi
         value.icon = icon;
         console.log(value);
         await useService('apps').updateDesc(info.id, value);
+        refresh();
+        setVisible(false);
     }
 
     return <>
