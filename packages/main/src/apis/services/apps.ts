@@ -12,8 +12,22 @@ import {assertStruct, partialObject} from '/@/apis/hooks/assertStruct';
 import {AppPermission} from '/@/core/apps/define';
 import PeerId from 'peer-id';
 
+/**
+ * 应用管理接口
+ * 普通应用可用 {@code thisInfo} {@code hasPermission} {@code requestPermission} {@code checkUpdateSelf} {@code updateDescSelf}
+ * 其他供特权应用管理使用
+ */
 export class AppsApi extends ExposedService {
     /// info
+    /**
+     * 获取当前应用的详细信息
+     * 包含
+     * * 应用的id，名字，介绍，图标，链接等基础信息
+     *   其中`name` `desc` `icon` `ext`会和程序元数据合并
+     * * 程序的元数据信息：作者，数据库，服务等
+     * * 本地的内部数据：权限，访问时间等
+     * 具体内容见返回的数据结构
+     */
     @api()
     async thisInfo() {
         const app = await useApp();
@@ -39,6 +53,9 @@ export class AppsApi extends ExposedService {
         };
     }
 
+    /**
+     * 管理接口：列出当前所有应用
+     */
     @api({permission: 'apps.admin'})
     async list() {
         const list = await AppManager.list();
@@ -50,6 +67,9 @@ export class AppsApi extends ExposedService {
         })));
     }
 
+    /**
+     * 管理接口：获取指定应用信息
+     */
     @api({permission: 'apps.admin'})
     async info(id: string) {
         return withContext(this.thisInfo, [useAppId, AppId.fromString(id)]);
@@ -57,12 +77,23 @@ export class AppsApi extends ExposedService {
 
 
     /// permission
+    /**
+     * 判断当前应用是否具有某个权限
+     * 没有权限可调用{@code requestPermission}请求授权
+     */
     @api()
     async hasPermission(node: string) {
         const app = await useApp();
         return await app.hasPermission(node);
     }
 
+    /**
+     * 请求授权
+     * 权限必须在应用元数据中有注明
+     *
+     * 该接口可能会弹窗请求用户确认，具有较长耗时，也可能请求超时，可能需要重试
+     * 已授权会立刻返回
+     */
     @api()
     async requestPermission(node: string) {
         const app = await useApp();
@@ -73,6 +104,9 @@ export class AppsApi extends ExposedService {
         return await this.callRequestPermission([{...meta, optional: false}]);
     }
 
+    /**
+     * 管理接口：授予指定应用指定权限
+     */
     @api({permission: 'apps.admin'})
     async grantPermission(id: string, permissions: string[]) {
         const app = await withContext(useApp, [useAppId, AppId.fromString(id)]);
@@ -88,6 +122,9 @@ export class AppsApi extends ExposedService {
         }))['granted'];
     }
 
+    /**
+     * 管理接口：创建一个新的本地开发应用
+     */
     /// manage
     @api({permission: 'apps.admin'})
     async create(name: string) {
@@ -95,6 +132,9 @@ export class AppsApi extends ExposedService {
         return withContext(this.thisInfo, [useApp, app]);
     }
 
+    /**
+     * 管理接口：fork一个应用成本地开发应用
+     */
     @api({permission: 'apps.admin'})
     async fork(name: string, fromApp: string) {
         const from = await withContext(useApp, [useAppId, AppId.fromString(fromApp)]);
@@ -102,12 +142,18 @@ export class AppsApi extends ExposedService {
         return withContext(this.thisInfo, [useApp, app]);
     }
 
+    /**
+     * 管理接口：发布一个本地开发应用
+     */
     @api({permission: 'apps.admin'})
     async publish(id: string) {
         const app = await withContext(useAppModifiable, [useAppId, AppId.fromString(id)]);
         await AppManager.publish(app);
     }
 
+    /**
+     * 管理接口：通过一个给定地址，下载一个应用
+     */
     @api({permission: 'apps.admin'})
     async clone(id: string) {
         const appId = AppId.fromString(id);
@@ -115,11 +161,19 @@ export class AppsApi extends ExposedService {
         return withContext(this.thisInfo, [useApp, app]);
     }
 
+    /**
+     * 管理接口：删除一个应用
+     */
     @api({permission: 'apps.admin'})
     async delete(id: string) {
         return await AppManager.delete(AppId.fromString(id));
     }
 
+    /**
+     * 检测更新
+     * 如果有更新，该接口会立刻更新应用
+     * @return boolean 有更新，前端应该主动刷新页面使用新版本
+     */
     /// update
     @api()
     async checkUpdateSelf() {
@@ -127,6 +181,10 @@ export class AppsApi extends ExposedService {
         return await AppManager.checkUpdate(app);
     }
 
+    /**
+     * 管理接口：检测指定应用更新
+     * @see checkUpdateSelf
+     */
     @api({permission: 'apps.admin'})
     async checkUpdate(id: string) {
         const app = await withContext(useApp, [useAppId, AppId.fromString(id)]);
@@ -142,7 +200,8 @@ export class AppsApi extends ExposedService {
 
     /// desc
     /**
-     * desc.ext.* null to delete key
+     * 更新当前应用信息
+     * 包括应用`name` `desc` `icon` `ext`
      */
     @api()
     async updateDescSelf(desc: typeof AppsApi.DescStruct['TYPE']) {
@@ -169,12 +228,20 @@ export class AppsApi extends ExposedService {
         await app.appMeta.set(meta);
     }
 
+    /**
+     * 管理接口：更新指定应用信息
+     * @see updateDescSelf
+     */
     @api({permission: 'apps.admin'})
     async updateDesc(id: string, desc: Partial<Pick<AppMeta, 'name' | 'desc' | 'icon' | 'ext'>>) {
         await withContext(this.updateDescSelf.bind(this, desc), [useAppId, AppId.fromString(id)]);
     }
 
     /// util
+    /**
+     * 管理接口：导入密钥
+     * 导入密钥后，将具有应用所有者的身份
+     */
     @api({permission: 'apps.admin'})
     async importKey(id: string, key0: PeerId.JSONPeerId) {
         const app = await withContext(useApp, [useAppId, AppId.fromString(id)]);
@@ -192,6 +259,10 @@ export class AppsApi extends ExposedService {
         }
     }
 
+    /**
+     * 管理接口：更新应用的程序
+     * 更新应用的代码
+     */
     @api({permission: 'apps.syncProgram'})
     async syncProgram(id: string, dir: string) {
         const app = await withContext(useAppModifiable, [useAppId, AppId.fromString(id)]);

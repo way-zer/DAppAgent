@@ -166,14 +166,14 @@ export class AppManager {
     }
 
     static async checkUpdate(app: App) {
-        if (!app.id.needUpdate) return;
+        if (!app.id.needUpdate) return false;
         const addr = await app.id.resolve();
         const old = await app.appMeta.file.cid();
+        let ok = false;
         if (addr && !old.equals(addr)) {
             const oldMeta = await app.appMeta.get();
             await app.appMeta.file.cpFrom(addr);
             app.appMeta.invalidCache();
-            let ok = false;
             try {
                 const newTime = (await app.appMeta.get()).updated;
                 if (newTime < oldMeta.updated) {
@@ -198,6 +198,7 @@ export class AppManager {
             }
         }
         await app.localData.edit({lastCheckUpdate: Date.now()});
+        return ok;
     }
 
     static async delete(id: AppId) {

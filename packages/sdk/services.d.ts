@@ -10,22 +10,56 @@ export type AppLocalMeta = {
     lastLocalProgramDir?: string
 };
 
+/**
+ * 应用管理接口
+ * 普通应用可用 {@code thisInfo} {@code hasPermission} {@code requestPermission} {@code checkUpdateSelf} {@code updateDescSelf}
+ * 其他供特权应用管理使用
+ */
 interface AppsApi {
+    /**
+     * 获取当前应用的详细信息
+     * 包含
+     * * 应用的id，名字，介绍，图标，链接等基础信息
+     *   其中`name` `desc` `icon` `ext`会和程序元数据合并
+     * * 程序的元数据信息：作者，数据库，服务等
+     * * 本地的内部数据：权限，访问时间等
+     * 具体内容见返回的数据结构
+     */
     /** @api() */
     thisInfo(): Promise<{ name: string; desc: string; icon: string; ext: { [x: string]: any; }; id: string; uniqueId: string; url: string; fork: string | undefined; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; program: { cid: string; name: string; desc: string; author: string; icon: string; ext: Record<string, unknown>; permissions: { desc: string; node: string; optional: boolean; }[]; databases: { name: string; type: 'docstore' | 'keyvalue' | 'feed' | 'eventlog' | 'counter'; access: 'private' | 'selfWrite'; }[]; singlePageApp: boolean; services: Record<string, { url: string; background: boolean; }>; }; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
 
+    /**
+     * 管理接口：列出当前所有应用
+     */
     /** @api({permission: 'apps.admin'}) */
     list(): Promise<{ id: string; url: string; modifiable: boolean; publicIds: string[]; }[]>;
 
+    /**
+     * 管理接口：获取指定应用信息
+     */
     /** @api({permission: 'apps.admin'}) */
     info(id: string): Promise<{ name: string; desc: string; icon: string; ext: { [x: string]: any; }; id: string; uniqueId: string; url: string; fork: string | undefined; modifiable: boolean; publicIds: string[]; localData: AppLocalMeta; program: { cid: string; name: string; desc: string; author: string; icon: string; ext: Record<string, unknown>; permissions: { desc: string; node: string; optional: boolean; }[]; databases: { name: string; type: 'docstore' | 'keyvalue' | 'feed' | 'eventlog' | 'counter'; access: 'private' | 'selfWrite'; }[]; singlePageApp: boolean; services: Record<string, { url: string; background: boolean; }>; }; creator: string; updated: number; databases: Record<string, string>; recordSign?: string | undefined; }>;
 
+    /**
+     * 判断当前应用是否具有某个权限
+     * 没有权限可调用{@code requestPermission}请求授权
+     */
     /** @api() */
     hasPermission(node: string): Promise<boolean>;
 
+    /**
+     * 请求授权
+     * 权限必须在应用元数据中有注明
+     *
+     * 该接口可能会弹窗请求用户确认，具有较长耗时，也可能请求超时，可能需要重试
+     * 已授权会立刻返回
+     */
     /** @api() */
     requestPermission(node: string): Promise<true | Boolean>;
 
+    /**
+     * 管理接口：授予指定应用指定权限
+     */
     /** @api({permission: 'apps.admin'}) */
     grantPermission(id: string, permissions: string[]): Promise<void>;
 }
@@ -47,22 +81,35 @@ export interface Transaction {
 
 /**
  * 跨应用调用接口
+ * 本服务提供了一个跨应用进行接口调用的方法
+ * 被调用方需要先在原数据上声明服务
+ * 调用方通过{@code request}请求服务
+ * 被调用方通过{@code respond}返回处理结果。
+ *   如处理时间较长，可以使用{@code heartbeat}保持长连接
+ *
+ * 被调用方有两种
+ * * 后台处理：被调用方在后台轮询{@code pullTransaction}接口 (间隔<10秒)
+ * * 其他处理：平台将开启一个新窗口，启动被调用方
  */
 interface CallApi {
     /**
      * 请求某一应用接口,长连接等待返回
+     * TODO：该接口请求时间可能超过浏览器，需要重试
      * @param app 被调用应用id
      * @param service 需要调用的接口
      * @param payload 传给接口的参数
+     * @throws gatewayTimeout 对面应用超时没有回复
      * @return 接口返回结果
      */
     /** @api() */
     request(app: string, service: string, payload: Record<string, unknown>): Promise<Record<string, unknown>>;
+
     /**
      * 响应请求
      * @param id 调用时,平台传入的事务id
      * @param token 调用时,平台传入的事务token
      * @param response 返回结果
+     * @throws Boom.notAcceptable 'Transaction not found'
      */
     /** @api() */
     respond(id: string, token: string, response: Record<string, unknown>): Promise<void>;
@@ -73,29 +120,74 @@ interface CallApi {
      */
     /** @api() */
     pullTransaction(id?: string, token?: string): Promise<Transaction[]>;
+
     /**
      * 心跳延时
      * 针对长时间请求,例如oauth登录之类需要用户操作的
-     * 需每10s调用一次,保证存活
+     * 需定期调用,保证存活 (10s超时)
      */
     /** @api() */
     heartbeat(id: string, token: string): Promise<void>;
 }
 
+/**
+ * 数据库功能(非关系性文档数据库)
+ * 包含数据的 增 删 查
+ * 因为去中心化特性，不建议使用数据库作为条件判断依据
+ * 需要声明和申请`db.use`权限
+ */
 interface DBApi {
+    /**
+     * 插入数据
+     * @param dbName 在元数据中声明的应用名称
+     * @param body 数据内容，需要含_id作为索引键
+     */
     /** @api({permission: 'db.use'}) */
     insert<T extends { _id: string }>(dbName: string, body: T): Promise<string>;
+
+    /**
+     * 获取单条数据
+     * @param dbName 在元数据中声明的应用名称
+     * @param _id 数据索引
+     */
     /** @api({permission: 'db.use'}) */
     get<T extends { _id: string }>(dbName: string, _id: string): Promise<T>;
+
+    /**
+     * 删除单条数据
+     * @param dbName 在元数据中声明的应用名称
+     * @param _id 数据索引
+     */
     /** @api({permission: 'db.use'}) */
     delete<T extends { _id: string }>(dbName: string, _id: string): Promise<string>;
+
+    /**
+     * 查询所有数据
+     * 可用offset和limit进行分页。默认返回所有
+     * @param dbName 在元数据中声明的应用名称
+     * @param offset 查询偏置
+     * @param limit 返回长度，可配合offset作为分页
+     */
     /** @api({permission: 'db.use'}) */
     queryAll<T extends { _id: string }>(dbName: string, offset: number = 0, limit: number = -1): Promise<T[]>;
+
+    /**
+     * 根据条件查询数据
+     * 可用offset和limit进行分页。默认返回所有
+     * @param dbName 在元数据中声明的应用名称
+     * @param filter 查询条件，详情见{@see https://www.npmjs.com/package/rule-judgment}
+     * @param offset 查询偏置
+     * @param limit 返回长度，可配合offset作为分页
+     */
     /** @api({permission: 'db.use'}) */
     query<T extends { _id: string }>(dbName: string, filter: FilterQuery<T>, offset: number = 0, limit: number = -1): Promise<{ count: number; offset: number; limit: number; data: T[]; }>;
 }
 
 interface TestApi {
+    /**
+     * 接口测试Api, 固定返回
+     * @return 'hello World'
+     */
     /** @api() */
     hello(): Promise<string>;
 }
@@ -118,19 +210,46 @@ interface IntegrateApi {
     _generateKeyPair(): Promise<JSONPeerId>;
 }
 
+/**
+ * 系统相关功能
+ */
 interface SystemApi {
+    /**
+     * 获取系统信息
+     * 包括 ipfs/orbitDB 相关状态
+     * 当前节点的版本，本地地址，已连接Peer
+     * TODO：该接口返回时间有时候过长，需要优化
+     */
     /** @api({permission: 'system.info'}) */
     status(): Promise<{ ipfs: boolean; orbitDB: boolean; versions: { version?: string | undefined; commit?: string | undefined; repo?: string | undefined; system?: string | undefined; golang?: string | undefined; 'ipfs-core'?: string | undefined; 'interface-ipfs-core'?: string | undefined; 'ipfs-http-client'?: string | undefined; }; id: { addresses: string[]; id?: string | undefined; publicKey?: string | undefined; agentVersion?: string | undefined; protocolVersion?: string | undefined; protocols?: string[] | undefined; }; peers: { addr: string; peer: string; latency?: string | undefined; muxer?: string | undefined; streams?: string[] | undefined; direction?: 'inbound' | 'outbound' | undefined; }[]; bandwidth: { totalIn: string; totalOut: string; rateIn: number; rateOut: number; }[]; }>;
 
+    /**
+     * 连接一个新的Peer
+     * @param addr 目标地址(multiAddress格式)
+     */
     /** @api({permission: 'system.admin'}) */
     connectPeer(addr: string): Promise<void>;
 
+    /**
+     * 更换系统的用户密钥
+     * 该接口会弹窗用户确认，耗时可能较长
+     * 接口调用成功会重启平台
+     */
     /** @api({permission: 'system.admin'}) */
     importPeerKey(key0: PeerId.JSONPeerId): Promise<void>;
 
+    /**
+     * 导出密钥，包括用户密钥和所有的应用密钥
+     * 该接口会弹窗用户确认，耗时可能较长
+     * @return 一个zip文件的二进制 前端需要配合axios适当处理
+     */
     /** @api({permission: 'system.admin'}) */
     exportKeys(): Promise<NodeJS.ReadableStream>;
 
+    /**
+     * 弹窗选择一个本地目录
+     * 该接口涉及用户操作，耗时可能较长
+     */
     /** @api({permission: 'system.selectDir'}) */
     selectDir(): Promise<string | null>;
 }

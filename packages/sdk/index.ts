@@ -5,9 +5,15 @@ import axios, {AxiosRequestConfig} from 'axios';
 // @ts-ignore
 export type {Services} from './services';
 
+/**
+ * 引用接口的返回类型
+ */
 export type ServiceReturn<Service extends keyof Services, F extends keyof Services[Service]> =
     Services[Service][F] extends (...args: any) => Promise<infer R> ? R : never
 
+/**
+ * 调用平台接口
+ */
 export function useService<T extends keyof Services>(serviceName: T, axiosConfig?: AxiosRequestConfig<any[]>): Omit<Services[T], 'apis'> {
     return new Proxy({}, {
         get(target: {}, name: string | symbol): any {
@@ -20,6 +26,10 @@ export function useService<T extends keyof Services>(serviceName: T, axiosConfig
     }) as any;
 }
 
+/**
+ * 上传文件到接口
+ * @return 文件链接 例如'/ipfs/xxxxx?abc.png'
+ */
 export async function ipfsUploadFile(file: File, onUploadProgress?: (e: ProgressEvent) => void): Promise<string> {
     console.debug('Upload ' + file + ' to ipfs');
     const result = await axios.post('/ipfs/upload', file, {

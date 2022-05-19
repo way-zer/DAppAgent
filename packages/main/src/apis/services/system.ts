@@ -9,7 +9,16 @@ import {AppManager} from '/@/core/apps';
 import PeerId from 'peer-id';
 import {bases} from 'multiformats/basics';
 
+/**
+ * 系统相关功能
+ */
 export class SystemApi extends ExposedService {
+    /**
+     * 获取系统信息
+     * 包括 ipfs/orbitDB 相关状态
+     * 当前节点的版本，本地地址，已连接Peer
+     * TODO：该接口返回时间有时候过长，需要优化
+     */
     @api({permission: 'system.info'})
     async status() {
         const ipfsStatus = await CoreIPFS.ipfsStatus();
@@ -41,11 +50,20 @@ export class SystemApi extends ExposedService {
         };
     }
 
+    /**
+     * 连接一个新的Peer
+     * @param addr 目标地址(multiAddress格式)
+     */
     @api({permission: 'system.admin'})
     async connectPeer(addr: string) {
         await CoreIPFS.inst.swarm.connect(addr);
     }
 
+    /**
+     * 更换系统的用户密钥
+     * 该接口会弹窗用户确认，耗时可能较长
+     * 接口调用成功会重启平台
+     */
     @api({permission: 'system.admin'})
     async importPeerKey(key0: PeerId.JSONPeerId) {
         let msg = '应用请求导入新的用户密钥\n这是一个危险操作，请再次确认\n导入新密钥会导致当前密钥被覆盖，请注意备份';
@@ -59,9 +77,14 @@ export class SystemApi extends ExposedService {
             PrivKey: bases.base64pad.encode(key.privKey.bytes),
         });
         await ElectronHelper.showConfirmDialog('应用即将重启已使用新密钥');
-
+        ElectronHelper.relaunch();
     }
 
+    /**
+     * 导出密钥，包括用户密钥和所有的应用密钥
+     * 该接口会弹窗用户确认，耗时可能较长
+     * @return 一个zip文件的二进制 前端需要配合axios适当处理
+     */
     @api({permission: 'system.admin'})
     async exportKeys() {
         let msg = '应用请求导出当前程序的所有密钥\n这是一个危险操作，请再次确认\n泄漏密钥可能造成严重后果';
@@ -85,6 +108,10 @@ export class SystemApi extends ExposedService {
         return zip.generateNodeStream();
     }
 
+    /**
+     * 弹窗选择一个本地目录
+     * 该接口涉及用户操作，耗时可能较长
+     */
     @api({permission: 'system.selectDir'})
     async selectDir() {
         return await ElectronHelper.selectDir();
