@@ -22,7 +22,9 @@ packageNow.version = process.env.APP_VERSION || require('./version');
 fs.writeFileSync('./package.json', JSON.stringify(packageNow));
 child_process.execSync('pnpm i --ignore-workspace --config.node-linker=hoisted', {stdio: 'inherit'});
 
+const publish = packageNow.version.includes('dev') ? '--dir' : '--publish always';
+
 child_process.execSync('electron-builder build ' +
     '--config electron-builder.config.js ' +
-    '--' + getPlatform() + ' ' +
-    '--publish always', {stdio: 'inherit'});
+    '--' + getPlatform() + ' ' + publish
+    , {stdio: 'inherit'});

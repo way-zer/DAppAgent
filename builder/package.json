@@ -3,7 +3,7 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "compile": "node build.js"
+    "compile": "node ./build.js"
   },
   "repository": "https://github.com/way-zer/DAppAgent",
   "dependencies": {
