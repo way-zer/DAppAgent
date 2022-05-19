@@ -1,5 +1,5 @@
 import {api, ExposedService, useService} from '.';
-import {AppId, AppManager, AppMeta} from '/@/core/apps';
+import {AppId, AppLocalMeta, AppManager, AppMeta, ProgramMeta} from '/@/core/apps';
 import {useApp, useAppId, useAppModifiable} from '../hooks/useApp';
 import {withContext} from '/@/util/hook';
 import {toArray} from '/@/util';
@@ -11,6 +11,18 @@ import {any, record, string} from 'superstruct';
 import {assertStruct, partialObject} from '/@/apis/hooks/assertStruct';
 import {AppPermission} from '/@/core/apps/define';
 import PeerId from 'peer-id';
+
+export type AppInfo = Omit<AppMeta, 'fork' | 'program'> & {
+    fork?: string,
+    program: ProgramMeta & { cid: string }
+} & {
+    id: string,
+    uniqueId: string
+    url: string
+    modifiable: boolean
+    publicIds: string[],
+    localData: AppLocalMeta
+}
 
 /**
  * 应用管理接口
@@ -50,7 +62,7 @@ export class AppsApi extends ExposedService {
                 ...programMeta,
                 cid: meta.program.toString(),
             },
-        };
+        } as AppInfo;
     }
 
     /**
@@ -122,10 +134,10 @@ export class AppsApi extends ExposedService {
         }))['granted'];
     }
 
+    /// manage
     /**
      * 管理接口：创建一个新的本地开发应用
      */
-    /// manage
     @api({permission: 'apps.admin'})
     async create(name: string) {
         const app = await AppManager.create(name);
