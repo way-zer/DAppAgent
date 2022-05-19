@@ -61,3 +61,4 @@ DAppAgent/
 .pnpm*.log
 /config/main.dev.config.js
 /builder/pnpm-lock.yaml
+/packages/sdk/docs
