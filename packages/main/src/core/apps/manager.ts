@@ -103,7 +103,7 @@ export class AppManager {
             if (dbInfo.name in appMeta.databases) continue;
             appMeta.databases[dbInfo.name] = await DBManager.create({
                 ...dbInfo,
-                name: program + dbInfo.name,
+                name: app.uniqueId + dbInfo.name,
             });
         }
 
@@ -124,9 +124,11 @@ export class AppManager {
             }
         }
         if (newNeed)
-            await withContext(async () => {
-                await useService('apps').callRequestPermission(permissions).catch(console.warn);
-            }, [useAppId, app.id]);//fixme, can't transmit useApp
+            setTimeout(async () => {
+                await withContext(async () => {
+                    await useService('apps').callRequestPermission(permissions).catch(console.warn);
+                }, [useAppId, app.id]);//fixme, can't transmit useApp
+            }, 1000);
     }
 
     /**发布应用,Need CanModify*/
@@ -204,7 +206,7 @@ export class AppManager {
     static async delete(id: AppId) {
         const i = (await this.list()).findIndex(it => it.id.equals(id));
         if (i >= 0) {
-            const app = this._list!!.splice(i)[0];
+            const app = this._list!!.splice(i, 1)[0];
             await CoreIPFS.inst.files.rm(app.appRoot, {recursive: true});
             return true;
         }

@@ -50,7 +50,7 @@ function electron() {
             if (command === 'serve') {
                 enable = true;
                 config.build.minify = false;
-                config.watch = {};
+                config.build.watch = {};
                 build(config).then();
                 return new Promise(() => {
                 });//never

@@ -35,10 +35,19 @@ export const onceF: MethodDecorator = (_, _2, descriptor) => {
 
     let ret: Promise<unknown> | null = null;
     descriptor.value = async function (this: any) {
-        if (ret)
+        if (ret && await promiseState(ret) !== 'rejected')
             return ret;
         ret = (async () => await origin.call(this, ...arguments))();
         return ret;
     } as any;
     return descriptor;
 };
+
+export async function promiseState(prom) {
+    try {
+        const result = await Promise.race([prom, Promise.resolve('pending')]);
+        return result === 'pending' ? 'pending' : 'fulfilled';
+    } catch (err) {
+        return 'rejected';
+    }
+}
