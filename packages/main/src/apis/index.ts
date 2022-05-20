@@ -5,6 +5,7 @@ import https from 'https';
 import key from 'config/ssl.key?raw';
 import cert from 'config/ssl.crt?raw';
 import globalConfig from '/@/config';
+import {AddressInfo} from 'net';
 
 export const Apis = {
     async start() {
@@ -21,7 +22,7 @@ export const Apis = {
         daruk.httpServer = httpsServer;
         daruk.emit('serverReady', daruk.httpServer);
 
-        http.createServer()
+        const server = http.createServer()
             .on('request', daruk.app.callback())
             .on('connect', (req, socket, head) => {
                 if (req.url!!.split(':')[0].endsWith('.dapp')) {
@@ -30,6 +31,9 @@ export const Apis = {
                     httpsServer.emit('connection', socket);
                 } else console.log('OTHER ' + req.url);
             })
-            .listen(globalConfig.port);
+            .listen(globalConfig.port, () => {
+                globalConfig.port = (server.address() as AddressInfo).port;
+                console.log('Gateway listen on', globalConfig.port);
+            });
     },
 };

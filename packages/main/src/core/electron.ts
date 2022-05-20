@@ -94,7 +94,7 @@ export class ElectronHelper {
             const window = new BrowserWindow({
                 show: false,
                 webPreferences: {
-                    nativeWindowOpen: true,
+                    enablePreferredSizeMode: true,
                     // preload: preloadPath
                 },
             });
